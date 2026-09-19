@@ -28,26 +28,26 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="flex flex-col text-right">
-            <div className="flex items-center gap-2">
-              <h1 className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">
-                ניהול פיננסי משפחתי
+            <div className="flex items-center gap-1.5">
+              <h1 className="font-extrabold text-base sm:text-lg text-slate-900 tracking-tight">
+                תיק משפחת בן
               </h1>
-              <span className="hidden sm:inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                ענן פעיל
+              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white shadow-xs" title="מאומת - חשבון ראשי">
+                <ShieldCheck className="w-3 h-3" />
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <span className="font-medium text-slate-700">שלום דניאל</span>
+              <span className="font-semibold text-slate-700">דניאל והמשפחה</span>
               <span className="inline-block w-1 h-1 rounded-full bg-slate-300"></span>
               {isCloudSynced ? (
-                <span className="text-emerald-600 font-medium flex items-center gap-1">
+                <span className="text-emerald-600 font-semibold flex items-center gap-1">
                   <Cloud className="w-3 h-3" />
-                  <span>מסונכרן לענן</span>
+                  <span>סנכרון ענן פעיל</span>
                 </span>
               ) : (
                 <span className="text-amber-600 font-medium flex items-center gap-1">
                   <CloudOff className="w-3 h-3" />
-                  <span>סנכרון מקומי</span>
+                  <span>מקומי</span>
                 </span>
               )}
             </div>
@@ -56,6 +56,11 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
+          {/* Currency Pill */}
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-700 font-num">
+            <span>₪ ILS</span>
+          </div>
+
           {/* Phone Access Modal Button */}
           <button
             onClick={onOpenPhoneModal}
@@ -63,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="סרוק או שלח קישור לטלפון"
           >
             <Smartphone className="w-4 h-4 text-blue-600" />
-            <span className="hidden xs:inline">פתח בטלפון</span>
+            <span className="hidden sm:inline">סנכרן טלפון</span>
           </button>
         </div>
 

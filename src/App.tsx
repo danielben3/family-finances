@@ -11,6 +11,14 @@ import { HistoryTable } from './components/HistoryTable';
 import { MobileNav, NavTab } from './components/MobileNav';
 import { PhoneModal } from './components/PhoneModal';
 import { InstallBanner } from './components/InstallBanner';
+import { AppleCardHero } from './components/AppleCardHero';
+import { WealthInsightsCarousel } from './components/WealthInsightsCarousel';
+import { AssetSparklinesCard } from './components/AssetSparklinesCard';
+import { CashflowDonutCard } from './components/CashflowDonutCard';
+import { LiquidityRunwayCard } from './components/LiquidityRunwayCard';
+import { FireMilestoneCard } from './components/FireMilestoneCard';
+import { FireCalculatorModal } from './components/FireCalculatorModal';
+import { exportFinancialRecordsToExcel } from './lib/exportExcel';
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -20,6 +28,7 @@ export const App: React.FC = () => {
   const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState<boolean>(false);
+  const [isFireModalOpen, setIsFireModalOpen] = useState<boolean>(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -176,38 +185,66 @@ export const App: React.FC = () => {
       />
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
         
-        {/* Top Net Worth Hero Card */}
-        <NetWorthHero
-          currentRecord={currentRecord}
-          previousRecord={previousRecord}
-        />
-
-        {/* 2026 Month Carousel Pills */}
-        <MonthSelector
-          records={records}
-          selectedPeriod={selectedPeriod}
-          onSelectPeriod={p => {
-            setSelectedPeriod(p);
-            // On mobile, if in overview, stay in overview or switch to edit if needed
-          }}
-        />
-
         {/* Desktop View: Grid Layout */}
         <div className="hidden md:grid md:grid-cols-12 gap-6">
-          {/* Left / Secondary Column (5 cols): Monthly Input Form */}
+          {/* Left Column (5 cols): Apple Card Hero + FIRE Milestone + Monthly Input Form */}
           <div className="md:col-span-5 space-y-6">
-            <MonthlyForm
-              record={currentRecord}
-              onSave={handleSaveRecord}
-              isSaving={isSaving}
+            <AppleCardHero
+              currentRecord={currentRecord}
+              previousRecord={previousRecord}
+              onQuickLog={() => {
+                const el = document.getElementById('desktop-monthly-form');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              onOpenFire={() => setIsFireModalOpen(true)}
+              onExportExcel={() => {
+                exportFinancialRecordsToExcel(records);
+                showToast('הקובץ יוצא בהצלחה! 📊', 'success');
+              }}
             />
+
+            {/* 2026 Month Carousel Pills */}
+            <MonthSelector
+              records={records}
+              selectedPeriod={selectedPeriod}
+              onSelectPeriod={p => setSelectedPeriod(p)}
+            />
+
+            <FireMilestoneCard
+              currentRecord={currentRecord}
+              onOpenCalculator={() => setIsFireModalOpen(true)}
+            />
+
+            <div id="desktop-monthly-form">
+              <MonthlyForm
+                record={currentRecord}
+                onSave={handleSaveRecord}
+                isSaving={isSaving}
+              />
+            </div>
           </div>
 
-          {/* Right / Primary Column (7 cols): Metrics Cards + Growth Chart */}
+          {/* Right Column (7 cols): AI Insights + Cashflow Donut + Asset Sparklines + Runway + Wealth Chart */}
           <div className="md:col-span-7 space-y-6">
-            <MetricsCards record={currentRecord} />
+            <WealthInsightsCarousel
+              records={records}
+              currentRecord={currentRecord}
+              onOpenFire={() => setIsFireModalOpen(true)}
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <CashflowDonutCard currentRecord={currentRecord} />
+              <LiquidityRunwayCard currentRecord={currentRecord} />
+            </div>
+
+            <AssetSparklinesCard
+              records={records}
+              currentRecord={currentRecord}
+              previousRecord={previousRecord}
+            />
+
             <WealthChart records={records} />
           </div>
         </div>
@@ -225,26 +262,91 @@ export const App: React.FC = () => {
         </div>
 
         {/* Mobile View: Controlled by Bottom MobileNav */}
-        <div className="md:hidden space-y-6">
+        <div className="md:hidden space-y-5">
           {activeTab === 'overview' && (
             <>
-              <MetricsCards record={currentRecord} />
-              <div className="pt-2">
-                <WealthChart records={records} />
+              {/* Apple Card Hero */}
+              <AppleCardHero
+                currentRecord={currentRecord}
+                previousRecord={previousRecord}
+                onQuickLog={() => setActiveTab('form')}
+                onOpenFire={() => setIsFireModalOpen(true)}
+                onScrollToGoals={() => {
+                  const el = document.getElementById('mobile-fire-milestone');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                onExportExcel={() => {
+                  exportFinancialRecordsToExcel(records);
+                  showToast('הקובץ יוצא בהצלחה! 📊', 'success');
+                }}
+              />
+
+              {/* Month Selector Carousel */}
+              <MonthSelector
+                records={records}
+                selectedPeriod={selectedPeriod}
+                onSelectPeriod={p => setSelectedPeriod(p)}
+              />
+
+              {/* AI Wealth Insights */}
+              <WealthInsightsCarousel
+                records={records}
+                currentRecord={currentRecord}
+                onOpenFire={() => setIsFireModalOpen(true)}
+              />
+
+              {/* 4 Pillars with Live SVG Sparklines */}
+              <AssetSparklinesCard
+                records={records}
+                currentRecord={currentRecord}
+                previousRecord={previousRecord}
+                onViewHistory={() => setActiveTab('history')}
+              />
+
+              {/* Cashflow Donut Ring */}
+              <CashflowDonutCard currentRecord={currentRecord} />
+
+              {/* Liquidity Runway Gauge */}
+              <LiquidityRunwayCard currentRecord={currentRecord} />
+
+              {/* FIRE Milestone Progress */}
+              <div id="mobile-fire-milestone">
+                <FireMilestoneCard
+                  currentRecord={currentRecord}
+                  onOpenCalculator={() => setIsFireModalOpen(true)}
+                />
               </div>
+
+              {/* Wealth Growth Curve */}
+              <WealthChart records={records} />
             </>
           )}
 
           {activeTab === 'form' && (
-            <MonthlyForm
-              record={currentRecord}
-              onSave={handleSaveRecord}
-              isSaving={isSaving}
-            />
+            <>
+              <MonthSelector
+                records={records}
+                selectedPeriod={selectedPeriod}
+                onSelectPeriod={p => setSelectedPeriod(p)}
+              />
+              <MonthlyForm
+                record={currentRecord}
+                onSave={handleSaveRecord}
+                isSaving={isSaving}
+              />
+            </>
           )}
 
           {activeTab === 'analytics' && (
-            <WealthChart records={records} />
+            <div className="space-y-5">
+              <FireMilestoneCard
+                currentRecord={currentRecord}
+                onOpenCalculator={() => setIsFireModalOpen(true)}
+              />
+              <LiquidityRunwayCard currentRecord={currentRecord} />
+              <CashflowDonutCard currentRecord={currentRecord} />
+              <WealthChart records={records} />
+            </div>
           )}
 
           {activeTab === 'history' && (
@@ -271,6 +373,14 @@ export const App: React.FC = () => {
       <PhoneModal
         isOpen={isPhoneModalOpen}
         onClose={() => setIsPhoneModalOpen(false)}
+      />
+
+      {/* FIRE Interactive Calculator Modal */}
+      <FireCalculatorModal
+        isOpen={isFireModalOpen}
+        onClose={() => setIsFireModalOpen(false)}
+        currentWealth={currentRecord.total_wealth || 0}
+        defaultMonthlySavings={currentRecord.savings || 12000}
       />
 
     </div>
