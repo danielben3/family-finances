@@ -57,7 +57,6 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
       
-      // Auto-size columns
       const colWidths = [
         { wch: 10 }, { wch: 14 }, { wch: 16 }, { wch: 18 },
         { wch: 16 }, { wch: 22 }, { wch: 20 }, { wch: 15 },
@@ -79,30 +78,30 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
   };
 
   return (
-    <div className="glass-card p-5 sm:p-6 bg-slate-900/70 border border-white/10 rounded-2xl shadow-xl">
+    <div className="bg-white rounded-3xl p-5 sm:p-6 card-diffused-shadow border border-slate-200/80">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
         <div>
-          <div className="flex items-center gap-2 text-white font-bold text-base sm:text-lg">
-            <Table className="w-5 h-5 text-amber-400" />
+          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm sm:text-base">
+            <Table className="w-4 h-4 text-blue-600" />
             <span>טבלת נתונים היסטורית מלאה</span>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            כל הרשומות מאוגוסט 2024 ועד היום — לחץ על שורה לעריכה מהירה
+            מאוגוסט 2024 ועד היום — לחץ על שורה לטעינת החודש לטופס
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Year Filter Tabs */}
-          <div className="flex bg-white/5 border border-white/10 rounded-xl p-1 text-xs">
+          <div className="flex bg-slate-100 border border-slate-200/70 rounded-xl p-1 text-xs">
             {['all', '2026', '2025', '2024'].map(year => (
               <button
                 key={year}
                 onClick={() => setSelectedYear(year)}
                 className={`px-3 py-1 rounded-lg font-medium transition ${
                   selectedYear === year
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-blue-600 text-white font-bold shadow-sm'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 {year === 'all' ? 'הכל' : year}
@@ -113,7 +112,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
           {/* Sort Toggle */}
           <button
             onClick={() => setSortAsc(!sortAsc)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-300 transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs text-slate-600 transition"
             title="שינוי כיוון מיון"
           >
             <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
@@ -124,10 +123,10 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
           <button
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-400 text-xs font-semibold transition"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-semibold transition shadow-sm active:scale-95"
           >
             {isExporting ? (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             ) : (
               <Download className="w-3.5 h-3.5" />
             )}
@@ -137,10 +136,10 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
       </div>
 
       {/* Table Container */}
-      <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#0B0F19]/60">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm">
         <table className="w-full text-right text-xs">
           <thead>
-            <tr className="border-b border-white/10 bg-white/[0.03] text-slate-400 font-semibold select-none">
+            <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold select-none">
               <th className="py-3 px-4">חודש</th>
               <th className="py-3 px-3 text-left">שווי כולל</th>
               <th className="py-3 px-3 text-left">שינוי</th>
@@ -155,7 +154,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
               <th className="py-3 px-3 text-center">פעולה</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5 font-num">
+          <tbody className="divide-y divide-slate-100 font-num">
             {sorted.map(rec => {
               const isSelected = rec.period === selectedPeriod;
               const hasDiff = rec.wealth_change_pct !== 0 && rec.wealth_change_pct !== undefined;
@@ -167,69 +166,69 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
                   onClick={() => onSelectPeriod(rec.period)}
                   className={`cursor-pointer transition-colors ${
                     isSelected
-                      ? 'bg-amber-500/15 text-white font-medium border-r-2 border-amber-500'
-                      : 'hover:bg-white/[0.04] text-slate-300'
+                      ? 'bg-blue-50/70 font-semibold text-slate-900 border-r-4 border-blue-600'
+                      : 'hover:bg-slate-50 text-slate-700'
                   }`}
                 >
                   <td className="py-3 px-4 font-sans font-medium flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                    <Calendar className="w-3.5 h-3.5 text-slate-400" />
                     <span>{rec.label}</span>
                   </td>
 
-                  <td className="py-3 px-3 text-left font-bold text-white">
+                  <td className="py-3 px-3 text-left font-bold text-slate-900">
                     {formatILS(rec.total_wealth)}
                   </td>
 
                   <td className="py-3 px-3 text-left">
                     {hasDiff ? (
                       <span
-                        className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-semibold ${
+                        className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                           isPos
-                            ? 'bg-emerald-500/10 text-emerald-400'
-                            : 'bg-rose-500/10 text-rose-400'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                            : 'bg-rose-50 text-rose-700 border border-rose-100'
                         }`}
                       >
                         {isPos ? '+' : ''}
                         {rec.wealth_change_pct}%
                       </span>
                     ) : (
-                      <span className="text-slate-600">—</span>
+                      <span className="text-slate-400">—</span>
                     )}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-slate-300">
+                  <td className="py-3 px-3 text-left text-slate-700">
                     {formatILS(rec.checking)}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-purple-300 hidden sm:table-cell">
+                  <td className="py-3 px-3 text-left text-blue-700 hidden sm:table-cell">
                     {formatILS(rec.altshuler)}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-sky-300 hidden sm:table-cell">
+                  <td className="py-3 px-3 text-left text-emerald-700 hidden sm:table-cell">
                     {formatILS(rec.excellence)}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-emerald-300 hidden md:table-cell">
+                  <td className="py-3 px-3 text-left text-indigo-700 hidden md:table-cell">
                     {rec.money_market > 0 ? formatILS(rec.money_market) : '—'}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-amber-300 font-semibold">
+                  <td className="py-3 px-3 text-left text-slate-900 font-bold">
                     {formatILS(rec.investments_total)}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-emerald-400 hidden lg:table-cell">
+                  <td className="py-3 px-3 text-left text-emerald-700 hidden lg:table-cell">
                     {rec.income_net > 0 ? formatILS(rec.income_net) : '—'}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-rose-400 hidden lg:table-cell">
+                  <td className="py-3 px-3 text-left text-rose-700 hidden lg:table-cell">
                     {rec.expenses > 0 ? formatILS(rec.expenses) : '—'}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-teal-300 hidden md:table-cell">
+                  <td className="py-3 px-3 text-left text-blue-700 hidden md:table-cell">
                     {rec.savings > 0 ? (
                       <span>
                         {formatILS(rec.savings)}{' '}
-                        <span className="text-[10px] text-teal-400/80">
+                        <span className="text-[10px] text-blue-500 font-normal">
                           ({rec.savings_rate.toFixed(0)}%)
                         </span>
                       </span>
@@ -244,7 +243,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
                         e.stopPropagation();
                         onSelectPeriod(rec.period);
                       }}
-                      className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-amber-400 transition"
+                      className="p-1 rounded-lg hover:bg-slate-200/60 text-slate-400 hover:text-blue-600 transition"
                       title="ערוך חודש זה"
                     >
                       <ChevronRight className="w-4 h-4 transform rotate-180" />
@@ -258,9 +257,9 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="mt-3 flex items-center justify-between text-xs text-slate-500 px-1">
+      <div className="mt-3 flex items-center justify-between text-xs text-slate-400 px-1">
         <span>סה"כ רשומות מוצגות: {sorted.length} חודשים</span>
-        <span>סנכרון בזמן אמת פעיל</span>
+        <span className="text-emerald-600 font-medium">סנכרון ענן פעיל</span>
       </div>
     </div>
   );

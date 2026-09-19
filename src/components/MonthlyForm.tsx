@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FinancialRecord } from '../types';
-import { Save, Sparkles, Check, AlertCircle } from 'lucide-react';
+import { Save, Sparkles, Check } from 'lucide-react';
 
 interface MonthlyFormProps {
   record: FinancialRecord;
@@ -96,34 +96,34 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     '₪' + Math.round(val).toLocaleString('he-IL');
 
   return (
-    <form onSubmit={handleSubmit} className="glass-card p-4 sm:p-6 bg-slate-900/80 border border-white/10">
+    <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-5 sm:p-6 card-diffused-shadow border border-slate-200/80">
       
       {/* Title & Live Status */}
-      <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+      <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
         <div>
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <span>טופס הזנה חודשי – {record.label}</span>
+          <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>טופס הזנה ועריכה – {record.label}</span>
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
-            הזן את המספרים לחודש זה. ניתן להקליד גם תרגילי חיבור (למשל 1200+350).
+            הזן מספרים או תרגילי חיבור (למשל: 1200+350). הכל מחושב בזמן אמת.
           </p>
         </div>
 
         <div className="text-left">
-          <span className="text-[11px] text-slate-400 block">סה״כ שווי מחושב:</span>
-          <span className="text-base sm:text-lg font-num font-bold text-amber-400">
+          <span className="text-[11px] text-slate-400 block">שווי כולל מחושב:</span>
+          <span className="text-base sm:text-lg font-num font-extrabold text-blue-600">
             {formatILS(calcTotalWealth)}
           </span>
         </div>
       </div>
 
       {/* Inputs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
         
         {/* 1. Income Net */}
         <div>
-          <label className="block text-xs font-semibold text-emerald-400 mb-1.5">
-            הכנסות נטו (משכורות שוטפות)
+          <label className="block text-xs font-semibold text-emerald-700 mb-1">
+            הכנסות נטו (משכורות)
           </label>
           <div className="relative">
             <input
@@ -131,17 +131,17 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               value={formData.income_net}
               onChange={e => setFormData({ ...formData, income_net: e.target.value })}
               placeholder="0"
-              className="w-full bg-slate-950/80 border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-white font-num text-sm focus:outline-none focus:border-emerald-400 transition text-left"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition text-left"
               dir="ltr"
             />
-            <span className="absolute right-3 top-2.5 text-slate-500 text-xs font-semibold pointer-events-none">₪</span>
+            <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
           </div>
         </div>
 
         {/* 2. Expenses */}
         <div>
-          <label className="block text-xs font-semibold text-rose-400 mb-1.5">
-            הוצאות (אשראי + שכירות + חשבונות)
+          <label className="block text-xs font-semibold text-rose-700 mb-1">
+            הוצאות (אשראי ושכירות)
           </label>
           <div className="relative">
             <input
@@ -149,17 +149,17 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               value={formData.expenses}
               onChange={e => setFormData({ ...formData, expenses: e.target.value })}
               placeholder="0"
-              className="w-full bg-slate-950/80 border border-rose-500/30 rounded-xl px-3.5 py-2.5 text-white font-num text-sm focus:outline-none focus:border-rose-400 transition text-left"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-100 transition text-left"
               dir="ltr"
             />
-            <span className="absolute right-3 top-2.5 text-slate-500 text-xs font-semibold pointer-events-none">₪</span>
+            <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
           </div>
         </div>
 
         {/* 3. Checking Balance */}
         <div>
-          <label className="block text-xs font-semibold text-cyan-400 mb-1.5">
-            יתרת עו״ש ונזילות מיידית
+          <label className="block text-xs font-semibold text-sky-700 mb-1">
+            עו״ש ונזילות מיידית
           </label>
           <div className="relative">
             <input
@@ -167,17 +167,17 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               value={formData.checking}
               onChange={e => setFormData({ ...formData, checking: e.target.value })}
               placeholder="0"
-              className="w-full bg-slate-950/80 border border-cyan-500/30 rounded-xl px-3.5 py-2.5 text-white font-num text-sm focus:outline-none focus:border-cyan-400 transition text-left"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition text-left"
               dir="ltr"
             />
-            <span className="absolute right-3 top-2.5 text-slate-500 text-xs font-semibold pointer-events-none">₪</span>
+            <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
           </div>
         </div>
 
         {/* 4. Altshuler Gemel */}
         <div>
-          <label className="block text-xs font-semibold text-purple-400 mb-1.5">
-            אלטשולר שחם (גמל להשקעה)
+          <label className="block text-xs font-semibold text-blue-700 mb-1">
+            אלטשולר שחם (גמל)
           </label>
           <div className="relative">
             <input
@@ -185,17 +185,17 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               value={formData.altshuler}
               onChange={e => setFormData({ ...formData, altshuler: e.target.value })}
               placeholder="0"
-              className="w-full bg-slate-950/80 border border-purple-500/30 rounded-xl px-3.5 py-2.5 text-white font-num text-sm focus:outline-none focus:border-purple-400 transition text-left"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-left"
               dir="ltr"
             />
-            <span className="absolute right-3 top-2.5 text-slate-500 text-xs font-semibold pointer-events-none">₪</span>
+            <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
           </div>
         </div>
 
         {/* 5. Excellence */}
         <div>
-          <label className="block text-xs font-semibold text-blue-400 mb-1.5">
-            אקסלנס (תיק מניות ומסחר)
+          <label className="block text-xs font-semibold text-emerald-700 mb-1">
+            אקסלנס (תיק מניות)
           </label>
           <div className="relative">
             <input
@@ -203,16 +203,16 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               value={formData.excellence}
               onChange={e => setFormData({ ...formData, excellence: e.target.value })}
               placeholder="0"
-              className="w-full bg-slate-950/80 border border-blue-500/30 rounded-xl px-3.5 py-2.5 text-white font-num text-sm focus:outline-none focus:border-blue-400 transition text-left"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition text-left"
               dir="ltr"
             />
-            <span className="absolute right-3 top-2.5 text-slate-500 text-xs font-semibold pointer-events-none">₪</span>
+            <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
           </div>
         </div>
 
         {/* 6. Money Market */}
         <div>
-          <label className="block text-xs font-semibold text-emerald-400 mb-1.5">
+          <label className="block text-xs font-semibold text-indigo-700 mb-1">
             קרן כספית שקלית
           </label>
           <div className="relative">
@@ -221,82 +221,63 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               value={formData.money_market}
               onChange={e => setFormData({ ...formData, money_market: e.target.value })}
               placeholder="0"
-              className="w-full bg-slate-950/80 border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-white font-num text-sm focus:outline-none focus:border-emerald-400 transition text-left"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition text-left"
               dir="ltr"
             />
-            <span className="absolute right-3 top-2.5 text-slate-500 text-xs font-semibold pointer-events-none">₪</span>
+            <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
           </div>
         </div>
 
       </div>
 
-      {/* Live Computed Telemetry Ribbon */}
-      <div className="mt-5 p-3.5 rounded-xl bg-slate-950/90 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-sky-400" />
-          <span className="text-slate-400">חישובים אוטומטיים בזמן אמת:</span>
+      {/* Live Computed Summary Ribbon */}
+      <div className="mt-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-1.5 text-slate-600 font-medium">
+          <Sparkles className="w-4 h-4 text-blue-600" />
+          <span>חישוב חי אוטומטי:</span>
         </div>
 
         <div className="flex items-center gap-4 sm:gap-6 font-num font-semibold">
           <div>
             <span className="text-slate-400 text-[11px] block">חיסכון:</span>
-            <span className={calcSavings >= 0 ? 'text-emerald-400' : 'text-rose-400'}>{formatILS(calcSavings)}</span>
+            <span className={calcSavings >= 0 ? 'text-emerald-600' : 'text-rose-600'}>
+              {formatILS(calcSavings)}
+            </span>
           </div>
           <div>
             <span className="text-slate-400 text-[11px] block">אחוז חיסכון:</span>
-            <span className="text-amber-400">{calcSavingsRate.toFixed(1)}%</span>
+            <span className="text-blue-600">{calcSavingsRate.toFixed(1)}%</span>
           </div>
           <div>
             <span className="text-slate-400 text-[11px] block">סה״כ השקעות:</span>
-            <span className="text-purple-400">{formatILS(calcInvestments)}</span>
-          </div>
-          <div>
-            <span className="text-slate-400 text-[11px] block">סה״כ הון:</span>
-            <span className="text-amber-300 font-bold">{formatILS(calcTotalWealth)}</span>
+            <span className="text-slate-900">{formatILS(calcInvestments)}</span>
           </div>
         </div>
       </div>
 
-      {/* Notes Field */}
-      <div className="mt-4">
-        <label className="block text-xs font-medium text-slate-400 mb-1">
-          הערות לחודש זה (טקסט חופשי / אירועים מיוחדים)
-        </label>
-        <input
-          type="text"
-          value={formData.notes}
-          onChange={e => setFormData({ ...formData, notes: e.target.value })}
-          placeholder="למשל: בונוס שנתי, טיפולי שיניים, הוצאות חופשה..."
-          className="w-full bg-slate-950/60 border border-white/10 rounded-xl px-3.5 py-2 text-white text-xs focus:outline-none focus:border-sky-400 transition"
-        />
-      </div>
-
-      {/* Save Button */}
-      <div className="mt-5 flex items-center justify-end gap-3">
-        {savedSuccess && (
-          <span className="text-xs text-emerald-400 flex items-center gap-1 font-semibold animate-fade-in">
-            <Check className="w-4 h-4" />
-            <span>נשמר בענן בהצלחה!</span>
-          </span>
-        )}
-
+      {/* Actions */}
+      <div className="mt-5 flex items-center justify-between pt-3 border-t border-slate-100">
         <button
           type="submit"
           disabled={isSaving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-950/40 border border-emerald-400/30 transition disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm shadow-md shadow-blue-500/25 active:scale-95 transition disabled:opacity-50"
         >
           {isSaving ? (
-            <>
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>שומר בענן...</span>
-            </>
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : savedSuccess ? (
+            <Check className="w-4 h-4 text-white" />
           ) : (
-            <>
-              <Save className="w-4 h-4" />
-              <span>שמור נתונים בענן</span>
-            </>
+            <Save className="w-4 h-4" />
           )}
+          <span>{savedSuccess ? 'נשמר בהצלחה!' : isSaving ? 'שומר...' : 'שמור חודש זה בענן'}</span>
         </button>
+
+        {savedSuccess && (
+          <span className="text-xs text-emerald-600 font-medium animate-fade-in flex items-center gap-1">
+            <Check className="w-3.5 h-3.5" />
+            <span>מסונכרן ל-Supabase</span>
+          </span>
+        )}
       </div>
 
     </form>

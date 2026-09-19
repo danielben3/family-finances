@@ -18,7 +18,6 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<NavTab>('overview');
   const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState<boolean>(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
@@ -146,21 +145,21 @@ export const App: React.FC = () => {
   const previousRecord = currentIndex > 0 ? sortedRecords[currentIndex - 1] : undefined;
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark bg-[#070A12] text-slate-100' : 'bg-slate-50 text-slate-900'} pb-24 md:pb-12 font-sans selection:bg-amber-500 selection:text-slate-950 transition-colors duration-300`} dir="rtl">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 pb-24 md:pb-12 font-sans selection:bg-blue-600 selection:text-white" dir="rtl">
       
       {/* Toast Notification */}
       {toast && (
-        <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 animate-bounce">
-          <div className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl shadow-2xl text-xs font-semibold backdrop-blur-xl border ${
+        <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 animate-bounce">
+          <div className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl shadow-xl text-xs font-semibold backdrop-blur-xl border ${
             toast.type === 'success'
-              ? 'bg-emerald-500/90 text-white border-emerald-400'
+              ? 'bg-emerald-50/95 text-emerald-800 border-emerald-200 shadow-emerald-500/10'
               : toast.type === 'error'
-              ? 'bg-rose-500/90 text-white border-rose-400'
-              : 'bg-sky-500/90 text-white border-sky-400'
+              ? 'bg-rose-50/95 text-rose-800 border-rose-200 shadow-rose-500/10'
+              : 'bg-blue-50/95 text-blue-800 border-blue-200 shadow-blue-500/10'
           }`}>
-            {toast.type === 'success' && <CheckCircle2 className="w-4 h-4" />}
-            {toast.type === 'error' && <AlertTriangle className="w-4 h-4" />}
-            {toast.type === 'info' && <Sparkles className="w-4 h-4" />}
+            {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
+            {toast.type === 'error' && <AlertTriangle className="w-4 h-4 text-rose-600" />}
+            {toast.type === 'info' && <Sparkles className="w-4 h-4 text-blue-600" />}
             <span>{toast.message}</span>
           </div>
         </div>
@@ -169,8 +168,6 @@ export const App: React.FC = () => {
       {/* Top Navigation Bar */}
       <Header
         isCloudSynced={isCloudSynced}
-        isDarkMode={isDarkMode}
-        onToggleTheme={() => setIsDarkMode(!isDarkMode)}
         onOpenPhoneModal={() => setIsPhoneModalOpen(true)}
       />
 

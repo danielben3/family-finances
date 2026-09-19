@@ -20,68 +20,79 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ currentRecord, recor
     '₪' + Math.round(val).toLocaleString('he-IL');
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      
-      {/* 1. Net Income */}
-      <div className="glass-card p-4 sm:p-5 relative overflow-hidden bg-slate-900/60 border-t-2 border-t-emerald-500">
-        <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-          <span className="flex items-center gap-1.5">
-            <ArrowDownLeft className="w-4 h-4 text-emerald-400" />
-            <span>הכנסות נטו</span>
-          </span>
-          <span className="text-[10px] text-emerald-400 font-mono">משכורות</span>
-        </div>
-        <div className="text-xl sm:text-2xl font-extrabold text-emerald-400 font-num mt-1">
-          {income > 0 ? formatILS(income) : '₪0'}
-        </div>
-        <div className="text-[11px] text-slate-400 mt-1">משכורות שוטפות נטו</div>
+    <div className="space-y-2.5">
+      <div className="flex items-center justify-between px-1">
+        <h2 className="text-xs sm:text-sm font-bold text-slate-800">תזרים חודשי שוטף</h2>
+        <span className="text-xs text-slate-500 font-medium">{active.label}</span>
       </div>
 
-      {/* 2. Expenses */}
-      <div className="glass-card p-4 sm:p-5 relative overflow-hidden bg-slate-900/60 border-t-2 border-t-rose-500">
-        <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-          <span className="flex items-center gap-1.5">
-            <ArrowUpRight className="w-4 h-4 text-rose-400" />
-            <span>הוצאות שוטפות</span>
-          </span>
-          <span className="text-[10px] text-rose-400 font-mono">חודשי</span>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        
+        {/* 1. Net Income */}
+        <div className="bg-white rounded-2xl p-4 card-diffused-shadow border border-slate-200/80 flex flex-col justify-between hover:border-emerald-200 transition">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-slate-500 font-medium">הכנסות נטו</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+              <ArrowDownLeft className="w-4 h-4" />
+            </div>
+          </div>
+          <div>
+            <div className="text-xl sm:text-2xl font-extrabold text-emerald-600 font-num">
+              {income > 0 ? formatILS(income) : '₪0'}
+            </div>
+            <span className="text-[11px] text-slate-400 mt-0.5 block">משכורות שהופקדו</span>
+          </div>
         </div>
-        <div className="text-xl sm:text-2xl font-extrabold text-rose-400 font-num mt-1">
-          {expenses > 0 ? formatILS(expenses) : '₪0'}
-        </div>
-        <div className="text-[11px] text-slate-400 mt-1">אשראי, שכירות, חשבונות</div>
-      </div>
 
-      {/* 3. Monthly Savings */}
-      <div className="glass-card p-4 sm:p-5 relative overflow-hidden bg-slate-900/60 border-t-2 border-t-sky-500">
-        <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-          <span className="flex items-center gap-1.5">
-            <PiggyBank className="w-4 h-4 text-sky-400" />
-            <span>חיסכון חודשי</span>
-          </span>
-          <span className="text-[10px] text-sky-400 font-mono">תזרים</span>
+        {/* 2. Expenses */}
+        <div className="bg-white rounded-2xl p-4 card-diffused-shadow border border-slate-200/80 flex flex-col justify-between hover:border-rose-200 transition">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-slate-500 font-medium">הוצאות שוטפות</span>
+            <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+          </div>
+          <div>
+            <div className="text-xl sm:text-2xl font-extrabold text-rose-600 font-num">
+              {expenses > 0 ? formatILS(expenses) : '₪0'}
+            </div>
+            <span className="text-[11px] text-slate-400 mt-0.5 block">אשראי, שכירות וחשבונות</span>
+          </div>
         </div>
-        <div className="text-xl sm:text-2xl font-extrabold text-sky-400 font-num mt-1">
-          {savings !== 0 ? formatILS(savings) : '₪0'}
-        </div>
-        <div className="text-[11px] text-slate-400 mt-1">עודף חודשי מהכנסות</div>
-      </div>
 
-      {/* 4. Savings Rate % */}
-      <div className="glass-card p-4 sm:p-5 relative overflow-hidden bg-slate-900/60 border-t-2 border-t-amber-500">
-        <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-          <span className="flex items-center gap-1.5">
-            <Percent className="w-4 h-4 text-amber-400" />
-            <span>שיעור חיסכון</span>
-          </span>
-          <span className="text-[10px] text-amber-400 font-mono">יעד: 50%+</span>
+        {/* 3. Monthly Savings */}
+        <div className="bg-white rounded-2xl p-4 card-diffused-shadow border border-slate-200/80 flex flex-col justify-between hover:border-blue-200 transition">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-slate-500 font-medium">חיסכון חודשי</span>
+            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+              <PiggyBank className="w-4 h-4" />
+            </div>
+          </div>
+          <div>
+            <div className={`text-xl sm:text-2xl font-extrabold font-num ${savings >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
+              {formatILS(savings)}
+            </div>
+            <span className="text-[11px] text-slate-400 mt-0.5 block">הכנסות פחות הוצאות</span>
+          </div>
         </div>
-        <div className="text-xl sm:text-2xl font-extrabold text-amber-400 font-num mt-1">
-          {savingsRate.toFixed(1)}%
-        </div>
-        <div className="text-[11px] text-slate-400 mt-1">אחוז חיסכון מסך ההכנסה</div>
-      </div>
 
+        {/* 4. Savings Rate */}
+        <div className="bg-white rounded-2xl p-4 card-diffused-shadow border border-slate-200/80 flex flex-col justify-between hover:border-purple-200 transition">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-slate-500 font-medium">שיעור חיסכון</span>
+            <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
+              <Percent className="w-4 h-4" />
+            </div>
+          </div>
+          <div>
+            <div className="text-xl sm:text-2xl font-extrabold text-purple-600 font-num">
+              {savingsRate > 0 ? `${savingsRate.toFixed(1)}%` : '0%'}
+            </div>
+            <span className="text-[11px] text-slate-400 mt-0.5 block">מההכנסה נותב לצמיחה</span>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 };
