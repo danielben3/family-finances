@@ -18,15 +18,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <title>ניהול פיננסי משפחתי | Family Financial OS</title>
-    <script type="module" crossorigin src="./assets/index-C_g51cl9.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-D6SYOvTT.css">
+    <script type="module" crossorigin src="./assets/index-BX-DRXXx.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-ESXDXsqR.css">
   </head>
   <body class="bg-[#F8FAFC] text-slate-900 font-sans antialiased selection:bg-blue-500/20 selection:text-blue-700">
     <div id="root"></div>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').catch(function(err) {
+          const swPath = window.location.pathname.includes('family-finances') ? '/family-finances/sw.js' : './sw.js';
+          navigator.serviceWorker.register(swPath).then(function(reg) {
+            console.log('SW registration successful with scope: ', reg.scope);
+          }).catch(function(err) {
             console.log('SW reg failed: ', err);
           });
         });
