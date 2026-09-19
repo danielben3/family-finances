@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-color: #070A12;
+  --card-bg: rgba(15, 23, 42, 0.75);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+}
+
+.day-mode {
+  --bg-color: #F8FAFC;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  overflow-x: hidden;
+  direction: rtl;
+  font-family: 'Heebo', sans-serif;
+}
+
+/* Glassmorphism Panels */
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Hide scrollbar for clean horizontal carousel */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Number font */
+.font-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: 'tnum' on, 'lnum' on;
+}
