@@ -68,8 +68,8 @@ export const InstallBanner: React.FC<InstallBannerProps> = ({ onInstalled }) => 
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
+          // Wait for the OS 'appinstalled' event before confirming installation
           setIsDismissed(true);
-          if (onInstalled) onInstalled();
         }
         setDeferredPrompt(null);
       } catch (err) {
@@ -178,7 +178,7 @@ export const InstallBanner: React.FC<InstallBannerProps> = ({ onInstalled }) => 
               <div className={`p-4 rounded-2xl border transition ${isAndroid ? 'bg-blue-50/70 border-blue-200 ring-2 ring-blue-500/20' : 'bg-slate-50 border-slate-200'}`}>
                 <div className="flex items-center gap-2 font-bold text-slate-900 mb-1.5">
                   <MoreVertical className="w-4 h-4 text-blue-600" />
-                  <span>באנדרואיד (Chrome / Brave / Samsung):</span>
+                  <span>באנדרואיד (Chrome / Brave / OnePlus / Samsung):</span>
                   {isAndroid && <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.5 rounded-full font-normal">המכשיר שלך</span>}
                 </div>
                 <ol className="list-decimal list-inside space-y-1 text-slate-600 text-[11px] pr-1">
@@ -186,6 +186,9 @@ export const InstallBanner: React.FC<InstallBannerProps> = ({ onInstalled }) => 
                   <li>בחר באפשרות <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong>.</li>
                   <li>אשר את ההתקנה בחלון שיופיע.</li>
                 </ol>
+                <div className="mt-2.5 pt-2 border-t border-slate-200/80 text-[10.5px] text-slate-600">
+                  <strong className="text-amber-800">למשתמשי OnePlus:</strong> אם ההתקנה לא מגיבה, ודא ב-הגדרות ⬅ מסך הבית ש-<strong>"נעילת פריסת מסך הבית"</strong> כבויה, או התקן דרך דפדפן <strong>Brave / Edge</strong>.
+                </div>
               </div>
 
             </div>
