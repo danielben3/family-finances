@@ -6,7 +6,7 @@ export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Full 25-month seed dataset directly extracted from 'מעקב הוצאות.xlsx' (Aug 2024 - Aug 2026)
+// Full 25-month seed dataset directly extracted and formula-evaluated from 'מעקב הוצאות.xlsx' (Aug 2024 - Aug 2026)
 export const INITIAL_EXCEL_SEED: FinancialRecord[] = [
   // 2024
   { period: "2024-08", year: 2024, month: 8, label: "אוגוסט 2024", income_net: 0, expenses: 0, savings: 0, savings_rate: 0, checking: 175900, altshuler: 202183, excellence: 429350, money_market: 0, investments_total: 631533, total_wealth: 807433, wealth_change_pct: 0 },
@@ -29,13 +29,13 @@ export const INITIAL_EXCEL_SEED: FinancialRecord[] = [
   { period: "2025-11", year: 2025, month: 11, label: "נובמבר 2025", income_net: 0, expenses: 0, savings: 0, savings_rate: 0, checking: 59177, altshuler: 267203, excellence: 841000, money_market: 0, investments_total: 1108203, total_wealth: 1167380, wealth_change_pct: -4.6 },
   { period: "2025-12", year: 2025, month: 12, label: "דצמבר 2025", income_net: 0, expenses: 0, savings: 0, savings_rate: 0, checking: 64963, altshuler: 269324, excellence: 861550, money_market: 0, investments_total: 1130874, total_wealth: 1195837, wealth_change_pct: 2.4 },
 
-  // 2026 (From 'בצע טרנזפוז' in Excel)
-  { period: "2026-01", year: 2026, month: 1, label: "ינואר 2026", income_net: 26853, expenses: 6481, savings: 20372, savings_rate: 75.86, checking: 31000, altshuler: 0, excellence: 520000, money_market: 30000, investments_total: 550000, total_wealth: 581000, wealth_change_pct: 0 },
-  { period: "2026-02", year: 2026, month: 2, label: "פברואר 2026", income_net: 19398, expenses: 5206, savings: 14192, savings_rate: 73.16, checking: 65000, altshuler: 285000, excellence: 530000, money_market: 0, investments_total: 815000, total_wealth: 880000, wealth_change_pct: -3.2 },
-  { period: "2026-03", year: 2026, month: 3, label: "מרץ 2026", income_net: 13954, expenses: 8210, savings: 5744, savings_rate: 41.16, checking: 42000, altshuler: 290000, excellence: 540000, money_market: 0, investments_total: 830000, total_wealth: 872000, wealth_change_pct: -5.1 },
-  { period: "2026-04", year: 2026, month: 4, label: "אפריל 2026", income_net: 28695, expenses: 9313, savings: 19382, savings_rate: 67.54, checking: 38000, altshuler: 295000, excellence: 550000, money_market: 0, investments_total: 845000, total_wealth: 883000, wealth_change_pct: 0 },
-  { period: "2026-05", year: 2026, month: 5, label: "מאי 2026", income_net: 53104, expenses: 9230, savings: 43874, savings_rate: 82.62, checking: 35000, altshuler: 300000, excellence: 560000, money_market: 0, investments_total: 860000, total_wealth: 895000, wealth_change_pct: 1.0 },
-  { period: "2026-06", year: 2026, month: 6, label: "יוני 2026", income_net: 28044, expenses: 0, savings: 28044, savings_rate: 100, checking: 31000, altshuler: 305000, excellence: 570000, money_market: 0, investments_total: 875000, total_wealth: 906000, wealth_change_pct: 0 },
-  { period: "2026-07", year: 2026, month: 7, label: "יולי 2026", income_net: 24800, expenses: 0, savings: 24800, savings_rate: 100, checking: 28640, altshuler: 194272, excellence: 580000, money_market: 32500, investments_total: 806772, total_wealth: 835412, wealth_change_pct: -24.0 },
-  { period: "2026-08", year: 2026, month: 8, label: "אוגוסט 2026", income_net: 0, expenses: 0, savings: 0, savings_rate: 0, checking: 0, altshuler: 194272, excellence: 952000, money_market: 0, investments_total: 1146272, total_wealth: 952000, wealth_change_pct: 14.0 }
+  // 2026 (From 'בצע טרנזפוז' with fully evaluated formulas)
+  { period: "2026-01", year: 2026, month: 1, label: "ינואר 2026", income_net: 26853, expenses: 6481, savings: 20372, savings_rate: 75.86, checking: 53103, altshuler: 278600, excellence: 520000, money_market: 30000, investments_total: 828600, total_wealth: 881703, wealth_change_pct: -26.3 },
+  { period: "2026-02", year: 2026, month: 2, label: "פברואר 2026", income_net: 19398, expenses: 5206, savings: 14192, savings_rate: 73.16, checking: 65000, altshuler: 285000, excellence: 530000, money_market: 0, investments_total: 815000, total_wealth: 880000, wealth_change_pct: -0.2 },
+  { period: "2026-03", year: 2026, month: 3, label: "מרץ 2026", income_net: 13954, expenses: 8210, savings: 5744, savings_rate: 41.16, checking: 42000, altshuler: 290000, excellence: 540000, money_market: 0, investments_total: 830000, total_wealth: 872000, wealth_change_pct: -0.9 },
+  { period: "2026-04", year: 2026, month: 4, label: "אפריל 2026", income_net: 28695, expenses: 9313, savings: 19382, savings_rate: 67.54, checking: 38000, altshuler: 295000, excellence: 550000, money_market: 0, investments_total: 845000, total_wealth: 883000, wealth_change_pct: 1.3 },
+  { period: "2026-05", year: 2026, month: 5, label: "מאי 2026", income_net: 53104, expenses: 9230, savings: 43874, savings_rate: 82.62, checking: 35000, altshuler: 300000, excellence: 560000, money_market: 0, investments_total: 860000, total_wealth: 895000, wealth_change_pct: 1.4 },
+  { period: "2026-06", year: 2026, month: 6, label: "יוני 2026", income_net: 28044, expenses: 0, savings: 28044, savings_rate: 100, checking: 31000, altshuler: 305000, excellence: 570000, money_market: 0, investments_total: 875000, total_wealth: 906000, wealth_change_pct: 1.2 },
+  { period: "2026-07", year: 2026, month: 7, label: "יולי 2026", income_net: 24800, expenses: 0, savings: 24800, savings_rate: 100, checking: 28640, altshuler: 194272, excellence: 580000, money_market: 32500, investments_total: 806772, total_wealth: 835412, wealth_change_pct: -7.8 },
+  { period: "2026-08", year: 2026, month: 8, label: "אוגוסט 2026", income_net: 0, expenses: 0, savings: 0, savings_rate: 0, checking: 0, altshuler: 194272, excellence: 952000, money_market: 0, investments_total: 1146272, total_wealth: 1146272, wealth_change_pct: 37.2 }
 ];
