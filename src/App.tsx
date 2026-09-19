@@ -167,7 +167,7 @@ export const App: React.FC = () => {
       )}
 
       {/* PWA Install Banner for Mobile */}
-      <InstallBanner onInstalled={() => showToast('האפליקציה הותקנה בהצלחה במסך הבית! 🚀', 'success')} />
+      <InstallBanner onInstalled={() => showToast('ההתקנה אושרה! 🚀 האייקון "פיננסים" נוסף למכשיר (בדוק במגירת האפליקציות)', 'success')} />
 
       {/* Top Navigation Bar */}
       <Header
