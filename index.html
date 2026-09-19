@@ -7,7 +7,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#070A12" />
     <meta name="description" content="ניהול פיננסי משפחתי מתקדם - מעקב צמיחת הון, תזרים והשקעות" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="./icon-192.png" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <link rel="manifest" href="./manifest.json" />
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,5 +22,14 @@
   </head>
   <body class="bg-[#070A12] text-slate-100 font-sans antialiased selection:bg-sky-500/30 selection:text-sky-200">
     <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(function(err) {
+            console.log('SW reg failed: ', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>

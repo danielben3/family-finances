@@ -1,0 +1,25 @@
+{
+  "name": "ניהול פיננסי משפחתי",
+  "short_name": "פיננסים",
+  "description": "מעקב צמיחת הון, תזרים והשקעות משפחתי",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070A12",
+  "theme_color": "#070A12",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
