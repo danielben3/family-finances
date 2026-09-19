@@ -10,6 +10,7 @@ export interface FinancialRecord {
   checking: number;           // עו"ש
   altshuler: number;          // אלטשולר שחם (גמל)
   excellence: number;         // אקסלנס (מניות)
+  excellence_cost_basis?: number; // קרן מושקעת באקסלנס (עלות בסיס)
   money_market: number;       // קרן כספית
   investments_total: number;  // סה"כ השקעות
   total_wealth: number;       // עו"ש + השקעות

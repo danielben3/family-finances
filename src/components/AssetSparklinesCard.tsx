@@ -1,12 +1,13 @@
 import React from 'react';
 import { FinancialRecord } from '../types';
-import { TrendingUp, ShieldCheck, Globe, Coins, Building2, ChevronLeft } from 'lucide-react';
+import { TrendingUp, ShieldCheck, Globe, Coins, Building2, ChevronLeft, Calculator } from 'lucide-react';
 
 interface AssetSparklinesCardProps {
   records: FinancialRecord[];
   currentRecord: FinancialRecord;
   previousRecord?: FinancialRecord;
   onViewHistory?: () => void;
+  onOpenCostBasis?: () => void;
 }
 
 export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
@@ -14,6 +15,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
   currentRecord,
   previousRecord,
   onViewHistory,
+  onOpenCostBasis,
 }) => {
   const total = currentRecord.total_wealth || 1;
 
@@ -134,53 +136,115 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
           return (
             <div
               key={asset.id}
-              className="bg-white rounded-2xl p-4 border border-slate-200/80 titanium-edge flex items-center justify-between hover:border-slate-300 transition-all shadow-xs"
+              className="bg-white rounded-2xl p-4 border border-slate-200/80 titanium-edge hover:border-slate-300 transition-all shadow-xs"
             >
-              {/* Right Side: Icon & Titles */}
-              <div className="flex items-center gap-3 min-w-0">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border ${asset.bgLight}`}>
-                  {asset.icon}
-                </div>
-                <div className="truncate">
-                  <div className="flex items-center gap-1.5">
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
-                      {asset.name}
-                    </h4>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 font-num shrink-0">
-                      {asset.pct}%
-                    </span>
+              <div className="flex items-center justify-between">
+                {/* Right Side: Icon & Titles */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border ${asset.bgLight}`}>
+                    {asset.icon}
                   </div>
-                  <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                    {asset.subtitle}
-                  </p>
+                  <div className="truncate">
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                        {asset.name}
+                      </h4>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 font-num shrink-0">
+                        {asset.pct}%
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                      {asset.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Left Side: Sparkline SVG & Value */}
+                <div className="flex items-center gap-3 shrink-0 mr-2">
+                  {/* Micro Sparkline */}
+                  <div className="hidden sm:block w-16 h-7">
+                    <svg className="w-full h-full overflow-visible" viewBox="0 0 64 24">
+                      <path
+                        d={generateSparklinePath(asset.history, 64, 24)}
+                        fill="none"
+                        stroke={asset.color}
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+
+                  <div className="text-left">
+                    <p className="text-xs sm:text-sm font-extrabold text-slate-900 font-num">
+                      {formatILS(asset.value)}
+                    </p>
+                    <p className={`text-[11px] font-bold font-num ${isUp ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {isUp ? '+' : ''}{asset.diffPct}% ({isUp ? '+' : ''}{formatILS(asset.diff)})
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Left Side: Sparkline SVG & Value */}
-              <div className="flex items-center gap-3 shrink-0 mr-2">
-                {/* Micro Sparkline */}
-                <div className="hidden sm:block w-16 h-7">
-                  <svg className="w-full h-full overflow-visible" viewBox="0 0 64 24">
-                    <path
-                      d={generateSparklinePath(asset.history, 64, 24)}
-                      fill="none"
-                      stroke={asset.color}
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
+              {/* Excellence Cost Basis & Net Calculation Drawer */}
+              {asset.id === 'excellence' && (
+                <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  {currentRecord.excellence_cost_basis && currentRecord.excellence_cost_basis > 0 ? (
+                    (() => {
+                      const basis = currentRecord.excellence_cost_basis;
+                      const capGain = excellence > basis ? excellence - basis : 0;
+                      const capGainPct = basis > 0 ? (capGain / basis) * 100 : 0;
+                      const estTax = Math.round(capGain * 0.25);
+                      const netVal = excellence - estTax;
 
-                <div className="text-left">
-                  <p className="text-xs sm:text-sm font-extrabold text-slate-900 font-num">
-                    {formatILS(asset.value)}
-                  </p>
-                  <p className={`text-[11px] font-bold font-num ${isUp ? 'text-emerald-600' : 'text-rose-600'}`}>
-                    {isUp ? '+' : ''}{asset.diffPct}% ({isUp ? '+' : ''}{formatILS(asset.diff)})
-                  </p>
+                      return (
+                        <div className="w-full flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-3 text-[11px]">
+                            <span className="text-slate-500">
+                              קרן שהופקדה: <strong className="text-slate-700 font-num">{formatILS(basis)}</strong>
+                            </span>
+                            <span className="text-emerald-700">
+                              רווח: <strong className="font-num">+{formatILS(capGain)} (+{capGainPct.toFixed(1)}%)</strong>
+                            </span>
+                            <span className="text-rose-600">
+                              מס 25%: <strong className="font-num">-{formatILS(estTax)}</strong>
+                            </span>
+                            <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-lg font-extrabold font-num">
+                              נטו בכיס: {formatILS(netVal)}
+                            </span>
+                          </div>
+
+                          {onOpenCostBasis && (
+                            <button
+                              onClick={onOpenCostBasis}
+                              className="text-[11px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition mr-auto"
+                            >
+                              <Calculator className="w-3.5 h-3.5" />
+                              <span>עדכן קרן</span>
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })()
+                  ) : (
+                    <div className="w-full flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400">
+                        טרם הוגדרה קרן מושקעת – רוצה לדעת כמה יישאר בנטו לאחר מס?
+                      </span>
+                      {onOpenCostBasis && (
+                        <button
+                          onClick={onOpenCostBasis}
+                          className="text-emerald-700 hover:text-emerald-800 font-bold bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-lg border border-emerald-200 transition flex items-center gap-1 shadow-2xs"
+                        >
+                          <Calculator className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>הזן קרן וחשב נטו</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
+
             </div>
           );
         })}

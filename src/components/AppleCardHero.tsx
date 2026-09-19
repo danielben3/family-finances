@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FinancialRecord } from '../types';
-import { TrendingUp, TrendingDown, Eye, EyeOff, Plus, Flame, Target, Download, Wifi, ShieldCheck, Sparkles } from 'lucide-react';
+import { TrendingUp, TrendingDown, Eye, EyeOff, Plus, Flame, Target, Download, Wifi, ShieldCheck, Sparkles, Calculator } from 'lucide-react';
 
 interface AppleCardHeroProps {
   currentRecord: FinancialRecord;
@@ -9,6 +9,7 @@ interface AppleCardHeroProps {
   onOpenFire: () => void;
   onScrollToGoals?: () => void;
   onExportExcel?: () => void;
+  onOpenCostBasis?: () => void;
 }
 
 export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
@@ -18,13 +19,29 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
   onOpenFire,
   onScrollToGoals,
   onExportExcel,
+  onOpenCostBasis,
 }) => {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
+  const [isNetMode, setIsNetMode] = useState<boolean>(false);
 
   const total = currentRecord.total_wealth || 0;
+  const excellence = currentRecord.excellence || 0;
+  const costBasis = currentRecord.excellence_cost_basis || 0;
+  const capitalGain = costBasis > 0 && excellence > costBasis ? excellence - costBasis : 0;
+  const estimatedTax = Math.round(capitalGain * 0.25);
+  const netTotal = total - estimatedTax;
+
+  const displayTotal = isNetMode ? netTotal : total;
+
   const prevTotal = previousRecord?.total_wealth || total;
-  const diff = total - prevTotal;
-  const diffPct = prevTotal > 0 ? ((total - prevTotal) / prevTotal) * 100 : 0;
+  const prevExcellence = previousRecord?.excellence || 0;
+  const prevCostBasis = previousRecord?.excellence_cost_basis || 0;
+  const prevCapitalGain = prevCostBasis > 0 && prevExcellence > prevCostBasis ? prevExcellence - prevCostBasis : 0;
+  const prevTax = Math.round(prevCapitalGain * 0.25);
+  const prevDisplayTotal = isNetMode ? prevTotal - prevTax : prevTotal;
+
+  const diff = displayTotal - prevDisplayTotal;
+  const diffPct = prevDisplayTotal > 0 ? ((displayTotal - prevDisplayTotal) / prevDisplayTotal) * 100 : 0;
   const isPositive = diff >= 0;
 
   const formatILS = (val: number) => {
@@ -73,28 +90,67 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
 
           {/* Center: Total Net Worth Display */}
           <div className="mt-8 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                סך ההון המשפחתי (נכסים נטו)
-              </span>
-              <button
-                onClick={() => setIsPrivate(!isPrivate)}
-                className="flex items-center gap-1 text-slate-500 hover:text-blue-600 transition text-[11px] font-semibold bg-white/70 backdrop-blur-sm px-2.5 py-1 rounded-full border border-slate-200/60 active:scale-95 shadow-xs"
-                title={isPrivate ? 'הצג סכומים' : 'הסתר סכומים (מצב פרטיות)'}
-              >
-                {isPrivate ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                <span>{isPrivate ? 'הצג' : 'פרטיות'}</span>
-              </button>
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  סך ההון המשפחתי
+                </span>
+                {/* Gross / Net Toggle */}
+                <div className="inline-flex rounded-lg bg-slate-200/70 p-0.5 text-[10px] font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setIsNetMode(false)}
+                    className={`px-2 py-0.5 rounded-md transition ${!isNetMode ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                  >
+                    ברוטו
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsNetMode(true)}
+                    className={`px-2 py-0.5 rounded-md transition ${isNetMode ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                  >
+                    נטו לאחר מס
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                {onOpenCostBasis && (
+                  <button
+                    onClick={onOpenCostBasis}
+                    className="flex items-center gap-1 text-emerald-800 hover:text-emerald-950 transition text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-full border border-emerald-300/80 active:scale-95 shadow-xs"
+                    title="הגדרת קרן וחישוב נטו"
+                  >
+                    <Calculator className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{costBasis > 0 ? 'ערוך קרן' : 'הזן קרן'}</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsPrivate(!isPrivate)}
+                  className="flex items-center gap-1 text-slate-500 hover:text-blue-600 transition text-[11px] font-semibold bg-white/70 backdrop-blur-sm px-2.5 py-1 rounded-full border border-slate-200/60 active:scale-95 shadow-xs"
+                  title={isPrivate ? 'הצג סכומים' : 'הסתר סכומים (מצב פרטיות)'}
+                >
+                  {isPrivate ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  <span>{isPrivate ? 'הצג' : 'פרטיות'}</span>
+                </button>
+              </div>
             </div>
 
             <div className="flex items-baseline gap-2">
               <span className="text-3xl sm:text-5xl font-extrabold text-slate-900 font-num tracking-tight">
-                {formatILS(total)}
+                {formatILS(displayTotal)}
               </span>
               <span className="text-xs sm:text-sm font-bold text-slate-400">
                 {currentRecord.label}
               </span>
             </div>
+
+            {costBasis > 0 && isNetMode && (
+              <p className="text-[11px] font-medium text-emerald-700 pt-0.5 flex items-center gap-1">
+                <span>הופחת מס רווחי הון 25% מאקסלנס: -{formatILS(estimatedTax)}</span>
+                <span className="text-slate-400 font-normal">(רווח צבור: +{formatILS(capitalGain)})</span>
+              </p>
+            )}
           </div>
 
           {/* Bottom Row: Performance Pill & Masked Security Tag */}
@@ -149,6 +205,17 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
           <Flame className="w-4 h-4 text-amber-500" />
           <span>מחשבון FIRE ועצמאות</span>
         </button>
+
+        {/* Cost Basis & Tax Net */}
+        {onOpenCostBasis && (
+          <button
+            onClick={onOpenCostBasis}
+            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 font-semibold text-xs shadow-sm active:scale-95 transition"
+          >
+            <Calculator className="w-4 h-4 text-emerald-600" />
+            <span>הזנת קרן וחישוב נטו</span>
+          </button>
+        )}
 
         {/* Independence Goals */}
         {onScrollToGoals && (

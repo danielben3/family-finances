@@ -18,6 +18,7 @@ import { CashflowDonutCard } from './components/CashflowDonutCard';
 import { LiquidityRunwayCard } from './components/LiquidityRunwayCard';
 import { FireMilestoneCard } from './components/FireMilestoneCard';
 import { FireCalculatorModal } from './components/FireCalculatorModal';
+import { CostBasisModal } from './components/CostBasisModal';
 import { exportFinancialRecordsToExcel } from './lib/exportExcel';
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
@@ -29,11 +30,46 @@ export const App: React.FC = () => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState<boolean>(false);
   const [isFireModalOpen, setIsFireModalOpen] = useState<boolean>(false);
+  const [isCostBasisModalOpen, setIsCostBasisModalOpen] = useState<boolean>(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
+  };
+
+  const handleSaveCostBasis = async (newBasis: number, applyToAll: boolean) => {
+    setIsSaving(true);
+    try {
+      const updatedList = records.map(r => {
+        if (r.period === selectedPeriod || (applyToAll && r.period >= selectedPeriod)) {
+          return { ...r, excellence_cost_basis: newBasis, updated_at: new Date().toISOString() };
+        }
+        return r;
+      });
+
+      setRecords(updatedList);
+      localStorage.setItem('family_finance_records', JSON.stringify(updatedList));
+
+      if (applyToAll) {
+        const recordsToUpdate = updatedList.filter(r => r.period >= selectedPeriod);
+        const { error } = await supabase.from('financial_records').upsert(recordsToUpdate, { onConflict: 'period' });
+        if (error) console.warn('Supabase batch upsert notice:', error.message);
+      } else {
+        const single = updatedList.find(r => r.period === selectedPeriod);
+        if (single) {
+          const { error } = await supabase.from('financial_records').upsert(single, { onConflict: 'period' });
+          if (error) console.warn('Supabase single upsert notice:', error.message);
+        }
+      }
+
+      showToast('קרן ההשקעה ושווי הנטו לאחר מס עודכנו בהצלחה! 💰', 'success');
+    } catch (err: any) {
+      console.error('Error saving cost basis:', err);
+      showToast('הקרן נשמרה בהצלחה במכשיר', 'info');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Fetch initial records from Supabase and subscribe to live changes
@@ -199,6 +235,7 @@ export const App: React.FC = () => {
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
               onOpenFire={() => setIsFireModalOpen(true)}
+              onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
               onExportExcel={() => {
                 exportFinancialRecordsToExcel(records);
                 showToast('הקובץ יוצא בהצלחה! 📊', 'success');
@@ -243,6 +280,7 @@ export const App: React.FC = () => {
               records={records}
               currentRecord={currentRecord}
               previousRecord={previousRecord}
+              onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
             />
 
             <WealthChart records={records} />
@@ -271,6 +309,7 @@ export const App: React.FC = () => {
                 previousRecord={previousRecord}
                 onQuickLog={() => setActiveTab('form')}
                 onOpenFire={() => setIsFireModalOpen(true)}
+                onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
                 onScrollToGoals={() => {
                   const el = document.getElementById('mobile-fire-milestone');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -301,6 +340,7 @@ export const App: React.FC = () => {
                 currentRecord={currentRecord}
                 previousRecord={previousRecord}
                 onViewHistory={() => setActiveTab('history')}
+                onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
               />
 
               {/* Cashflow Donut Ring */}
@@ -381,6 +421,16 @@ export const App: React.FC = () => {
         onClose={() => setIsFireModalOpen(false)}
         currentWealth={currentRecord.total_wealth || 0}
         defaultMonthlySavings={currentRecord.savings || 12000}
+      />
+
+      {/* Cost Basis & Tax Net Modal */}
+      <CostBasisModal
+        isOpen={isCostBasisModalOpen}
+        onClose={() => setIsCostBasisModalOpen(false)}
+        marketValue={currentRecord.excellence || 0}
+        currentCostBasis={currentRecord.excellence_cost_basis}
+        monthLabel={currentRecord.label}
+        onSaveCostBasis={handleSaveCostBasis}
       />
 
     </div>

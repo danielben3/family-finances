@@ -19,6 +19,7 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     checking: record.checking ? String(record.checking) : '',
     altshuler: record.altshuler ? String(record.altshuler) : '',
     excellence: record.excellence ? String(record.excellence) : '',
+    excellence_cost_basis: record.excellence_cost_basis ? String(record.excellence_cost_basis) : '',
     money_market: record.money_market ? String(record.money_market) : '',
     notes: record.notes || '',
   });
@@ -33,6 +34,7 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
       checking: record.checking ? String(record.checking) : '',
       altshuler: record.altshuler ? String(record.altshuler) : '',
       excellence: record.excellence ? String(record.excellence) : '',
+      excellence_cost_basis: record.excellence_cost_basis ? String(record.excellence_cost_basis) : '',
       money_market: record.money_market ? String(record.money_market) : '',
       notes: record.notes || '',
     });
@@ -61,6 +63,7 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   const numChecking = parseVal(formData.checking);
   const numAltshuler = parseVal(formData.altshuler);
   const numExcellence = parseVal(formData.excellence);
+  const numCostBasis = parseVal(formData.excellence_cost_basis);
   const numMoneyMarket = parseVal(formData.money_market);
 
   const calcSavings = numIncome > 0 || numExpenses > 0 ? numIncome - numExpenses : 0;
@@ -80,6 +83,7 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
       checking: numChecking,
       altshuler: numAltshuler,
       excellence: numExcellence,
+      excellence_cost_basis: numCostBasis > 0 ? numCostBasis : undefined,
       money_market: numMoneyMarket,
       investments_total: calcInvestments,
       total_wealth: calcTotalWealth,
@@ -195,7 +199,7 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
         {/* 5. Excellence */}
         <div>
           <label className="block text-xs font-semibold text-emerald-700 mb-1">
-            אקסלנס (תיק מניות)
+            אקסלנס (תיק מניות) – שווי שוק
           </label>
           <div className="relative">
             <input
@@ -208,6 +212,30 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
             />
             <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
           </div>
+        </div>
+
+        {/* 5b. Excellence Cost Basis */}
+        <div>
+          <label className="block text-xs font-semibold text-teal-700 mb-1 flex items-center justify-between">
+            <span>קרן שהופקדה באקסלנס (בסיס)</span>
+            <span className="text-[10px] text-slate-400 font-normal">לחישוב נטו</span>
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              value={formData.excellence_cost_basis}
+              onChange={e => setFormData({ ...formData, excellence_cost_basis: e.target.value })}
+              placeholder="למשל: 400000"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 transition text-left"
+              dir="ltr"
+            />
+            <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
+          </div>
+          {numCostBasis > 0 && numExcellence > 0 && (
+            <p className="text-[11px] text-teal-700 font-medium mt-1 leading-tight">
+              רווח: +{formatILS(Math.max(0, numExcellence - numCostBasis))} | מס 25%: -{formatILS(Math.round(Math.max(0, numExcellence - numCostBasis) * 0.25))} | <strong className="text-emerald-800">נטו ביד: {formatILS(numExcellence - Math.round(Math.max(0, numExcellence - numCostBasis) * 0.25))}</strong>
+            </p>
+          )}
         </div>
 
         {/* 6. Money Market */}
