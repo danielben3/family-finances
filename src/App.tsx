@@ -20,6 +20,15 @@ import { FireMilestoneCard } from './components/FireMilestoneCard';
 import { FireCalculatorModal } from './components/FireCalculatorModal';
 import { CostBasisModal } from './components/CostBasisModal';
 import { exportFinancialRecordsToExcel } from './lib/exportExcel';
+import { Holding, PortfolioCash, PortfolioTransaction } from './types/portfolio';
+import {
+  INITIAL_HOLDINGS_SEED,
+  INITIAL_PORTFOLIO_CASH,
+  fetchUsdToIlsRate,
+} from './lib/stockPricesService';
+import { HoldingsPortfolioView } from './components/HoldingsPortfolioView';
+import { SellHoldingModal } from './components/SellHoldingModal';
+import { AddEditHoldingModal } from './components/AddEditHoldingModal';
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -31,6 +40,43 @@ export const App: React.FC = () => {
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState<boolean>(false);
   const [isFireModalOpen, setIsFireModalOpen] = useState<boolean>(false);
   const [isCostBasisModalOpen, setIsCostBasisModalOpen] = useState<boolean>(false);
+
+  // Portfolio Holdings & Cash State
+  const [holdings, setHoldings] = useState<Holding[]>(() => {
+    const saved = localStorage.getItem('family_finance_holdings');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return INITIAL_HOLDINGS_SEED;
+  });
+
+  const [portfolioCash, setPortfolioCash] = useState<PortfolioCash>(() => {
+    const saved = localStorage.getItem('family_finance_portfolio_cash');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return INITIAL_PORTFOLIO_CASH;
+  });
+
+  const [transactions, setTransactions] = useState<PortfolioTransaction[]>(() => {
+    const saved = localStorage.getItem('family_finance_transactions');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return [];
+  });
+
+  const [selectedHoldingForSale, setSelectedHoldingForSale] = useState<Holding | null>(null);
+  const [isSellModalOpen, setIsSellModalOpen] = useState<boolean>(false);
+  const [holdingToEdit, setHoldingToEdit] = useState<Holding | null>(null);
+  const [isAddEditModalOpen, setIsAddEditModalOpen] = useState<boolean>(false);
+
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -70,6 +116,102 @@ export const App: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // Stock Portfolio Handlers
+  const handleSaveHolding = async (holding: Holding) => {
+    setHoldings(prev => {
+      const exists = prev.some(h => h.id === holding.id);
+      const next = exists ? prev.map(h => (h.id === holding.id ? holding : h)) : [holding, ...prev];
+      localStorage.setItem('family_finance_holdings', JSON.stringify(next));
+      return next;
+    });
+    showToast(`נייר ${holding.symbol} נשמר בהצלחה בתיק! 📈`, 'success');
+  };
+
+  const handleDeleteHolding = (id: string) => {
+    setHoldings(prev => {
+      const next = prev.filter(h => h.id !== id);
+      localStorage.setItem('family_finance_holdings', JSON.stringify(next));
+      return next;
+    });
+    showToast('הנייר הוסר מהתיק', 'info');
+  };
+
+  const handleUpdateCash = (newCash: PortfolioCash) => {
+    setPortfolioCash(newCash);
+    localStorage.setItem('family_finance_portfolio_cash', JSON.stringify(newCash));
+    showToast('יתרות המזומן עודכנו בהצלחה! 💵', 'success');
+  };
+
+  const handleRefreshQuotes = async () => {
+    const rate = await fetchUsdToIlsRate();
+    setPortfolioCash(prev => {
+      const next = { ...prev, usd_rate: rate };
+      localStorage.setItem('family_finance_portfolio_cash', JSON.stringify(next));
+      return next;
+    });
+    setHoldings(prev => {
+      const next = prev.map(h => (h.currency === 'USD' ? { ...h, exchange_rate_to_ils: rate } : h));
+      localStorage.setItem('family_finance_holdings', JSON.stringify(next));
+      return next;
+    });
+    showToast(`שערי המטבע עודכנו בהצלחה: $1 = ₪${rate} 🔄`, 'success');
+  };
+
+  const handleConfirmSale = async (tx: PortfolioTransaction, updatedHolding: Holding | null) => {
+    // 1. Update holdings list
+    setHoldings(prev => {
+      const next = updatedHolding
+        ? prev.map(h => (h.id === updatedHolding.id ? updatedHolding : h))
+        : prev.filter(h => h.id !== tx.holding_id);
+      localStorage.setItem('family_finance_holdings', JSON.stringify(next));
+      return next;
+    });
+
+    // 2. Add transaction to history
+    setTransactions(prev => {
+      const next = [tx, ...prev];
+      localStorage.setItem('family_finance_transactions', JSON.stringify(next));
+      return next;
+    });
+
+    // 3. If transferred to checking: update financial_records
+    if (tx.transferred_to_checking) {
+      const targetP = tx.target_period || selectedPeriod;
+      const targetRec = records.find(r => r.period === targetP) || currentRecord;
+      const newChecking = (targetRec.checking || 0) + tx.net_proceeds_ils;
+      const newTotalWealth = newChecking + (targetRec.investments_total || 0);
+
+      const updatedRec: FinancialRecord = {
+        ...targetRec,
+        checking: newChecking,
+        total_wealth: newTotalWealth,
+        updated_at: new Date().toISOString(),
+      };
+
+      await handleSaveRecord(updatedRec);
+      showToast(`נמכרו ${tx.shares_sold} יח׳ של ${tx.symbol}! ₪${tx.net_proceeds_ils.toLocaleString()} הועברו ישירות לעו״ש בחודש ${targetRec.label}! 💰`, 'success');
+    } else {
+      showToast(`מכירת ${tx.symbol} נרשמה בהצלחה!`, 'success');
+    }
+  };
+
+  const handleSyncExcellenceToMonth = async (totalVal: number) => {
+    const rounded = Math.round(totalVal);
+    const newInvestments = (currentRecord.altshuler || 0) + rounded + (currentRecord.money_market || 0);
+    const newTotal = (currentRecord.checking || 0) + newInvestments;
+
+    const updated: FinancialRecord = {
+      ...currentRecord,
+      excellence: rounded,
+      investments_total: newInvestments,
+      total_wealth: newTotal,
+      updated_at: new Date().toISOString(),
+    };
+
+    await handleSaveRecord(updated);
+    showToast(`שווי אקסלנס ב-${currentRecord.label} עודכן בהצלחה ל-₪${rounded.toLocaleString()}! 🚀`, 'success');
   };
 
   // Fetch initial records from Supabase and subscribe to live changes
@@ -218,85 +360,125 @@ export const App: React.FC = () => {
       <Header
         isCloudSynced={isCloudSynced}
         onOpenPhoneModal={() => setIsPhoneModalOpen(true)}
+        activeTab={activeTab}
+        onSelectTab={tab => setActiveTab(tab)}
       />
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-5 space-y-6">
         
-        {/* Desktop View: Grid Layout */}
-        <div className="hidden md:grid md:grid-cols-12 gap-6">
-          {/* Left Column (5 cols): Apple Card Hero + FIRE Milestone + Monthly Input Form */}
-          <div className="md:col-span-5 space-y-6">
-            <AppleCardHero
-              currentRecord={currentRecord}
-              previousRecord={previousRecord}
-              onQuickLog={() => {
-                const el = document.getElementById('desktop-monthly-form');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
+        {/* Desktop View */}
+        <div className="hidden md:block">
+          {activeTab === 'stocks' ? (
+            <HoldingsPortfolioView
+              holdings={holdings}
+              cash={portfolioCash}
+              transactions={transactions}
+              onOpenAddHolding={() => {
+                setHoldingToEdit(null);
+                setIsAddEditModalOpen(true);
               }}
-              onOpenFire={() => setIsFireModalOpen(true)}
-              onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
-              onExportExcel={() => {
-                exportFinancialRecordsToExcel(records);
-                showToast('הקובץ יוצא בהצלחה! 📊', 'success');
+              onOpenEditHolding={h => {
+                setHoldingToEdit(h);
+                setIsAddEditModalOpen(true);
               }}
+              onOpenSellHolding={h => {
+                setSelectedHoldingForSale(h);
+                setIsSellModalOpen(true);
+              }}
+              onDeleteHolding={handleDeleteHolding}
+              onUpdateCash={handleUpdateCash}
+              onRefreshQuotes={handleRefreshQuotes}
+              onSyncExcellenceToMonth={handleSyncExcellenceToMonth}
+              currentMonthLabel={currentRecord.label}
             />
-
-            {/* 2026 Month Carousel Pills */}
-            <MonthSelector
+          ) : activeTab === 'history' ? (
+            <HistoryTable
               records={records}
               selectedPeriod={selectedPeriod}
-              onSelectPeriod={p => setSelectedPeriod(p)}
+              onSelectPeriod={p => {
+                setSelectedPeriod(p);
+                setActiveTab('overview');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             />
+          ) : (
+            <div className="space-y-6">
+              {/* Grid Layout (5 cols / 7 cols) */}
+              <div className="grid grid-cols-12 gap-6">
+                {/* Left Column (5 cols): Apple Card Hero + FIRE Milestone + Monthly Input Form */}
+                <div className="col-span-5 space-y-6">
+                  <AppleCardHero
+                    currentRecord={currentRecord}
+                    previousRecord={previousRecord}
+                    onQuickLog={() => {
+                      const el = document.getElementById('desktop-monthly-form');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    onOpenFire={() => setIsFireModalOpen(true)}
+                    onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                    onExportExcel={() => {
+                      exportFinancialRecordsToExcel(records);
+                      showToast('הקובץ יוצא בהצלחה! 📊', 'success');
+                    }}
+                  />
 
-            <FireMilestoneCard
-              currentRecord={currentRecord}
-              onOpenCalculator={() => setIsFireModalOpen(true)}
-            />
+                  {/* 2026 Month Carousel Pills */}
+                  <MonthSelector
+                    records={records}
+                    selectedPeriod={selectedPeriod}
+                    onSelectPeriod={p => setSelectedPeriod(p)}
+                  />
 
-            <div id="desktop-monthly-form">
-              <MonthlyForm
-                record={currentRecord}
-                onSave={handleSaveRecord}
-                isSaving={isSaving}
+                  <FireMilestoneCard
+                    currentRecord={currentRecord}
+                    onOpenCalculator={() => setIsFireModalOpen(true)}
+                  />
+
+                  <div id="desktop-monthly-form">
+                    <MonthlyForm
+                      record={currentRecord}
+                      onSave={handleSaveRecord}
+                      isSaving={isSaving}
+                    />
+                  </div>
+                </div>
+
+                {/* Right Column (7 cols): AI Insights + Cashflow Donut + Asset Sparklines + Runway + Wealth Chart */}
+                <div className="col-span-7 space-y-6">
+                  <WealthInsightsCarousel
+                    records={records}
+                    currentRecord={currentRecord}
+                    onOpenFire={() => setIsFireModalOpen(true)}
+                  />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <CashflowDonutCard currentRecord={currentRecord} />
+                    <LiquidityRunwayCard currentRecord={currentRecord} />
+                  </div>
+
+                  <AssetSparklinesCard
+                    records={records}
+                    currentRecord={currentRecord}
+                    previousRecord={previousRecord}
+                    onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                  />
+
+                  <WealthChart records={records} />
+                </div>
+              </div>
+
+              {/* Full History Table Underneath */}
+              <HistoryTable
+                records={records}
+                selectedPeriod={selectedPeriod}
+                onSelectPeriod={p => {
+                  setSelectedPeriod(p);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
               />
             </div>
-          </div>
-
-          {/* Right Column (7 cols): AI Insights + Cashflow Donut + Asset Sparklines + Runway + Wealth Chart */}
-          <div className="md:col-span-7 space-y-6">
-            <WealthInsightsCarousel
-              records={records}
-              currentRecord={currentRecord}
-              onOpenFire={() => setIsFireModalOpen(true)}
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <CashflowDonutCard currentRecord={currentRecord} />
-              <LiquidityRunwayCard currentRecord={currentRecord} />
-            </div>
-
-            <AssetSparklinesCard
-              records={records}
-              currentRecord={currentRecord}
-              previousRecord={previousRecord}
-              onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
-            />
-
-            <WealthChart records={records} />
-          </div>
-        </div>
-
-        {/* Desktop View: Full History Table */}
-        <div className="hidden md:block">
-          <HistoryTable
-            records={records}
-            selectedPeriod={selectedPeriod}
-            onSelectPeriod={p => {
-              setSelectedPeriod(p);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          />
+          )}
         </div>
 
         {/* Mobile View: Controlled by Bottom MobileNav */}
@@ -360,6 +542,31 @@ export const App: React.FC = () => {
               {/* Wealth Growth Curve */}
               <WealthChart records={records} />
             </>
+          )}
+
+          {activeTab === 'stocks' && (
+            <HoldingsPortfolioView
+              holdings={holdings}
+              cash={portfolioCash}
+              transactions={transactions}
+              onOpenAddHolding={() => {
+                setHoldingToEdit(null);
+                setIsAddEditModalOpen(true);
+              }}
+              onOpenEditHolding={h => {
+                setHoldingToEdit(h);
+                setIsAddEditModalOpen(true);
+              }}
+              onOpenSellHolding={h => {
+                setSelectedHoldingForSale(h);
+                setIsSellModalOpen(true);
+              }}
+              onDeleteHolding={handleDeleteHolding}
+              onUpdateCash={handleUpdateCash}
+              onRefreshQuotes={handleRefreshQuotes}
+              onSyncExcellenceToMonth={handleSyncExcellenceToMonth}
+              currentMonthLabel={currentRecord.label}
+            />
           )}
 
           {activeTab === 'form' && (
@@ -431,6 +638,24 @@ export const App: React.FC = () => {
         currentCostBasis={currentRecord.excellence_cost_basis}
         monthLabel={currentRecord.label}
         onSaveCostBasis={handleSaveCostBasis}
+      />
+
+      {/* Sell Holding & Cash Transfer Modal */}
+      <SellHoldingModal
+        isOpen={isSellModalOpen}
+        onClose={() => setIsSellModalOpen(false)}
+        holding={selectedHoldingForSale}
+        periods={records.map(r => ({ period: r.period, label: r.label }))}
+        currentPeriod={selectedPeriod}
+        onConfirmSale={handleConfirmSale}
+      />
+
+      {/* Add / Edit Holding Modal */}
+      <AddEditHoldingModal
+        isOpen={isAddEditModalOpen}
+        onClose={() => setIsAddEditModalOpen(false)}
+        holdingToEdit={holdingToEdit}
+        onSaveHolding={handleSaveHolding}
       />
 
     </div>

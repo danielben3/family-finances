@@ -1,14 +1,18 @@
-import React from 'react';
-import { ShieldCheck, Cloud, CloudOff, Smartphone, Sparkles } from 'lucide-react';
+import { ShieldCheck, Cloud, CloudOff, Smartphone, Sparkles, Home, Briefcase, Table } from 'lucide-react';
+import { NavTab } from './MobileNav';
 
 interface HeaderProps {
   isCloudSynced: boolean;
   onOpenPhoneModal: () => void;
+  activeTab?: NavTab;
+  onSelectTab?: (tab: NavTab) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   isCloudSynced,
   onOpenPhoneModal,
+  activeTab = 'overview',
+  onSelectTab,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-3 sm:px-6 shadow-sm">
@@ -53,6 +57,47 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Center Desktop Navigation Tabs */}
+        {onSelectTab && (
+          <div className="hidden md:flex items-center gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200">
+            <button
+              onClick={() => onSelectTab('overview')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+                activeTab === 'overview'
+                  ? 'bg-white text-slate-950 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Home className="w-3.5 h-3.5" />
+              <span>דשבורד ראשי</span>
+            </button>
+
+            <button
+              onClick={() => onSelectTab('stocks')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+                activeTab === 'stocks'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Briefcase className="w-3.5 h-3.5" />
+              <span>תיק מניות חי</span>
+            </button>
+
+            <button
+              onClick={() => onSelectTab('history')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+                activeTab === 'history'
+                  ? 'bg-white text-slate-950 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Table className="w-3.5 h-3.5" />
+              <span>היסטוריה ואקסל</span>
+            </button>
+          </div>
+        )}
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
