@@ -10,6 +10,7 @@ import { WealthChart } from './components/WealthChart';
 import { HistoryTable } from './components/HistoryTable';
 import { MobileNav, NavTab } from './components/MobileNav';
 import { PhoneModal } from './components/PhoneModal';
+import { InstallBanner } from './components/InstallBanner';
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -164,6 +165,9 @@ export const App: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* PWA Install Banner for Mobile */}
+      <InstallBanner onInstalled={() => showToast('האפליקציה הותקנה בהצלחה במסך הבית! 🚀', 'success')} />
 
       {/* Top Navigation Bar */}
       <Header
