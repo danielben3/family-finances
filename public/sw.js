@@ -1,5 +1,5 @@
 // Service Worker for Family Finances PWA
-const CACHE_NAME = 'family-finances-v4';
+const CACHE_NAME = 'family-finances-v5';
 const PRECACHE_URLS = [
   '/family-finances/',
   '/family-finances/index.html',

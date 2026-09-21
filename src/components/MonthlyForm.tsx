@@ -13,8 +13,37 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   onSave,
   isSaving,
 }) => {
+  const getInitSalaryDan = (r: FinancialRecord) => {
+    if (r.salary_daniel !== undefined && r.salary_daniel !== null) return String(r.salary_daniel);
+    if (r.period === '2026-09') return '16260';
+    return '';
+  };
+  const getInitNonWorkDan = (r: FinancialRecord) => {
+    if (r.non_work_daniel !== undefined && r.non_work_daniel !== null) return String(r.non_work_daniel);
+    return '';
+  };
+  const getInitSalaryShov = (r: FinancialRecord) => {
+    if (r.salary_shoval !== undefined && r.salary_shoval !== null) return String(r.salary_shoval);
+    if (r.period === '2026-09') return '7800';
+    return '';
+  };
+  const getInitNonWorkShov = (r: FinancialRecord) => {
+    if (r.non_work_shoval !== undefined && r.non_work_shoval !== null) return String(r.non_work_shoval);
+    return '';
+  };
+  const getInitOtherInc = (r: FinancialRecord) => {
+    if (r.other_income !== undefined && r.other_income !== null) return String(r.other_income);
+    if (r.period === '2026-09') return '1310';
+    return '';
+  };
+
   const [formData, setFormData] = useState({
-    income_net: record.income_net ? String(record.income_net) : '',
+    // Split income fields
+    salary_daniel: getInitSalaryDan(record),
+    non_work_daniel: getInitNonWorkDan(record),
+    salary_shoval: getInitSalaryShov(record),
+    non_work_shoval: getInitNonWorkShov(record),
+    other_income: getInitOtherInc(record),
     expenses: record.expenses ? String(record.expenses) : '',
     // Split checking fields
     checking_onezero: record.checking_onezero ? String(record.checking_onezero) : '',
@@ -35,7 +64,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   // Sync form when selected record changes
   useEffect(() => {
     setFormData({
-      income_net: record.income_net ? String(record.income_net) : '',
+      salary_daniel: getInitSalaryDan(record),
+      non_work_daniel: getInitNonWorkDan(record),
+      salary_shoval: getInitSalaryShov(record),
+      non_work_shoval: getInitNonWorkShov(record),
+      other_income: getInitOtherInc(record),
       expenses: record.expenses ? String(record.expenses) : '',
       checking_onezero: record.checking_onezero ? String(record.checking_onezero) : '',
       checking_pepper: record.checking_pepper ? String(record.checking_pepper) : '',
@@ -89,8 +122,19 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   };
 
   // Live Calculated Values
-  const numIncome = parseVal(formData.income_net);
+  const numSalDan = parseVal(formData.salary_daniel);
+  const numNonWorkDan = parseVal(formData.non_work_daniel);
+  const numSalShov = parseVal(formData.salary_shoval);
+  const numNonWorkShov = parseVal(formData.non_work_shoval);
+  const numOtherIncome = parseVal(formData.other_income);
   const numExpenses = parseVal(formData.expenses);
+
+  const calcTotalDan = numSalDan + numNonWorkDan;
+  const calcTotalShov = numSalShov + numNonWorkShov;
+  const calcTotalWorkSalary = numSalDan + numSalShov;
+  const calcTotalNonWork = numNonWorkDan + numNonWorkShov + numOtherIncome;
+  const calcTotalIncome = calcTotalDan + calcTotalShov + numOtherIncome;
+
   const numOneZero = parseVal(formData.checking_onezero);
   const numPepper = parseVal(formData.checking_pepper);
   const numOtsar = parseVal(formData.checking_otsar);
@@ -104,8 +148,8 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   const calcBanksTotal = numOneZero + numPepper + numOtsar;
   const calcWalletsTotal = numPaybox + numBit;
   const calcChecking = calcBanksTotal + calcWalletsTotal;
-  const calcSavings = numIncome > 0 || numExpenses > 0 ? numIncome - numExpenses : 0;
-  const calcSavingsRate = numIncome > 0 ? (calcSavings / numIncome) * 100 : 0;
+  const calcSavings = calcTotalIncome > 0 || numExpenses > 0 ? calcTotalIncome - numExpenses : 0;
+  const calcSavingsRate = calcTotalIncome > 0 ? (calcSavings / calcTotalIncome) * 100 : 0;
   const calcInvestments = numAltshuler + numExcellence + numMoneyMarket;
   const calcTotalWealth = calcChecking + calcInvestments;
 
@@ -115,7 +159,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     // Ensure all input fields reflect their evaluated numeric values
     setFormData(prev => ({
       ...prev,
-      income_net: numIncome ? String(numIncome) : '',
+      salary_daniel: numSalDan ? String(numSalDan) : '',
+      non_work_daniel: numNonWorkDan ? String(numNonWorkDan) : '',
+      salary_shoval: numSalShov ? String(numSalShov) : '',
+      non_work_shoval: numNonWorkShov ? String(numNonWorkShov) : '',
+      other_income: numOtherIncome ? String(numOtherIncome) : '',
       expenses: numExpenses ? String(numExpenses) : '',
       checking_onezero: numOneZero ? String(numOneZero) : '',
       checking_pepper: numPepper ? String(numPepper) : '',
@@ -129,7 +177,12 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
 
     const updated: FinancialRecord = {
       ...record,
-      income_net: numIncome,
+      income_net: calcTotalIncome,
+      salary_daniel: numSalDan,
+      non_work_daniel: numNonWorkDan,
+      salary_shoval: numSalShov,
+      non_work_shoval: numNonWorkShov,
+      other_income: numOtherIncome,
       expenses: numExpenses,
       savings: calcSavings,
       savings_rate: Math.round(calcSavingsRate * 100) / 100,
@@ -181,23 +234,149 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
         </div>
       </div>
 
-      {/* ─────────────── Section 1: Cashflow ─────────────── */}
-      <div className="mb-5">
-        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">הכנסות והוצאות</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+      {/* ─────────────── Section 1: Income & Cashflow (Split Daniel & Shoval) ─────────────── */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            הכנסות משק הבית — שכר עבודה ושלא מעבודה
+          </p>
+          <span className="text-xs font-num font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            סה״כ הכנסות נטו: {formatILS(calcTotalIncome)}
+          </span>
+        </div>
+
+        {/* Daniel & Shoval Split Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-3.5">
           
-          {/* Income */}
+          {/* Card: Daniel */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50/70 via-slate-50 to-blue-50/30 border border-blue-100 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between border-b border-blue-100/70 pb-2">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs sm:text-sm">
+                <span className="text-base">👨‍💻</span>
+                <span>דניאל</span>
+                <span className="text-[10px] text-blue-600 font-normal">(אוניברסיטת אריאל)</span>
+              </div>
+              <span className="text-xs font-num font-extrabold text-blue-700 bg-blue-100/70 px-2.5 py-0.5 rounded-lg">
+                סה״כ: {formatILS(calcTotalDan)}
+              </span>
+            </div>
+
+            <div className="space-y-2.5">
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  💼 שכר עבודה נטו
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.salary_daniel}
+                    onChange={e => setFormData({ ...formData, salary_daniel: e.target.value })}
+                    onBlur={() => evalField('salary_daniel')}
+                    onKeyDown={e => handleKeyDown(e, 'salary_daniel')}
+                    placeholder="0"
+                    dir="ltr"
+                    className={`${inputBase} focus:border-blue-500 focus:ring-2 focus:ring-blue-100`}
+                  />
+                  <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1 flex items-center justify-between">
+                  <span>🛡️ שלא מעבודה (מילואים / ביטוח לאומי)</span>
+                  <span className="text-[10px] text-slate-400 font-normal">מענקים, תגמולים וכד׳</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.non_work_daniel}
+                    onChange={e => setFormData({ ...formData, non_work_daniel: e.target.value })}
+                    onBlur={() => evalField('non_work_daniel')}
+                    onKeyDown={e => handleKeyDown(e, 'non_work_daniel')}
+                    placeholder="0"
+                    dir="ltr"
+                    className={`${inputBase} focus:border-blue-500 focus:ring-2 focus:ring-blue-100`}
+                  />
+                  <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card: Shoval */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50/70 via-slate-50 to-purple-50/30 border border-purple-100 space-y-3 shadow-xs">
+            <div className="flex items-center justify-between border-b border-purple-100/70 pb-2">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs sm:text-sm">
+                <span className="text-base">👩‍⚕️</span>
+                <span>שובל</span>
+                <span className="text-[10px] text-purple-600 font-normal">(עזר מציון / עיריית פ״ת)</span>
+              </div>
+              <span className="text-xs font-num font-extrabold text-purple-700 bg-purple-100/70 px-2.5 py-0.5 rounded-lg">
+                סה״כ: {formatILS(calcTotalShov)}
+              </span>
+            </div>
+
+            <div className="space-y-2.5">
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  💼 שכר עבודה נטו
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.salary_shoval}
+                    onChange={e => setFormData({ ...formData, salary_shoval: e.target.value })}
+                    onBlur={() => evalField('salary_shoval')}
+                    onKeyDown={e => handleKeyDown(e, 'salary_shoval')}
+                    placeholder="0"
+                    dir="ltr"
+                    className={`${inputBase} focus:border-purple-500 focus:ring-2 focus:ring-purple-100`}
+                  />
+                  <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1 flex items-center justify-between">
+                  <span>👶 שלא מעבודה (ביטוח לאומי / קצבאות)</span>
+                  <span className="text-[10px] text-slate-400 font-normal">דמי לידה, קצבאות וכד׳</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.non_work_shoval}
+                    onChange={e => setFormData({ ...formData, non_work_shoval: e.target.value })}
+                    onBlur={() => evalField('non_work_shoval')}
+                    onKeyDown={e => handleKeyDown(e, 'non_work_shoval')}
+                    placeholder="0"
+                    dir="ltr"
+                    className={`${inputBase} focus:border-purple-500 focus:ring-2 focus:ring-purple-100`}
+                  />
+                  <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Other household income & Expenses row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          {/* Other Income */}
           <div>
-            <label className="block text-xs font-semibold text-emerald-700 mb-1">
-              הכנסות נטו (משכורות)
+            <label className="block text-xs font-semibold text-teal-700 mb-1 flex items-center gap-1">
+              <span>🏛️</span>
+              <span>הכנסות נוספות למשק הבית (קצבאות ילדים וכד׳)</span>
             </label>
             <div className="relative">
-              <input type="text" value={formData.income_net}
-                onChange={e => setFormData({ ...formData, income_net: e.target.value })}
-                onBlur={() => evalField('income_net')}
-                onKeyDown={e => handleKeyDown(e, 'income_net')}
-                placeholder="0" dir="ltr"
-                className={`${inputBase} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100`}
+              <input
+                type="text"
+                value={formData.other_income}
+                onChange={e => setFormData({ ...formData, other_income: e.target.value })}
+                onBlur={() => evalField('other_income')}
+                onKeyDown={e => handleKeyDown(e, 'other_income')}
+                placeholder="0"
+                dir="ltr"
+                className={`${inputBase} focus:border-teal-500 focus:ring-2 focus:ring-teal-100`}
               />
               <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
@@ -205,19 +384,45 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
 
           {/* Expenses */}
           <div>
-            <label className="block text-xs font-semibold text-rose-700 mb-1">
-              הוצאות (אשראי ושכירות)
+            <label className="block text-xs font-semibold text-rose-700 mb-1 flex items-center gap-1">
+              <span>💳</span>
+              <span>הוצאות שוטפות (כרטיסי אשראי, שכר דירה, מיסי יישוב)</span>
             </label>
             <div className="relative">
-              <input type="text" value={formData.expenses}
+              <input
+                type="text"
+                value={formData.expenses}
                 onChange={e => setFormData({ ...formData, expenses: e.target.value })}
                 onBlur={() => evalField('expenses')}
                 onKeyDown={e => handleKeyDown(e, 'expenses')}
-                placeholder="0" dir="ltr"
+                placeholder="0"
+                dir="ltr"
                 className={`${inputBase} focus:border-rose-500 focus:ring-2 focus:ring-rose-100`}
               />
               <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
+          </div>
+        </div>
+
+        {/* Live Income Subtotal Ribbon */}
+        <div className="mt-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+          <span className="text-slate-500 font-medium flex items-center gap-1">
+            <span>📊</span>
+            <span>סיכום הכנסות:</span>
+          </span>
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 font-num font-semibold text-[11px]">
+            <span className="text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+              דניאל: {formatILS(calcTotalDan)}
+            </span>
+            <span className="text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200">
+              שובל: {formatILS(calcTotalShov)}
+            </span>
+            <span className="text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">
+              שכר מעבודה: {formatILS(calcTotalWorkSalary)}
+            </span>
+            <span className="text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
+              שלא מעבודה: {formatILS(calcTotalNonWork)}
+            </span>
           </div>
         </div>
       </div>

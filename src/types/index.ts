@@ -3,7 +3,12 @@ export interface FinancialRecord {
   year: number;               // 2024, 2025, 2026
   month: number;              // 1..12
   label: string;              // 'אוגוסט 2024', 'יולי 2026'
-  income_net: number;         // משכורות נטו
+  income_net: number;         // סה״כ הכנסות נטו למשק הבית
+  salary_daniel?: number;     // שכר עבודה דניאל (נטו)
+  non_work_daniel?: number;   // שלא מעבודה דניאל (מילואים, מענקים, ביטוח לאומי)
+  salary_shoval?: number;     // שכר עבודה שובל (נטו)
+  non_work_shoval?: number;   // שלא מעבודה שובל (ביטוח לאומי, דמי לידה, קצבאות)
+  other_income?: number;      // הכנסות נוספות למשק הבית (קצבאות ילדים וכד׳)
   expenses: number;           // כרטיסי אשראי + שכירות + מיסי יישוב + חשמל
   savings: number;            // הכנסות נטו - הוצאות
   savings_rate: number;       // אחוז חיסכון
