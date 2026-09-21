@@ -7,13 +7,18 @@ export interface FinancialRecord {
   expenses: number;           // כרטיסי אשראי + שכירות + מיסי יישוב + חשמל
   savings: number;            // הכנסות נטו - הוצאות
   savings_rate: number;       // אחוז חיסכון
-  checking: number;           // עו"ש
+  checking: number;           // סה״כ עו״ש ונזילות (כולל כל החשבונות והארנקים)
+  checking_onezero?: number;  // עו״ש ONE ZERO — חשבון 2150
+  checking_pepper?: number;   // עו״ש Pepper לאומי — חשבון 3302
+  checking_otsar?: number;    // עו״ש אוצר החייל — חשבון 6775
+  paybox?: number;            // ארנק PayBox
+  bit?: number;               // ארנק Bit
   altshuler: number;          // אלטשולר שחם (גמל)
   excellence: number;         // אקסלנס (מניות)
   excellence_cost_basis?: number; // קרן מושקעת באקסלנס (עלות בסיס)
   money_market: number;       // קרן כספית
-  investments_total: number;  // סה"כ השקעות
-  total_wealth: number;       // עו"ש + השקעות
+  investments_total: number;  // סה״כ השקעות
+  total_wealth: number;       // עו״ש + השקעות
   wealth_change_pct: number;  // שינוי באחוזים מחודש קודם
   notes?: string | null;      // הערות חודשיות
   raw_formulas?: Record<string, string>;
