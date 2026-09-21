@@ -46,7 +46,11 @@ export const App: React.FC = () => {
     const saved = localStorage.getItem('family_finance_holdings');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Automatically upgrade any old mock cache (less than 10 items or holding-cspx) to the real 27 holdings
+        if (Array.isArray(parsed) && parsed.length >= 10 && !parsed.some((h: any) => h.id === 'holding-cspx')) {
+          return parsed;
+        }
       } catch (e) {}
     }
     return INITIAL_HOLDINGS_SEED;
@@ -56,7 +60,10 @@ export const App: React.FC = () => {
     const saved = localStorage.getItem('family_finance_portfolio_cash');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed.ils === 'number' && parsed.ils > 0) {
+          return parsed;
+        }
       } catch (e) {}
     }
     return INITIAL_PORTFOLIO_CASH;
@@ -126,15 +133,25 @@ export const App: React.FC = () => {
       localStorage.setItem('family_finance_holdings', JSON.stringify(next));
       return next;
     });
+    try {
+      await supabase.from('portfolio_holdings').upsert(holding);
+    } catch (e) {
+      console.warn('Notice: portfolio_holdings cloud upsert skipped', e);
+    }
     showToast(`נייר ${holding.symbol} נשמר בהצלחה בתיק! 📈`, 'success');
   };
 
-  const handleDeleteHolding = (id: string) => {
+  const handleDeleteHolding = async (id: string) => {
     setHoldings(prev => {
       const next = prev.filter(h => h.id !== id);
       localStorage.setItem('family_finance_holdings', JSON.stringify(next));
       return next;
     });
+    try {
+      await supabase.from('portfolio_holdings').delete().eq('id', id);
+    } catch (e) {
+      console.warn('Notice: portfolio_holdings cloud delete skipped', e);
+    }
     showToast('הנייר הוסר מהתיק', 'info');
   };
 
@@ -217,6 +234,7 @@ export const App: React.FC = () => {
   // Fetch initial records from Supabase and subscribe to live changes
   useEffect(() => {
     let channel: any = null;
+    let portfolioChannel: any = null;
 
     const initData = async () => {
       try {
@@ -281,12 +299,63 @@ export const App: React.FC = () => {
       } catch (subErr) {
         console.warn('Realtime subscription error:', subErr);
       }
+
+      // Fetch portfolio holdings from Supabase if table exists
+      try {
+        const { data: pData, error: pErr } = await supabase
+          .from('portfolio_holdings')
+          .select('*');
+        if (!pErr && pData && pData.length > 0) {
+          setHoldings(pData);
+          localStorage.setItem('family_finance_holdings', JSON.stringify(pData));
+        } else if (!pErr && pData && pData.length === 0) {
+          await supabase.from('portfolio_holdings').upsert(INITIAL_HOLDINGS_SEED);
+        }
+      } catch (pEx) {
+        console.warn('Notice: portfolio_holdings table not in Supabase yet:', pEx);
+      }
+
+      // Realtime subscription for portfolio holdings across devices
+      try {
+        portfolioChannel = supabase
+          .channel('public:portfolio_holdings')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'portfolio_holdings' },
+            (payload: any) => {
+              if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+                const updated = payload.new as Holding;
+                setHoldings(prev => {
+                  const exists = prev.some(h => h.id === updated.id);
+                  const next = exists
+                    ? prev.map(h => (h.id === updated.id ? updated : h))
+                    : [updated, ...prev];
+                  localStorage.setItem('family_finance_holdings', JSON.stringify(next));
+                  return next;
+                });
+              } else if (payload.eventType === 'DELETE') {
+                const delId = payload.old?.id;
+                if (delId) {
+                  setHoldings(prev => {
+                    const next = prev.filter(h => h.id !== delId);
+                    localStorage.setItem('family_finance_holdings', JSON.stringify(next));
+                    return next;
+                  });
+                }
+              }
+            }
+          )
+          .subscribe();
+      } catch (pSubErr) {
+        console.warn('Realtime portfolio subscription notice:', pSubErr);
+      }
     };
 
     initData();
 
     return () => {
       if (channel) supabase.removeChannel(channel);
+      if (portfolioChannel) supabase.removeChannel(portfolioChannel);
     };
   }, []);
 
