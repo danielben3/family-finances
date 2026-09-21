@@ -210,24 +210,24 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   const formatILS = (val: number) =>
     '₪' + Math.round(val).toLocaleString('he-IL');
 
-  const inputBase = 'w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none transition text-left';
+  const inputBase = 'w-full bg-slate-50/80 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none transition text-left';
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-5 sm:p-6 card-diffused-shadow border border-slate-200/80">
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 card-diffused-shadow border border-slate-200/80">
       
       {/* Title & Live Status */}
-      <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-slate-100 gap-2.5">
         <div>
-          <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
-            <span>טופס הזנה ועריכה – {record.label}</span>
+          <h3 className="text-sm sm:text-base font-bold text-slate-900">
+            טופס הזנה ועריכה – {record.label}
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            הזן מספרים או תרגילי חיבור (למשל: 1200+350). הכל מחושב בזמן אמת.
+          <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+            ניתן להזין תרגיל (למשל: 16260+1500) – יחושב אוטומטית ביציאה או בלחיצה על Enter.
           </p>
         </div>
 
-        <div className="text-left">
-          <span className="text-[11px] text-slate-400 block">שווי כולל מחושב:</span>
+        <div className="flex items-center justify-between sm:justify-end gap-2 bg-blue-50/80 sm:bg-transparent px-3 py-1.5 sm:p-0 rounded-xl sm:rounded-none">
+          <span className="text-[11px] text-slate-500 sm:text-slate-400 block">שווי כולל מחושב:</span>
           <span className="text-base sm:text-lg font-num font-extrabold text-blue-600">
             {formatILS(calcTotalWealth)}
           </span>
@@ -235,35 +235,37 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
       </div>
 
       {/* ─────────────── Section 1: Income & Cashflow (Split Daniel & Shoval) ─────────────── */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-3">
+      <div className="mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-1.5">
           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
             הכנסות משק הבית — שכר עבודה ושלא מעבודה
           </p>
-          <span className="text-xs font-num font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            סה״כ הכנסות נטו: {formatILS(calcTotalIncome)}
-          </span>
+          <div className="self-start sm:self-auto">
+            <span className="text-xs font-num font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              סה״כ הכנסות נטו: {formatILS(calcTotalIncome)}
+            </span>
+          </div>
         </div>
 
         {/* Daniel & Shoval Split Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
           
           {/* Card: Daniel */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50/70 via-slate-50 to-blue-50/30 border border-blue-100 space-y-3 shadow-xs">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-blue-50/60 to-slate-50/90 border border-blue-100 space-y-2.5">
             <div className="flex items-center justify-between border-b border-blue-100/70 pb-2">
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs sm:text-sm">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs">
                 <span className="text-base">👨‍💻</span>
                 <span>דניאל</span>
                 <span className="text-[10px] text-blue-600 font-normal">(אוניברסיטת אריאל)</span>
               </div>
-              <span className="text-xs font-num font-extrabold text-blue-700 bg-blue-100/70 px-2.5 py-0.5 rounded-lg">
+              <span className="text-[11px] font-num font-extrabold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-lg">
                 סה״כ: {formatILS(calcTotalDan)}
               </span>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                   💼 שכר עבודה נטו
                 </label>
                 <div className="relative">
@@ -282,9 +284,8 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1 flex items-center justify-between">
-                  <span>🛡️ שלא מעבודה (מילואים / ביטוח לאומי)</span>
-                  <span className="text-[10px] text-slate-400 font-normal">מענקים, תגמולים וכד׳</span>
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  🛡️ שלא מעבודה (מילואים / ביטוח לאומי)
                 </label>
                 <div className="relative">
                   <input
@@ -304,21 +305,21 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
           </div>
 
           {/* Card: Shoval */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50/70 via-slate-50 to-purple-50/30 border border-purple-100 space-y-3 shadow-xs">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-purple-50/60 to-slate-50/90 border border-purple-100 space-y-2.5">
             <div className="flex items-center justify-between border-b border-purple-100/70 pb-2">
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs sm:text-sm">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs">
                 <span className="text-base">👩‍⚕️</span>
                 <span>שובל</span>
                 <span className="text-[10px] text-purple-600 font-normal">(עזר מציון / עיריית פ״ת)</span>
               </div>
-              <span className="text-xs font-num font-extrabold text-purple-700 bg-purple-100/70 px-2.5 py-0.5 rounded-lg">
+              <span className="text-[11px] font-num font-extrabold text-purple-700 bg-purple-100/70 px-2 py-0.5 rounded-lg">
                 סה״כ: {formatILS(calcTotalShov)}
               </span>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                   💼 שכר עבודה נטו
                 </label>
                 <div className="relative">
@@ -337,9 +338,8 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1 flex items-center justify-between">
-                  <span>👶 שלא מעבודה (ביטוח לאומי / קצבאות)</span>
-                  <span className="text-[10px] text-slate-400 font-normal">דמי לידה, קצבאות וכד׳</span>
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  👶 שלא מעבודה (דמי לידה / ביטוח לאומי)
                 </label>
                 <div className="relative">
                   <input
@@ -360,12 +360,10 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
         </div>
 
         {/* Other household income & Expenses row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          {/* Other Income */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
           <div>
-            <label className="block text-xs font-semibold text-teal-700 mb-1 flex items-center gap-1">
-              <span>🏛️</span>
-              <span>הכנסות נוספות למשק הבית (קצבאות ילדים וכד׳)</span>
+            <label className="block text-xs font-semibold text-teal-800 mb-1">
+              🏛️ קצבאות ילדים והכנסות נוספות
             </label>
             <div className="relative">
               <input
@@ -382,11 +380,9 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
             </div>
           </div>
 
-          {/* Expenses */}
           <div>
-            <label className="block text-xs font-semibold text-rose-700 mb-1 flex items-center gap-1">
-              <span>💳</span>
-              <span>הוצאות שוטפות (כרטיסי אשראי, שכר דירה, מיסי יישוב)</span>
+            <label className="block text-xs font-semibold text-rose-700 mb-1">
+              💳 הוצאות שוטפות (אשראי, שכירות, חשבונות)
             </label>
             <div className="relative">
               <input
@@ -404,154 +400,183 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
           </div>
         </div>
 
-        {/* Live Income Subtotal Ribbon */}
-        <div className="mt-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-wrap items-center justify-between gap-2.5 text-xs">
-          <span className="text-slate-500 font-medium flex items-center gap-1">
-            <span>📊</span>
-            <span>סיכום הכנסות:</span>
-          </span>
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 font-num font-semibold text-[11px]">
-            <span className="text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
-              דניאל: {formatILS(calcTotalDan)}
-            </span>
-            <span className="text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200">
-              שובל: {formatILS(calcTotalShov)}
-            </span>
-            <span className="text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">
-              שכר מעבודה: {formatILS(calcTotalWorkSalary)}
-            </span>
-            <span className="text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
-              שלא מעבודה: {formatILS(calcTotalNonWork)}
-            </span>
+        {/* Live Income Subtotal Ribbon: 2x2 grid on mobile, row on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] font-num font-semibold">
+          <div className="bg-white p-2 rounded-lg border border-slate-100 text-center">
+            <span className="text-slate-400 block text-[10px]">דניאל</span>
+            <span className="text-blue-700 font-bold">{formatILS(calcTotalDan)}</span>
+          </div>
+          <div className="bg-white p-2 rounded-lg border border-slate-100 text-center">
+            <span className="text-slate-400 block text-[10px]">שובל</span>
+            <span className="text-purple-700 font-bold">{formatILS(calcTotalShov)}</span>
+          </div>
+          <div className="bg-white p-2 rounded-lg border border-slate-100 text-center">
+            <span className="text-slate-400 block text-[10px]">מעבודה</span>
+            <span className="text-slate-800 font-bold">{formatILS(calcTotalWorkSalary)}</span>
+          </div>
+          <div className="bg-white p-2 rounded-lg border border-slate-100 text-center">
+            <span className="text-slate-400 block text-[10px]">שלא מעבודה</span>
+            <span className="text-teal-700 font-bold">{formatILS(calcTotalNonWork)}</span>
           </div>
         </div>
       </div>
 
-      {/* ─────────────── Section 2: Checking Accounts ─────────────── */}
+      {/* ─────────────── Section 2: Checking Accounts & Wallets ─────────────── */}
       <div className="mb-5">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">עו״ש — חשבונות בנק</p>
-          <span className="text-xs font-num font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">
-            סה״כ בנקים: {formatILS(calcBanksTotal)}
-          </span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-1.5">
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            עו״ש — חשבונות בנק וארנקים
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-num font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
+              בנקים: {formatILS(calcBanksTotal)}
+            </span>
+            <span className="text-xs font-num font-bold text-violet-700 bg-violet-50 px-2.5 py-0.5 rounded-full border border-violet-200">
+              ארנקים: {formatILS(calcWalletsTotal)}
+            </span>
+          </div>
         </div>
-        <div className="grid grid-cols-3 gap-3">
 
+        {/* Bank Accounts List: Clean Card Rows */}
+        <div className="space-y-2 mb-3">
           {/* ONE ZERO */}
-          <div>
-            <label className="block text-[11px] font-bold text-blue-700 mb-1 flex items-center gap-1">
-              <span className="text-base leading-none">🏦</span> ONE ZERO
-              <span className="text-[10px] text-slate-400 font-normal">2150</span>
-            </label>
-            <div className="relative">
-              <input type="text" value={formData.checking_onezero}
+          <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-blue-100/70 text-blue-700 flex items-center justify-center text-sm shrink-0">
+                🏦
+              </div>
+              <div className="truncate">
+                <span className="text-xs font-bold text-slate-800 block leading-tight">ONE ZERO</span>
+                <span className="text-[10px] text-slate-400 font-normal">חשבון ראשי 2150</span>
+              </div>
+            </div>
+            <div className="relative w-36 sm:w-44 shrink-0">
+              <input
+                type="text"
+                value={formData.checking_onezero}
                 onChange={e => setFormData({ ...formData, checking_onezero: e.target.value })}
                 onBlur={() => evalField('checking_onezero')}
                 onKeyDown={e => handleKeyDown(e, 'checking_onezero')}
-                placeholder="0" dir="ltr"
-                className={`${inputBase} focus:border-blue-500 focus:ring-2 focus:ring-blue-100`}
+                placeholder="0"
+                dir="ltr"
+                className={`${inputBase} focus:border-blue-500 focus:ring-2 focus:ring-blue-100 font-bold`}
               />
-              <span className="absolute right-2 top-2.5 text-slate-400 text-[11px] font-semibold pointer-events-none">₪</span>
+              <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
           </div>
 
           {/* Pepper */}
-          <div>
-            <label className="block text-[11px] font-bold text-red-600 mb-1 flex items-center gap-1">
-              <span className="text-base leading-none">🌶️</span> Pepper
-              <span className="text-[10px] text-slate-400 font-normal">3302</span>
-            </label>
-            <div className="relative">
-              <input type="text" value={formData.checking_pepper}
+          <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-red-100/70 text-red-700 flex items-center justify-center text-sm shrink-0">
+                🌶️
+              </div>
+              <div className="truncate">
+                <span className="text-xs font-bold text-slate-800 block leading-tight">Pepper (לאומי)</span>
+                <span className="text-[10px] text-slate-400 font-normal">חשבון 3302</span>
+              </div>
+            </div>
+            <div className="relative w-36 sm:w-44 shrink-0">
+              <input
+                type="text"
+                value={formData.checking_pepper}
                 onChange={e => setFormData({ ...formData, checking_pepper: e.target.value })}
                 onBlur={() => evalField('checking_pepper')}
                 onKeyDown={e => handleKeyDown(e, 'checking_pepper')}
-                placeholder="0" dir="ltr"
-                className={`${inputBase} focus:border-red-400 focus:ring-2 focus:ring-red-100`}
+                placeholder="0"
+                dir="ltr"
+                className={`${inputBase} focus:border-red-400 focus:ring-2 focus:ring-red-100 font-bold`}
               />
-              <span className="absolute right-2 top-2.5 text-slate-400 text-[11px] font-semibold pointer-events-none">₪</span>
+              <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
           </div>
 
           {/* Otzar HaHayal */}
-          <div>
-            <label className="block text-[11px] font-bold text-purple-700 mb-1 flex items-center gap-1">
-              <span className="text-base leading-none">🎖️</span> אוצר
-              <span className="text-[10px] text-slate-400 font-normal">6775</span>
-            </label>
-            <div className="relative">
-              <input type="text" value={formData.checking_otsar}
+          <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-purple-100/70 text-purple-700 flex items-center justify-center text-sm shrink-0">
+                🎖️
+              </div>
+              <div className="truncate">
+                <span className="text-xs font-bold text-slate-800 block leading-tight">אוצר החייל</span>
+                <span className="text-[10px] text-slate-400 font-normal">חשבון 6775</span>
+              </div>
+            </div>
+            <div className="relative w-36 sm:w-44 shrink-0">
+              <input
+                type="text"
+                value={formData.checking_otsar}
                 onChange={e => setFormData({ ...formData, checking_otsar: e.target.value })}
                 onBlur={() => evalField('checking_otsar')}
                 onKeyDown={e => handleKeyDown(e, 'checking_otsar')}
-                placeholder="0" dir="ltr"
-                className={`${inputBase} focus:border-purple-500 focus:ring-2 focus:ring-purple-100`}
+                placeholder="0"
+                dir="ltr"
+                className={`${inputBase} focus:border-purple-500 focus:ring-2 focus:ring-purple-100 font-bold`}
               />
-              <span className="absolute right-2 top-2.5 text-slate-400 text-[11px] font-semibold pointer-events-none">₪</span>
+              <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
           </div>
-        </div>
 
-        {/* Digital Wallets Row */}
-        <div className="mt-3">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">ארנקים דיגיטליים</p>
-            <span className="text-xs font-num font-bold text-violet-700 bg-violet-50 px-2.5 py-1 rounded-full border border-violet-200">
-              סה״כ ארנקים: {formatILS(calcWalletsTotal)}
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-
+          {/* Digital Wallets: PayBox & Bit Side-by-Side */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
             {/* PayBox */}
-            <div>
-              <label className="block text-[11px] font-bold text-orange-600 mb-1 flex items-center gap-1">
-                <span className="text-base leading-none">👛</span> PayBox
-              </label>
-              <div className="relative">
-                <input type="text" value={formData.paybox}
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-base">👛</span>
+                <span className="text-xs font-bold text-slate-800">PayBox</span>
+              </div>
+              <div className="relative w-32 sm:w-36 shrink-0">
+                <input
+                  type="text"
+                  value={formData.paybox}
                   onChange={e => setFormData({ ...formData, paybox: e.target.value })}
                   onBlur={() => evalField('paybox')}
                   onKeyDown={e => handleKeyDown(e, 'paybox')}
-                  placeholder="0" dir="ltr"
-                  className={`${inputBase} focus:border-orange-400 focus:ring-2 focus:ring-orange-100`}
+                  placeholder="0"
+                  dir="ltr"
+                  className={`${inputBase} focus:border-orange-400 focus:ring-2 focus:ring-orange-100 font-bold`}
                 />
-                <span className="absolute right-2 top-2.5 text-slate-400 text-[11px] font-semibold pointer-events-none">₪</span>
+                <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
               </div>
             </div>
 
             {/* Bit */}
-            <div>
-              <label className="block text-[11px] font-bold text-teal-600 mb-1 flex items-center gap-1">
-                <span className="text-base leading-none">💳</span> Bit
-              </label>
-              <div className="relative">
-                <input type="text" value={formData.bit}
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-base">💳</span>
+                <span className="text-xs font-bold text-slate-800">Bit</span>
+              </div>
+              <div className="relative w-32 sm:w-36 shrink-0">
+                <input
+                  type="text"
+                  value={formData.bit}
                   onChange={e => setFormData({ ...formData, bit: e.target.value })}
                   onBlur={() => evalField('bit')}
                   onKeyDown={e => handleKeyDown(e, 'bit')}
-                  placeholder="0" dir="ltr"
-                  className={`${inputBase} focus:border-teal-400 focus:ring-2 focus:ring-teal-100`}
+                  placeholder="0"
+                  dir="ltr"
+                  className={`${inputBase} focus:border-teal-400 focus:ring-2 focus:ring-teal-100 font-bold`}
                 />
-                <span className="absolute right-2 top-2.5 text-slate-400 text-[11px] font-semibold pointer-events-none">₪</span>
+                <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Total Checking Summary Strip */}
-        <div className="mt-3 flex items-center justify-between bg-sky-50 border border-sky-200 rounded-xl px-4 py-2.5">
-          <div className="text-xs text-sky-700 font-semibold flex items-center gap-1.5">
+        <div className="flex items-center justify-between bg-sky-50/90 border border-sky-200 rounded-xl px-3.5 py-2">
+          <div className="text-xs text-sky-800 font-semibold flex items-center gap-1.5">
             <span>💰</span>
             <span>סה״כ נזילות מיידית:</span>
           </div>
-          <span className="text-sm font-num font-extrabold text-sky-800">{formatILS(calcChecking)}</span>
+          <span className="text-sm font-num font-extrabold text-sky-900">{formatILS(calcChecking)}</span>
         </div>
       </div>
 
       {/* ─────────────── Section 3: Investments ─────────────── */}
       <div className="mb-5">
         <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">השקעות ותיקים</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
           {/* Altshuler Gemel */}
           <div>
@@ -589,9 +614,8 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
 
           {/* Excellence Cost Basis */}
           <div>
-            <label className="block text-xs font-semibold text-teal-700 mb-1 flex items-center justify-between">
-              <span>קרן שהופקדה באקסלנס (בסיס)</span>
-              <span className="text-[10px] text-slate-400 font-normal">לחישוב נטו</span>
+            <label className="block text-xs font-semibold text-teal-700 mb-1">
+              קרן שהופקדה באקסלנס (בסיס)
             </label>
             <div className="relative">
               <input type="text" value={formData.excellence_cost_basis}
@@ -604,9 +628,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
               <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
             {numCostBasis > 0 && numExcellence > 0 && (
-              <p className="text-[11px] text-teal-700 font-medium mt-1 leading-tight">
-                רווח: +{formatILS(Math.max(0, numExcellence - numCostBasis))} | מס 25%: -{formatILS(Math.round(Math.max(0, numExcellence - numCostBasis) * 0.25))} | <strong className="text-emerald-800">נטו ביד: {formatILS(numExcellence - Math.round(Math.max(0, numExcellence - numCostBasis) * 0.25))}</strong>
-              </p>
+              <div className="text-[11px] text-teal-800 bg-teal-50/60 border border-teal-200/60 rounded-lg p-1.5 mt-1.5 font-num flex flex-wrap items-center justify-between gap-1">
+                <span>רווח: +{formatILS(Math.max(0, numExcellence - numCostBasis))}</span>
+                <span>מס 25%: -{formatILS(Math.round(Math.max(0, numExcellence - numCostBasis) * 0.25))}</span>
+                <span className="font-bold text-emerald-800">נטו: {formatILS(numExcellence - Math.round(Math.max(0, numExcellence - numCostBasis) * 0.25))}</span>
+              </div>
             )}
           </div>
 
@@ -629,50 +655,46 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
         </div>
       </div>
 
-
       {/* Live Computed Summary Ribbon */}
-      <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-600 font-medium">
-          <Sparkles className="w-4 h-4 text-blue-600" />
-          <span>חישוב חי אוטומטי:</span>
+      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-3 gap-2 text-center text-xs mb-4">
+        <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-xs">
+          <span className="text-slate-400 text-[10px] block">חיסכון חודשי</span>
+          <span className={`font-num font-extrabold text-xs sm:text-sm ${calcSavings >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+            {formatILS(calcSavings)}
+          </span>
         </div>
-
-        <div className="flex items-center gap-4 sm:gap-6 font-num font-semibold">
-          <div>
-            <span className="text-slate-400 text-[11px] block">חיסכון:</span>
-            <span className={calcSavings >= 0 ? 'text-emerald-600' : 'text-rose-600'}>
-              {formatILS(calcSavings)}
-            </span>
-          </div>
-          <div>
-            <span className="text-slate-400 text-[11px] block">אחוז חיסכון:</span>
-            <span className="text-blue-600">{calcSavingsRate.toFixed(1)}%</span>
-          </div>
-          <div>
-            <span className="text-slate-400 text-[11px] block">סה״כ השקעות:</span>
-            <span className="text-slate-900">{formatILS(calcInvestments)}</span>
-          </div>
+        <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-xs">
+          <span className="text-slate-400 text-[10px] block">אחוז חיסכון</span>
+          <span className="font-num font-extrabold text-xs sm:text-sm text-blue-600">
+            {calcSavingsRate.toFixed(1)}%
+          </span>
+        </div>
+        <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-xs">
+          <span className="text-slate-400 text-[10px] block">סה״כ השקעות</span>
+          <span className="font-num font-extrabold text-xs sm:text-sm text-slate-900">
+            {formatILS(calcInvestments)}
+          </span>
         </div>
       </div>
 
       {/* Notes */}
-      <div className="mt-4">
+      <div>
         <label className="block text-xs font-semibold text-slate-500 mb-1">הערות חופשיות (אופציונלי)</label>
         <textarea
           value={formData.notes}
           onChange={e => setFormData({ ...formData, notes: e.target.value })}
           placeholder="הערות לחודש זה..."
           rows={2}
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-700 text-xs focus:bg-white focus:outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100 transition resize-none"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-slate-700 text-xs focus:bg-white focus:outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100 transition resize-none"
         />
       </div>
 
       {/* Actions */}
-      <div className="mt-5 flex items-center justify-between pt-3 border-t border-slate-100">
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-100 gap-3">
         <button
           type="submit"
           disabled={isSaving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm shadow-md shadow-blue-500/25 active:scale-95 transition disabled:opacity-50"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md shadow-blue-500/25 active:scale-95 transition disabled:opacity-50"
         >
           {isSaving ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
