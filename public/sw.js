@@ -1,11 +1,11 @@
-// Service Worker for Family Finances PWA
-const CACHE_NAME = 'family-finances-v7';
+const CACHE_NAME = 'family-finances-v8';
 const PRECACHE_URLS = [
   '/family-finances/',
   '/family-finances/index.html',
   '/family-finances/manifest.json',
   '/family-finances/icon-192.png',
-  '/family-finances/icon-512.png'
+  '/family-finances/icon-512.png',
+  '/family-finances/favicon.png'
 ];
 
 self.addEventListener('install', (event) => {

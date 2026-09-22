@@ -186,8 +186,13 @@ export const InstallBanner: React.FC<InstallBannerProps> = ({ onInstalled }) => 
                   <li>בחר באפשרות <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong>.</li>
                   <li>אשר את ההתקנה בחלון שיופיע.</li>
                 </ol>
-                <div className="mt-2.5 pt-2 border-t border-slate-200/80 text-[10.5px] text-slate-600">
-                  <strong className="text-amber-800">למשתמשי OnePlus:</strong> אם ההתקנה לא מגיבה, ודא ב-הגדרות ⬅ מסך הבית ש-<strong>"נעילת פריסת מסך הבית"</strong> כבויה, או התקן דרך דפדפן <strong>Brave / Edge</strong>.
+                <div className="mt-2.5 pt-2 border-t border-slate-200/80 text-[10.5px] text-slate-600 space-y-1">
+                  <div>
+                    <strong className="text-rose-700">מופיעה שגיאה "ההתקנה לא הצליחה"?</strong> יש להסיר קודם את האפליקציה הישנה מהמכשיר (לחיצה ארוכה על האייקון ⬅ <strong>הסר התקנה</strong>, או הגדרות ⬅ יישומים), ואז להתקין שוב.
+                  </div>
+                  <div>
+                    <strong className="text-amber-800">נעילת מסך:</strong> ודא שבהגדרות מסך הבית האפשרות <strong>"נעילת פריסת מסך הבית"</strong> כבויה.
+                  </div>
                 </div>
               </div>
 
