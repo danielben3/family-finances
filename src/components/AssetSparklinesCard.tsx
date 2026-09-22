@@ -1,6 +1,6 @@
 import React from 'react';
 import { FinancialRecord } from '../types';
-import { TrendingUp, ShieldCheck, Globe, Coins, Building2, ChevronLeft, Calculator } from 'lucide-react';
+import { TrendingUp, ShieldCheck, Globe, Coins, Building2, ChevronLeft, Calculator, Layers } from 'lucide-react';
 
 interface AssetSparklinesCardProps {
   records: FinancialRecord[];
@@ -22,11 +22,15 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
   const checking = currentRecord.checking || 0;
   const altshuler = currentRecord.altshuler || 0;
   const excellence = currentRecord.excellence || 0;
+  const onezero = currentRecord.onezero_portfolio || Number(currentRecord.raw_formulas?.onezero_portfolio || (currentRecord.period >= '2026-07' ? 207785 : 0));
   const moneyMarket = currentRecord.money_market || 0;
 
   const prevChecking = previousRecord ? (previousRecord.checking ?? 0) : checking;
   const prevAltshuler = previousRecord ? (previousRecord.altshuler ?? 0) : altshuler;
   const prevExcellence = previousRecord ? (previousRecord.excellence ?? 0) : excellence;
+  const prevOneZero = previousRecord
+    ? (previousRecord.onezero_portfolio ?? Number(previousRecord.raw_formulas?.onezero_portfolio ?? (previousRecord.period >= '2026-07' ? 207785 : 0)))
+    : onezero;
   const prevMoneyMarket = previousRecord ? (previousRecord.money_market ?? 0) : moneyMarket;
 
   const calcDiffPct = (curr: number, prev: number) => {
@@ -57,6 +61,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
   const checkingHistory = records.map(r => r.checking || 0);
   const altshulerHistory = records.map(r => r.altshuler || 0);
   const excellenceHistory = records.map(r => r.excellence || 0);
+  const onezeroHistory = records.map(r => r.onezero_portfolio || (r.period >= '2026-07' ? 207785 : 0));
   const moneyMarketHistory = records.map(r => r.money_market || 0);
 
   const assets = [
@@ -72,6 +77,19 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       color: '#10B981',
       bgLight: 'bg-emerald-50 text-emerald-700 border-emerald-200/60',
       icon: <Globe className="w-5 h-5 text-emerald-600" />,
+    },
+    {
+      id: 'onezero',
+      name: 'וואן זירו (ONE ZERO)',
+      subtitle: 'כספית ילין לפידות (₪190K) · מור 125 · קרן VTV',
+      value: onezero,
+      pct: ((onezero / total) * 100).toFixed(1),
+      diff: onezero - prevOneZero,
+      diffPct: calcDiffPct(onezero, prevOneZero),
+      history: onezeroHistory,
+      color: '#6366F1',
+      bgLight: 'bg-indigo-50 text-indigo-700 border-indigo-200/60',
+      icon: <Layers className="w-5 h-5 text-indigo-600" />,
     },
     {
       id: 'altshuler',
@@ -119,10 +137,10 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <h2 className="text-sm font-bold text-slate-900 tracking-tight">
-            4 עמודי התווך של ההון
+            עמודי התווך של ההון וההשקעות
           </h2>
           <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-            פילוח מפורט
+            5 מוקדים
           </span>
         </div>
         {onViewHistory && (

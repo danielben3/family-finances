@@ -21,6 +21,7 @@ export interface FinancialRecord {
   altshuler: number;          // אלטשולר שחם (גמל)
   excellence: number;         // אקסלנס (מניות)
   excellence_cost_basis?: number; // קרן מושקעת באקסלנס (עלות בסיס)
+  onezero_portfolio?: number; // תיק ניירות ערך וכספית ONE ZERO
   money_market: number;       // קרן כספית
   investments_total: number;  // סה״כ השקעות
   total_wealth: number;       // עו״ש + השקעות

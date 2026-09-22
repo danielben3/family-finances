@@ -597,8 +597,8 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 1.0321,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0.02,
-    "week_change_pct": 0.1,
+    "day_change_pct": 0.0,
+    "week_change_pct": 0.92,
     "notes": "קרן כספית שקלית מניבה ריבית",
     "updated_at": "2026-09-20T12:18:00.598Z"
   },
@@ -613,8 +613,8 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 4.2375,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0.85,
-    "week_change_pct": 1.45,
+    "day_change_pct": 0.95,
+    "week_change_pct": 1.05,
     "notes": "קרן מחקה מדד ת\"א 125",
     "updated_at": "2026-09-20T12:18:00.598Z"
   },
@@ -629,8 +629,8 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 221.25,
     "currency": "USD",
     "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 0.7,
-    "week_change_pct": 1.1,
+    "day_change_pct": -0.24,
+    "week_change_pct": -0.62,
     "notes": "קרן סל ערך אמריקאית",
     "updated_at": "2026-09-20T12:18:00.732Z"
   },
