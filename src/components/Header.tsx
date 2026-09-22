@@ -1,4 +1,4 @@
-import { ShieldCheck, Cloud, CloudOff, Smartphone, Sparkles, Home, Briefcase, Table } from 'lucide-react';
+import { ShieldCheck, Cloud, CloudOff, Smartphone, Sparkles, Home, Briefcase, Table, RefreshCw } from 'lucide-react';
 import { NavTab } from './MobileNav';
 
 interface HeaderProps {
@@ -114,6 +114,23 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Smartphone className="w-4 h-4 text-blue-600" />
             <span className="hidden sm:inline">סנכרן טלפון</span>
+          </button>
+
+          {/* Force Refresh & Cache Clear Button */}
+          <button
+            onClick={async () => {
+              if ('caches' in window) {
+                try {
+                  const names = await caches.keys();
+                  await Promise.all(names.map(n => caches.delete(n)));
+                } catch (e) {}
+              }
+              window.location.reload();
+            }}
+            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition active:scale-95"
+            title="רענן גרסה ונקה מטמון"
+          >
+            <RefreshCw className="w-4 h-4" />
           </button>
         </div>
 
