@@ -9,6 +9,9 @@ import {
   calcTotalCashILS,
   calcTotalHoldingsGainILS,
   calcTotalEstimatedTaxILS,
+  calcTotalDailyChangeILS,
+  calcTotalWeeklyChangeILS,
+  calcPortfolioBreakdowns,
 } from '../lib/stockPricesService';
 import {
   TrendingUp,
@@ -27,6 +30,9 @@ import {
   History,
   ShieldCheck,
   Sparkles,
+  PieChart,
+  Calendar,
+  Zap,
 } from 'lucide-react';
 
 interface HoldingsPortfolioViewProps {
@@ -74,6 +80,11 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
   const totalGainPct = totalCostBasis > 0 ? (totalGain / totalCostBasis) * 100 : 0;
   const estimatedTax = calcTotalEstimatedTaxILS(holdings, 0.25);
   const netAfterTaxVal = totalVal - estimatedTax;
+
+  const dayChange = calcTotalDailyChangeILS(holdings);
+  const weekChange = calcTotalWeeklyChangeILS(holdings);
+  const breakdowns = calcPortfolioBreakdowns(holdings, cash);
+  const [breakdownCategory, setBreakdownCategory] = useState<'asset' | 'currency' | 'account'>('asset');
 
   // Filter holdings
   const portfoliosList = Array.from(new Set(holdings.map(h => h.portfolio_name)));
@@ -152,10 +163,10 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
           </div>
 
           {/* KPI Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             
-            {/* Total Portfolio ILS */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+            {/* 1. Total Portfolio ILS */}
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
               <span className="text-xs text-slate-400 font-medium block">
                 סך שווי התיק הכולל (מניות + מזומן)
               </span>
@@ -165,12 +176,60 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
                 </span>
               </div>
               <span className="text-[11px] text-slate-400 mt-1 block">
-                {holdings.length} ניירות מוחזקים
+                {holdings.length} ניירות מוחזקים · כולל יתרות מזומן
               </span>
             </div>
 
-            {/* Total Unrealized Gain */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+            {/* 2. Daily Change (24h) */}
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400 font-medium">
+                  שינוי יומי בתיק (24 שעות)
+                </span>
+                <span className="p-1 rounded-lg bg-white/10 text-amber-300">
+                  <Zap className="w-3.5 h-3.5" />
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1.5 mt-1">
+                <span className={`text-2xl sm:text-3xl font-extrabold font-num ${
+                  dayChange.amount >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                }`}>
+                  {dayChange.amount >= 0 ? '+' : ''}{formatILS(dayChange.amount)}
+                </span>
+              </div>
+              <span className={`text-[11px] font-bold font-num mt-1 block ${
+                dayChange.pct >= 0 ? 'text-emerald-300' : 'text-rose-300'
+              }`}>
+                {dayChange.pct >= 0 ? '+' : ''}{dayChange.pct}% תנודה יומית
+              </span>
+            </div>
+
+            {/* 3. Weekly Change (7d) */}
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400 font-medium">
+                  שינוי שבועי בתיק (7 ימים)
+                </span>
+                <span className="p-1 rounded-lg bg-white/10 text-indigo-300">
+                  <Calendar className="w-3.5 h-3.5" />
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1.5 mt-1">
+                <span className={`text-2xl sm:text-3xl font-extrabold font-num ${
+                  weekChange.amount >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                }`}>
+                  {weekChange.amount >= 0 ? '+' : ''}{formatILS(weekChange.amount)}
+                </span>
+              </div>
+              <span className={`text-[11px] font-bold font-num mt-1 block ${
+                weekChange.pct >= 0 ? 'text-emerald-300' : 'text-rose-300'
+              }`}>
+                {weekChange.pct >= 0 ? '+' : ''}{weekChange.pct}% ב-7 הימים האחרונים
+              </span>
+            </div>
+
+            {/* 4. Total Unrealized Gain */}
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
               <span className="text-xs text-slate-400 font-medium block">
                 רווח הון צבור (לפני מס)
               </span>
@@ -180,12 +239,12 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
                 </span>
               </div>
               <span className="text-[11px] font-bold text-emerald-300 mt-1 block font-num">
-                +{totalGainPct.toFixed(1)}% תשואה כוללת
+                +{totalGainPct.toFixed(1)}% תשואה מצטברת כוללת
               </span>
             </div>
 
-            {/* Estimated Tax & Net */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+            {/* 5. Estimated Tax & Net */}
+            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
               <span className="text-xs text-slate-400 font-medium block">
                 נטו שנשאר בכיס (לאחר 25% מס)
               </span>
@@ -199,7 +258,7 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
               </span>
             </div>
 
-            {/* Cash in Account */}
+            {/* 6. Cash in Account */}
             <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between">
@@ -286,7 +345,124 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Filter and Search Bar */}
+      {/* 2. Portfolio Allocations & Breakdowns Section */}
+      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5">
+        {/* Header with Switcher Tabs */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200/60 shrink-0">
+              <PieChart className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                פילוח והקצאת נכסים בתיק
+              </h3>
+              <p className="text-[11px] text-slate-500 font-medium">
+                פיזור ההון לפי אפיקי השקעה, חשיפה למטבעות ומוסדות פיננסיים
+              </p>
+            </div>
+          </div>
+
+          {/* Tab Pills */}
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl text-xs font-bold">
+            <button
+              onClick={() => setBreakdownCategory('asset')}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                breakdownCategory === 'asset'
+                  ? 'bg-white text-slate-900 shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              אפיקי השקעה
+            </button>
+            <button
+              onClick={() => setBreakdownCategory('currency')}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                breakdownCategory === 'currency'
+                  ? 'bg-white text-slate-900 shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              חשיפה למטבע
+            </button>
+            <button
+              onClick={() => setBreakdownCategory('account')}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                breakdownCategory === 'account'
+                  ? 'bg-white text-slate-900 shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              חשבונות מסחר
+            </button>
+          </div>
+        </div>
+
+        {/* Active Allocation Bar & Detail Cards */}
+        {(() => {
+          const activeItems =
+            breakdownCategory === 'asset'
+              ? breakdowns.byAssetType
+              : breakdownCategory === 'currency'
+              ? breakdowns.byCurrency
+              : breakdowns.byAccount;
+
+          return (
+            <div className="space-y-4">
+              {/* Multi-segment Progress Bar */}
+              <div className="w-full h-4 rounded-full bg-slate-100 flex overflow-hidden p-0.5 border border-slate-200/60 shadow-inner">
+                {activeItems.map(item => (
+                  <div
+                    key={item.id}
+                    style={{
+                      width: `${item.percentage}%`,
+                      backgroundColor: item.color,
+                    }}
+                    className="h-full rounded-xs transition-all duration-500 first:rounded-r-full last:rounded-l-full"
+                    title={`${item.name}: ${item.percentage}% (${formatILS(item.valueILS)})`}
+                  />
+                ))}
+              </div>
+
+              {/* Detailed Items Cards Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+                {activeItems.map(item => (
+                  <div
+                    key={item.id}
+                    className="p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-50 transition flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span
+                        className="w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <div className="truncate">
+                        <h4 className="text-xs font-bold text-slate-800 truncate">
+                          {item.name}
+                        </h4>
+                        <span className="text-[11px] text-slate-400 font-num">
+                          {item.count} {item.count === 1 ? 'נכס' : 'נכסים'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-left shrink-0 mr-3">
+                      <span className="text-xs font-extrabold text-slate-900 font-num block">
+                        {formatILS(item.valueILS)}
+                      </span>
+                      <span className="text-[11px] font-black text-slate-600 font-num">
+                        {item.percentage}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+
+      {/* 3. Filter and Search Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         {/* Portfolio Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
@@ -380,6 +556,29 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
                       <p className="text-xs text-slate-500 mt-0.5 font-medium">
                         {holding.name}
                       </p>
+                      {/* Daily & Weekly Performance Badges */}
+                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                        {typeof holding.day_change_pct === 'number' && (
+                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg font-num flex items-center gap-1 border ${
+                            holding.day_change_pct >= 0
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/70'
+                              : 'bg-rose-50 text-rose-700 border-rose-200/70'
+                          }`}>
+                            <Zap className="w-2.5 h-2.5" />
+                            <span>יומי: {holding.day_change_pct >= 0 ? '+' : ''}{holding.day_change_pct}%</span>
+                          </span>
+                        )}
+                        {typeof holding.week_change_pct === 'number' && (
+                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg font-num flex items-center gap-1 border ${
+                            holding.week_change_pct >= 0
+                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200/70'
+                              : 'bg-amber-50 text-amber-700 border-amber-200/70'
+                          }`}>
+                            <Calendar className="w-2.5 h-2.5" />
+                            <span>שבועי: {holding.week_change_pct >= 0 ? '+' : ''}{holding.week_change_pct}%</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 

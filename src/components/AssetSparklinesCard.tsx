@@ -24,10 +24,16 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
   const excellence = currentRecord.excellence || 0;
   const moneyMarket = currentRecord.money_market || 0;
 
-  const prevChecking = previousRecord?.checking || checking;
-  const prevAltshuler = previousRecord?.altshuler || altshuler;
-  const prevExcellence = previousRecord?.excellence || excellence;
-  const prevMoneyMarket = previousRecord?.money_market || moneyMarket;
+  const prevChecking = previousRecord ? (previousRecord.checking ?? 0) : checking;
+  const prevAltshuler = previousRecord ? (previousRecord.altshuler ?? 0) : altshuler;
+  const prevExcellence = previousRecord ? (previousRecord.excellence ?? 0) : excellence;
+  const prevMoneyMarket = previousRecord ? (previousRecord.money_market ?? 0) : moneyMarket;
+
+  const calcDiffPct = (curr: number, prev: number) => {
+    if (prev > 0) return (((curr - prev) / prev) * 100).toFixed(1);
+    if (prev === 0 && curr > 0) return '+100';
+    return '0.0';
+  };
 
   const formatILS = (val: number) =>
     '₪' + Math.round(val).toLocaleString('he-IL');
@@ -61,7 +67,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       value: excellence,
       pct: ((excellence / total) * 100).toFixed(1),
       diff: excellence - prevExcellence,
-      diffPct: prevExcellence > 0 ? (((excellence - prevExcellence) / prevExcellence) * 100).toFixed(1) : '0',
+      diffPct: calcDiffPct(excellence, prevExcellence),
       history: excellenceHistory,
       color: '#10B981',
       bgLight: 'bg-emerald-50 text-emerald-700 border-emerald-200/60',
@@ -74,7 +80,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       value: altshuler,
       pct: ((altshuler / total) * 100).toFixed(1),
       diff: altshuler - prevAltshuler,
-      diffPct: prevAltshuler > 0 ? (((altshuler - prevAltshuler) / prevAltshuler) * 100).toFixed(1) : '0',
+      diffPct: calcDiffPct(altshuler, prevAltshuler),
       history: altshulerHistory,
       color: '#2563EB',
       bgLight: 'bg-blue-50 text-blue-700 border-blue-200/60',
@@ -87,7 +93,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       value: moneyMarket,
       pct: ((moneyMarket / total) * 100).toFixed(1),
       diff: moneyMarket - prevMoneyMarket,
-      diffPct: prevMoneyMarket > 0 ? (((moneyMarket - prevMoneyMarket) / prevMoneyMarket) * 100).toFixed(1) : '0',
+      diffPct: calcDiffPct(moneyMarket, prevMoneyMarket),
       history: moneyMarketHistory,
       color: '#F59E0B',
       bgLight: 'bg-amber-50 text-amber-700 border-amber-200/60',
@@ -100,7 +106,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       value: checking,
       pct: ((checking / total) * 100).toFixed(1),
       diff: checking - prevChecking,
-      diffPct: prevChecking > 0 ? (((checking - prevChecking) / prevChecking) * 100).toFixed(1) : '0',
+      diffPct: calcDiffPct(checking, prevChecking),
       history: checkingHistory,
       color: '#64748B',
       bgLight: 'bg-slate-100 text-slate-700 border-slate-200/60',

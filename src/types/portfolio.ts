@@ -13,6 +13,7 @@ export interface Holding {
   currency: Currency;          // מטבע המקור
   exchange_rate_to_ils: number;// שער המרה לשקל (1 לש"ח, ~3.65 ל-$)
   day_change_pct?: number;     // שינוי יומי באחוזים
+  week_change_pct?: number;    // שינוי שבועי באחוזים
   notes?: string;
   updated_at?: string;
 }

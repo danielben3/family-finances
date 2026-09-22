@@ -49,7 +49,14 @@ export const App: React.FC = () => {
         const parsed = JSON.parse(saved);
         // Automatically upgrade any old mock cache (less than 10 items or holding-cspx) to the real 27 holdings
         if (Array.isArray(parsed) && parsed.length >= 10 && !parsed.some((h: any) => h.id === 'holding-cspx')) {
-          return parsed;
+          return parsed.map((h: any) => {
+            const seed = INITIAL_HOLDINGS_SEED.find((s: any) => s.id === h.id || s.symbol === h.symbol);
+            return {
+              ...h,
+              day_change_pct: typeof h.day_change_pct === 'number' && h.day_change_pct !== 0 ? h.day_change_pct : (seed?.day_change_pct ?? 0),
+              week_change_pct: typeof h.week_change_pct === 'number' && h.week_change_pct !== 0 ? h.week_change_pct : (seed?.week_change_pct ?? 0),
+            };
+          });
         }
       } catch (e) {}
     }
