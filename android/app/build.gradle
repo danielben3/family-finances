@@ -7,8 +7,8 @@ android {
         applicationId "com.familyfinances.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2.0"
+        versionCode 3
+        versionName "2.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +16,28 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            storeFile file('keystore/family-finances.keystore')
+            storePassword 'familyfinances2026'
+            keyAlias 'familykey'
+            keyPassword 'familyfinances2026'
+        }
+        debug {
+            storeFile file('keystore/family-finances.keystore')
+            storePassword 'familyfinances2026'
+            keyAlias 'familykey'
+            keyPassword 'familyfinances2026'
+        }
+    }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 }
