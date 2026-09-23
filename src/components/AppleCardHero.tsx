@@ -51,98 +51,95 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
 
   return (
     <section className="space-y-4">
-      {/* 1. Physical Titanium Virtual Card */}
-      <div className="relative w-full rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-white via-slate-100 to-slate-200/90 border border-white/90 titanium-card-bevel overflow-hidden transition-all">
-        {/* Specular Sheen Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/60 to-transparent pointer-events-none opacity-80" />
-        <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-blue-400/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
+      {/* Quiet Wealth RTL Master Glass Card */}
+      <div className="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden transition-all duration-300">
+        {/* Specular Ambient Gradient Orbs */}
+        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-blue-400/10 blur-3xl pointer-events-none" />
 
         <div className="relative z-10">
-          {/* Top Row: Cardholder Branding & Chip */}
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] font-bold tracking-widest uppercase text-slate-500 deboss-text">
-                  BEN SOVEREIGN WEALTH
-                </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-              </div>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
-                תיק הון משפחתי רב-נכסי
-              </p>
+          {/* Top Row: Header & Privacy / Net Toggle */}
+          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-slate-200/60">
+            <div className="flex items-center gap-2 text-slate-500 text-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="font-bold uppercase tracking-wider text-slate-600 text-[11px]">
+                סך שווי הון כולל נטו (NET WORTH)
+              </span>
+              <span className="text-slate-300">•</span>
+              <span className="text-slate-400 text-[11px] font-medium">מעודכן ל-{currentRecord.label}</span>
             </div>
 
-            {/* Chip and Contactless Wave */}
-            <div className="flex items-center gap-3">
-              <Wifi className="w-5 h-5 text-slate-400 rotate-90" />
-              {/* Microchip */}
-              <div className="w-9 h-7 rounded-md bg-gradient-to-br from-amber-200 via-amber-300 to-yellow-500 border border-amber-400/90 p-1 flex flex-col justify-between shadow-xs">
-                <div className="w-full h-px bg-amber-600/60" />
-                <div className="flex justify-between h-3">
-                  <div className="w-2.5 border-r border-amber-600/60" />
-                  <div className="w-2.5 border-l border-amber-600/60" />
-                </div>
-                <div className="w-full h-px bg-amber-600/60" />
+            <div className="flex items-center gap-2">
+              {/* Gross / Net Toggle */}
+              <div className="inline-flex rounded-xl bg-slate-100/90 p-0.5 text-[11px] font-bold border border-slate-200/60">
+                <button
+                  type="button"
+                  onClick={() => setIsNetMode(false)}
+                  className={`px-2.5 py-1 rounded-lg transition ${!isNetMode ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  ברוטו
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsNetMode(true)}
+                  className={`px-2.5 py-1 rounded-lg transition ${isNetMode ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  נטו לאחר מס
+                </button>
               </div>
+
+              {onOpenCostBasis && (
+                <button
+                  onClick={onOpenCostBasis}
+                  className="flex items-center gap-1 text-emerald-800 hover:text-emerald-950 transition text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-xl border border-emerald-300/80 active:scale-95 shadow-xs"
+                  title="הגדרת קרן וחישוב נטו"
+                >
+                  <Calculator className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="hidden sm:inline">{costBasis > 0 ? 'ערוך קרן' : 'הזן קרן'}</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => setIsPrivate(!isPrivate)}
+                className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition text-[11px] font-semibold bg-white px-2.5 py-1 rounded-xl border border-slate-200/80 active:scale-95 shadow-xs"
+                title={isPrivate ? 'הצג סכומים' : 'הסתר סכומים (מצב פרטיות)'}
+              >
+                {isPrivate ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                <span className="hidden sm:inline">{isPrivate ? 'הצג' : 'פרטיות'}</span>
+              </button>
             </div>
           </div>
 
-          {/* Center: Total Net Worth Display */}
-          <div className="mt-8 space-y-1.5">
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  סך ההון המשפחתי
-                </span>
-                {/* Gross / Net Toggle */}
-                <div className="inline-flex rounded-lg bg-slate-200/70 p-0.5 text-[10px] font-bold">
-                  <button
-                    type="button"
-                    onClick={() => setIsNetMode(false)}
-                    className={`px-2 py-0.5 rounded-md transition ${!isNetMode ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
-                  >
-                    ברוטו
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsNetMode(true)}
-                    className={`px-2 py-0.5 rounded-md transition ${isNetMode ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
-                  >
-                    נטו לאחר מס
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                {onOpenCostBasis && (
-                  <button
-                    onClick={onOpenCostBasis}
-                    className="flex items-center gap-1 text-emerald-800 hover:text-emerald-950 transition text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-full border border-emerald-300/80 active:scale-95 shadow-xs"
-                    title="הגדרת קרן וחישוב נטו"
-                  >
-                    <Calculator className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{costBasis > 0 ? 'ערוך קרן' : 'הזן קרן'}</span>
-                  </button>
-                )}
-                <button
-                  onClick={() => setIsPrivate(!isPrivate)}
-                  className="flex items-center gap-1 text-slate-500 hover:text-blue-600 transition text-[11px] font-semibold bg-white/70 backdrop-blur-sm px-2.5 py-1 rounded-full border border-slate-200/60 active:scale-95 shadow-xs"
-                  title={isPrivate ? 'הצג סכומים' : 'הסתר סכומים (מצב פרטיות)'}
-                >
-                  {isPrivate ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                  <span>{isPrivate ? 'הצג' : 'פרטיות'}</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl sm:text-5xl font-extrabold text-slate-900 font-num tracking-tight">
+          {/* Big Metric Display */}
+          <div className="mt-5 space-y-2">
+            <div className="flex flex-wrap items-baseline gap-3 sm:gap-5">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tabular-nums tracking-tight">
                 {formatILS(displayTotal)}
-              </span>
-              <span className="text-xs sm:text-sm font-bold text-slate-400">
-                {currentRecord.label}
-              </span>
+              </h1>
+
+              {/* Emerald Glow Pill */}
+              {previousRecord && (
+                <div
+                  className={`px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-bold tabular-nums shadow-sm transition ${
+                    isPositive
+                      ? 'emerald-glow-pill text-emerald-800 bg-emerald-500/10 border border-emerald-600/25'
+                      : 'bg-rose-50 text-rose-800 border border-rose-200'
+                  }`}
+                >
+                  {isPositive ? (
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                  ) : (
+                    <TrendingDown className="w-4 h-4 text-rose-600" />
+                  )}
+                  <span>
+                    {isPositive ? '+' : ''}
+                    {diffPct.toFixed(1)}%
+                  </span>
+                  <span className="text-[11px] font-normal text-slate-600">
+                    ({isPositive ? '+' : ''}{isPrivate ? '••••' : formatILS(diff)} החודש)
+                  </span>
+                </div>
+              )}
             </div>
 
             {costBasis > 0 && isNetMode && (
@@ -153,64 +150,58 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
             )}
           </div>
 
-          {/* Bottom Row: Performance Pill & Masked Security Tag */}
-          <div className="mt-7 pt-4 border-t border-slate-300/50 flex items-center justify-between">
-            {previousRecord ? (
-              <div
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold font-num shadow-xs ${
-                  isPositive
-                    ? 'bg-emerald-500/10 text-emerald-800 border border-emerald-600/20'
-                    : 'bg-rose-500/10 text-rose-800 border border-rose-600/20'
-                }`}
-              >
-                {isPositive ? (
-                  <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
-                ) : (
-                  <TrendingDown className="w-3.5 h-3.5 text-rose-600" />
-                )}
-                <span>
-                  {isPositive ? '+' : ''}
-                  {isPrivate ? '••••' : formatILS(diff)} ({isPositive ? '+' : ''}{diffPct.toFixed(1)}%)
-                </span>
-                <span className="text-[10px] text-slate-500 font-normal">החודש</span>
-              </div>
-            ) : (
-              <div className="text-xs text-slate-400">חודש בסיס</div>
-            )}
+          {/* Inline Metadata Stats Ledger */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-5 mt-5 border-t border-slate-200/60 text-xs">
+            <div className="p-2.5 rounded-2xl bg-white/70 border border-slate-100 flex flex-col justify-between">
+              <span className="text-slate-400 text-[11px] block">נזילות מיידית (עו״ש + כספית):</span>
+              <span className="font-bold text-slate-900 text-sm sm:text-base tabular-nums mt-0.5">
+                {formatILS((currentRecord.checking || 0) + (currentRecord.money_market || 0))}
+              </span>
+            </div>
 
-            <div className="flex items-center gap-1 text-[11px] font-mono text-slate-400">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>SOV-2026</span>
+            <div className="p-2.5 rounded-2xl bg-white/70 border border-slate-100 flex flex-col justify-between">
+              <span className="text-slate-400 text-[11px] block">חיסכון חודשי מדווח:</span>
+              <span className="font-bold text-slate-900 text-sm sm:text-base tabular-nums mt-0.5">
+                {formatILS(currentRecord.savings || 0)}
+              </span>
+            </div>
+
+            <div className="p-2.5 rounded-2xl bg-white/70 border border-slate-100 col-span-2 sm:col-span-1 flex flex-col justify-between">
+              <span className="text-slate-400 text-[11px] block">פרופיל סיכון והרכב:</span>
+              <span className="font-semibold text-emerald-700 text-xs sm:text-sm mt-0.5 flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>צמיחה מאוזנת (6.2/10)</span>
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. Quick Action Interactive Pills Bar */}
+      {/* Quick Action Interactive Pills Bar */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
         {/* Quick Log Form */}
         <button
           onClick={onQuickLog}
-          className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 active:scale-95 transition"
+          className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md active:scale-95 transition"
         >
-          <Plus className="w-4 h-4" />
-          <span>הזנה מהירה</span>
+          <Plus className="w-4 h-4 text-emerald-400" />
+          <span>הזנת נתונים</span>
         </button>
 
         {/* FIRE Calculator */}
         <button
           onClick={onOpenFire}
-          className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-sm active:scale-95 transition"
+          className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-xs active:scale-95 transition"
         >
           <Flame className="w-4 h-4 text-amber-500" />
-          <span>מחשבון FIRE ועצמאות</span>
+          <span>מחשבון יעדים ו-FIRE</span>
         </button>
 
         {/* Cost Basis & Tax Net */}
         {onOpenCostBasis && (
           <button
             onClick={onOpenCostBasis}
-            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 font-semibold text-xs shadow-sm active:scale-95 transition"
+            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 font-semibold text-xs shadow-xs active:scale-95 transition"
           >
             <Calculator className="w-4 h-4 text-emerald-600" />
             <span>הזנת קרן וחישוב נטו</span>
@@ -221,7 +212,7 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
         {onScrollToGoals && (
           <button
             onClick={onScrollToGoals}
-            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-sm active:scale-95 transition"
+            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-xs active:scale-95 transition"
           >
             <Target className="w-4 h-4 text-blue-600" />
             <span>יעד 2M ₪</span>
@@ -232,7 +223,7 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
         {onExportExcel && (
           <button
             onClick={onExportExcel}
-            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-sm active:scale-95 transition"
+            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-xs active:scale-95 transition"
           >
             <Download className="w-4 h-4 text-slate-500" />
             <span>ייצוא לאקסל</span>

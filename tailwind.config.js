@@ -8,21 +8,25 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Heebo', 'Inter', 'sans-serif'],
+        sans: ['Rubik', 'Heebo', 'Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
+        porcelain: '#F8FAFC',
+        deepNavy: '#0F172A',
+        emeraldGlow: '#059669',
+        slateGold: '#C5A869',
         fin: {
-          bg: '#070A12',
-          surface: '#0F172A',
-          card: 'rgba(15, 23, 42, 0.75)',
-          border: 'rgba(255, 255, 255, 0.08)',
-          emerald: '#10B981',
-          rose: '#EF4444',
-          sky: '#38BDF8',
-          amber: '#F59E0B',
-          purple: '#A855F7',
-          blue: '#3B82F6'
+          bg: '#F8FAFC',
+          surface: '#FFFFFF',
+          card: 'rgba(255, 255, 255, 0.92)',
+          border: 'rgba(226, 232, 240, 0.85)',
+          emerald: '#006c4a',
+          rose: '#ba1a1a',
+          sky: '#0284c7',
+          amber: '#d97706',
+          purple: '#7c3aed',
+          blue: '#2563EB'
         }
       }
     },

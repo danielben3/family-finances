@@ -479,32 +479,62 @@ export const App: React.FC = () => {
               }}
             />
           ) : (
-            <div className="space-y-6">
-              {/* Grid Layout (5 cols / 7 cols) */}
-              <div className="grid grid-cols-12 gap-6">
-                {/* Left Column (5 cols): Apple Card Hero + FIRE Milestone + Monthly Input Form */}
-                <div className="col-span-5 space-y-6">
-                  <AppleCardHero
-                    currentRecord={currentRecord}
-                    previousRecord={previousRecord}
-                    onQuickLog={() => {
-                      const el = document.getElementById('desktop-monthly-form');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    onOpenFire={() => setIsFireModalOpen(true)}
-                    onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
-                    onExportExcel={() => {
-                      exportFinancialRecordsToExcel(records);
-                      showToast('הקובץ יוצא בהצלחה! 📊', 'success');
-                    }}
-                  />
+            <div className="space-y-8">
+              {/* 1. Grand Net Worth Hero Card (Full Width) */}
+              <AppleCardHero
+                currentRecord={currentRecord}
+                previousRecord={previousRecord}
+                onQuickLog={() => {
+                  const el = document.getElementById('desktop-monthly-form');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                onOpenFire={() => setIsFireModalOpen(true)}
+                onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                onExportExcel={() => {
+                  exportFinancialRecordsToExcel(records);
+                  showToast('הקובץ יוצא בהצלחה! 📊', 'success');
+                }}
+              />
 
-                  {/* 2026 Month Carousel Pills */}
+              {/* 2. 5 Wealth Pillar Cards (Full Width 5-Column Grid) */}
+              <AssetSparklinesCard
+                records={records}
+                currentRecord={currentRecord}
+                previousRecord={previousRecord}
+                onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                onViewHistory={() => {
+                  setActiveTab('history');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+
+              {/* 3. Analytics & Tools Two Column Section (7 cols / 5 cols) */}
+              <div className="grid grid-cols-12 gap-8 items-start">
+                {/* Right / Main 7-cols: Wealth Progression Chart & AI Insights */}
+                <div className="col-span-7 space-y-6">
+                  <WealthChart records={records} />
+
+                  <WealthInsightsCarousel
+                    records={records}
+                    currentRecord={currentRecord}
+                    onOpenFire={() => setIsFireModalOpen(true)}
+                  />
+                </div>
+
+                {/* Left 5-cols: Month Selector + Cashflow & Runway + Monthly Form */}
+                <div className="col-span-5 space-y-6">
+                  {/* Month Carousel Selector */}
                   <MonthSelector
                     records={records}
                     selectedPeriod={selectedPeriod}
                     onSelectPeriod={p => setSelectedPeriod(p)}
                   />
+
+                  {/* Cashflow & Liquidity Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <CashflowDonutCard currentRecord={currentRecord} />
+                    <LiquidityRunwayCard currentRecord={currentRecord} />
+                  </div>
 
                   <FireMilestoneCard
                     currentRecord={currentRecord}
@@ -519,32 +549,9 @@ export const App: React.FC = () => {
                     />
                   </div>
                 </div>
-
-                {/* Right Column (7 cols): AI Insights + Cashflow Donut + Asset Sparklines + Runway + Wealth Chart */}
-                <div className="col-span-7 space-y-6">
-                  <WealthInsightsCarousel
-                    records={records}
-                    currentRecord={currentRecord}
-                    onOpenFire={() => setIsFireModalOpen(true)}
-                  />
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <CashflowDonutCard currentRecord={currentRecord} />
-                    <LiquidityRunwayCard currentRecord={currentRecord} />
-                  </div>
-
-                  <AssetSparklinesCard
-                    records={records}
-                    currentRecord={currentRecord}
-                    previousRecord={previousRecord}
-                    onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
-                  />
-
-                  <WealthChart records={records} />
-                </div>
               </div>
 
-              {/* Full History Table Underneath */}
+              {/* 4. Full History Table Underneath */}
               <HistoryTable
                 records={records}
                 selectedPeriod={selectedPeriod}
@@ -578,21 +585,7 @@ export const App: React.FC = () => {
                 }}
               />
 
-              {/* Month Selector Carousel */}
-              <MonthSelector
-                records={records}
-                selectedPeriod={selectedPeriod}
-                onSelectPeriod={p => setSelectedPeriod(p)}
-              />
-
-              {/* AI Wealth Insights */}
-              <WealthInsightsCarousel
-                records={records}
-                currentRecord={currentRecord}
-                onOpenFire={() => setIsFireModalOpen(true)}
-              />
-
-              {/* 4 Pillars with Live SVG Sparklines */}
+              {/* 5 Wealth Pillars with Live SVG Sparklines & Carousel */}
               <AssetSparklinesCard
                 records={records}
                 currentRecord={currentRecord}
@@ -601,11 +594,28 @@ export const App: React.FC = () => {
                 onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
               />
 
-              {/* Cashflow Donut Ring */}
-              <CashflowDonutCard currentRecord={currentRecord} />
+              {/* Month Selector Carousel */}
+              <MonthSelector
+                records={records}
+                selectedPeriod={selectedPeriod}
+                onSelectPeriod={p => setSelectedPeriod(p)}
+              />
 
-              {/* Liquidity Runway Gauge */}
-              <LiquidityRunwayCard currentRecord={currentRecord} />
+              {/* Wealth Growth Curve */}
+              <WealthChart records={records} />
+
+              {/* Cashflow Donut Ring & Liquidity Runway */}
+              <div className="grid grid-cols-1 gap-4">
+                <CashflowDonutCard currentRecord={currentRecord} />
+                <LiquidityRunwayCard currentRecord={currentRecord} />
+              </div>
+
+              {/* AI Wealth Insights */}
+              <WealthInsightsCarousel
+                records={records}
+                currentRecord={currentRecord}
+                onOpenFire={() => setIsFireModalOpen(true)}
+              />
 
               {/* FIRE Milestone Progress */}
               <div id="mobile-fire-milestone">
@@ -614,9 +624,6 @@ export const App: React.FC = () => {
                   onOpenCalculator={() => setIsFireModalOpen(true)}
                 />
               </div>
-
-              {/* Wealth Growth Curve */}
-              <WealthChart records={records} />
             </>
           )}
 

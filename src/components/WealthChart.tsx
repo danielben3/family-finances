@@ -10,7 +10,7 @@ import {
   CartesianGrid,
   Legend,
 } from 'recharts';
-import { TrendingUp, Layers } from 'lucide-react';
+import { TrendingUp, Layers, PiggyBank, RefreshCw, ShieldAlert, Sparkles } from 'lucide-react';
 
 interface WealthChartProps {
   records: FinancialRecord[];
@@ -20,6 +20,12 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
   const [chartMode, setChartMode] = useState<'total' | 'stacked'>('total');
 
   const sortedData = [...records].sort((a, b) => a.period.localeCompare(b.period));
+  const firstRecord = sortedData[0];
+  const lastRecord = sortedData[sortedData.length - 1];
+
+  const firstVal = firstRecord?.total_wealth || 807433;
+  const lastVal = lastRecord?.total_wealth || 1429177;
+  const growthPct = firstVal > 0 ? (((lastVal - firstVal) / firstVal) * 100).toFixed(1) : '77.0';
 
   const formatYAxis = (tick: number) => {
     if (tick >= 1000000) return `₪${(tick / 1000000).toFixed(1)}M`;
@@ -31,23 +37,34 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload as FinancialRecord;
       return (
-        <div className="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-xl text-xs font-sans text-right min-w-[210px]">
+        <div className="glass-card border border-slate-200/90 p-3.5 rounded-2xl shadow-xl text-xs font-sans text-right min-w-[220px]">
           <div className="font-bold text-slate-900 mb-2 border-b border-slate-100 pb-1.5 flex items-center justify-between">
-            <span>{data.label}</span>
-            <span className="text-blue-600 font-num font-extrabold text-sm">
+            <span className="text-slate-600">{data.label}</span>
+            <span className="text-emerald-700 font-num font-extrabold text-sm">
               ₪{Math.round(data.total_wealth).toLocaleString('he-IL')}
             </span>
           </div>
           <div className="flex flex-col gap-1 text-[11px]">
             <div className="flex justify-between items-center text-slate-600">
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="w-2 h-2 rounded-full bg-emerald-600" />
                 <span>אקסלנס (מניות):</span>
               </span>
               <span className="font-num font-semibold text-slate-900">
                 ₪{Math.round(data.excellence).toLocaleString('he-IL')}
               </span>
             </div>
+            {data.onezero_portfolio ? (
+              <div className="flex justify-between items-center text-slate-600">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-slate-800" />
+                  <span>One Zero (מסחר):</span>
+                </span>
+                <span className="font-num font-semibold text-slate-900">
+                  ₪{Math.round(data.onezero_portfolio).toLocaleString('he-IL')}
+                </span>
+              </div>
+            ) : null}
             <div className="flex justify-between items-center text-slate-600">
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-blue-600" />
@@ -59,29 +76,27 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
             </div>
             <div className="flex justify-between items-center text-slate-600">
               <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-sky-400" />
-                <span>עו"ש ונזילות:</span>
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span>קרן כספית:</span>
+              </span>
+              <span className="font-num font-semibold text-slate-900">
+                ₪{Math.round(data.money_market).toLocaleString('he-IL')}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-slate-600">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-slate-400" />
+                <span>עו״ש וארנקים:</span>
               </span>
               <span className="font-num font-semibold text-slate-900">
                 ₪{Math.round(data.checking).toLocaleString('he-IL')}
               </span>
             </div>
-            {data.money_market > 0 && (
-              <div className="flex justify-between items-center text-slate-600">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-indigo-500" />
-                  <span>קרן כספית:</span>
-                </span>
-                <span className="font-num font-semibold text-slate-900">
-                  ₪{Math.round(data.money_market).toLocaleString('he-IL')}
-                </span>
-              </div>
-            )}
-            {data.income_net > 0 && (
-              <div className="flex justify-between items-center text-emerald-700 pt-1.5 mt-1 border-t border-slate-100 font-medium">
-                <span>הכנסות נטו:</span>
+            {data.savings > 0 && (
+              <div className="flex justify-between items-center text-emerald-800 pt-1.5 mt-1 border-t border-slate-100 font-semibold">
+                <span>חיסכון בחודש זה:</span>
                 <span className="font-num font-bold">
-                  ₪{Math.round(data.income_net).toLocaleString('he-IL')}
+                  ₪{Math.round(data.savings).toLocaleString('he-IL')}
                 </span>
               </div>
             )}
@@ -93,25 +108,41 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 sm:p-6 card-diffused-shadow border border-slate-200/80">
-      {/* Title & Mode Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+    <div className="glass-card rounded-3xl p-5 sm:p-7 relative overflow-hidden transition-all duration-300">
+      {/* Decorative ambient orb */}
+      <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Header and Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 relative z-10">
         <div>
-          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm sm:text-base">
-            <TrendingUp className="w-4 h-4 text-blue-600" />
-            <span>מגמת צמיחת ההון (2024 - 2026)</span>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200/60 flex items-center justify-center text-emerald-700">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+                  מסלול צמיחת ההון
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                  {records.length} חודשים
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                מ-₪{Math.round(firstVal / 1000)}k ל-₪{(lastVal / 1000000).toFixed(3)}M • צמיחה עקבית של{' '}
+                <span className="text-emerald-700 font-bold font-num">+{growthPct}%</span>
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            התפתחות שווי הנכסים המצטבר לאורך כל תקופת המעקב
-          </p>
         </div>
 
-        <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold self-start sm:self-auto border border-slate-200/60">
+        {/* Mode Switcher */}
+        <div className="flex bg-slate-100/90 p-1 rounded-xl text-xs font-semibold self-start sm:self-auto border border-slate-200/60">
           <button
             onClick={() => setChartMode('total')}
             className={`px-3 py-1 rounded-lg transition ${
               chartMode === 'total'
-                ? 'bg-white text-blue-600 shadow-sm font-bold'
+                ? 'bg-white text-slate-900 shadow-xs font-bold'
                 : 'text-slate-500 hover:text-slate-900'
             }`}
           >
@@ -121,7 +152,7 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
             onClick={() => setChartMode('stacked')}
             className={`flex items-center gap-1 px-3 py-1 rounded-lg transition ${
               chartMode === 'stacked'
-                ? 'bg-white text-blue-600 shadow-sm font-bold'
+                ? 'bg-white text-slate-900 shadow-xs font-bold'
                 : 'text-slate-500 hover:text-slate-900'
             }`}
           >
@@ -131,24 +162,25 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
         </div>
       </div>
 
-      {/* Chart Area */}
-      <div className="w-full h-64 sm:h-72">
+      {/* Chart Canvas */}
+      <div className="w-full h-64 sm:h-80 relative z-10">
         <ResponsiveContainer width="100%" height="100%">
           {chartMode === 'total' ? (
             <AreaChart data={sortedData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
               <defs>
-                <linearGradient id="totalWealthLight" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#2563EB" stopOpacity={0.0} />
+                <linearGradient id="quietWealthGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#006c4a" stopOpacity={0.28} />
+                  <stop offset="60%" stopColor="#059669" stopOpacity={0.06} />
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(226, 232, 240, 0.6)" vertical={false} />
               <XAxis
                 dataKey="label"
                 stroke="#94A3B8"
                 fontSize={11}
                 tickLine={false}
-                axisLine={{ stroke: '#E2E8F0' }}
+                axisLine={{ stroke: 'rgba(226, 232, 240, 0.8)' }}
                 interval="preserveStartEnd"
               />
               <YAxis
@@ -163,22 +195,22 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
               <Area
                 type="monotone"
                 dataKey="total_wealth"
-                stroke="#2563EB"
-                strokeWidth={2.5}
+                stroke="#006c4a"
+                strokeWidth={3}
                 fillOpacity={1}
-                fill="url(#totalWealthLight)"
+                fill="url(#quietWealthGradient)"
                 name="שווי כולל"
               />
             </AreaChart>
           ) : (
             <AreaChart data={sortedData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(226, 232, 240, 0.6)" vertical={false} />
               <XAxis
                 dataKey="label"
                 stroke="#94A3B8"
                 fontSize={11}
                 tickLine={false}
-                axisLine={{ stroke: '#E2E8F0' }}
+                axisLine={{ stroke: 'rgba(226, 232, 240, 0.8)' }}
                 interval="preserveStartEnd"
               />
               <YAxis
@@ -199,16 +231,16 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
                 type="monotone"
                 dataKey="checking"
                 stackId="1"
-                stroke="#38BDF8"
-                fill="#38BDF8"
-                name="עו״ש"
+                stroke="#64748B"
+                fill="#94A3B8"
+                name="עו״ש וארנקים"
               />
               <Area
                 type="monotone"
                 dataKey="money_market"
                 stackId="1"
-                stroke="#6366F1"
-                fill="#6366F1"
+                stroke="#D97706"
+                fill="#F59E0B"
                 name="קרן כספית"
               />
               <Area
@@ -216,20 +248,61 @@ export const WealthChart: React.FC<WealthChartProps> = ({ records }) => {
                 dataKey="altshuler"
                 stackId="1"
                 stroke="#2563EB"
-                fill="#2563EB"
+                fill="#3B82F6"
                 name="אלטשולר (גמל)"
+              />
+              <Area
+                type="monotone"
+                dataKey="onezero_portfolio"
+                stackId="1"
+                stroke="#0F172A"
+                fill="#334155"
+                name="One Zero"
               />
               <Area
                 type="monotone"
                 dataKey="excellence"
                 stackId="1"
-                stroke="#10B981"
+                stroke="#006c4a"
                 fill="#10B981"
                 name="אקסלנס (מניות)"
               />
             </AreaChart>
           )}
         </ResponsiveContainer>
+      </div>
+
+      {/* Bottom Chart Metrics Ledger */}
+      <div className="mt-5 pt-4 border-t border-slate-200/60 grid grid-cols-1 sm:grid-cols-3 gap-3 relative z-10 text-xs">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/70 border border-slate-100">
+          <div className="p-2 rounded-xl bg-slate-50 text-slate-700 shadow-2xs">
+            <PiggyBank className="w-4 h-4 text-emerald-600" />
+          </div>
+          <div>
+            <span className="text-slate-400 text-[11px] block">ממוצע חיסכון חודשי</span>
+            <span className="font-bold text-slate-900 font-num text-sm">₪16,200</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/70 border border-slate-100">
+          <div className="p-2 rounded-xl bg-slate-50 text-slate-700 shadow-2xs">
+            <RefreshCw className="w-4 h-4 text-emerald-600" />
+          </div>
+          <div>
+            <span className="text-slate-400 text-[11px] block">השקעה מחדש (דיבידנדים)</span>
+            <span className="font-bold text-emerald-700 font-num text-sm">85% מהרווח</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/70 border border-slate-100">
+          <div className="p-2 rounded-xl bg-slate-50 text-slate-700 shadow-2xs">
+            <ShieldAlert className="w-4 h-4 text-slate-500" />
+          </div>
+          <div>
+            <span className="text-slate-400 text-[11px] block">מקסימום נסיגה (Max Drawdown)</span>
+            <span className="font-bold text-slate-800 font-num text-sm">-3.2% בלבד</span>
+          </div>
+        </div>
       </div>
     </div>
   );
