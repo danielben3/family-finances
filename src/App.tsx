@@ -29,6 +29,8 @@ import {
 import { HoldingsPortfolioView } from './components/HoldingsPortfolioView';
 import { SellHoldingModal } from './components/SellHoldingModal';
 import { AddEditHoldingModal } from './components/AddEditHoldingModal';
+import { TopHoldingsCard } from './components/TopHoldingsCard';
+import { TrustVerificationBanner } from './components/TrustVerificationBanner';
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
@@ -438,6 +440,11 @@ export const App: React.FC = () => {
         onOpenPhoneModal={() => setIsPhoneModalOpen(true)}
         activeTab={activeTab}
         onSelectTab={tab => setActiveTab(tab)}
+        currentPeriodLabel={currentRecord.label}
+        onExportExcel={() => {
+          exportFinancialRecordsToExcel(records);
+          showToast('הקובץ יוצא בהצלחה! 📊', 'success');
+        }}
       />
 
       {/* Main Container */}
@@ -508,11 +515,18 @@ export const App: React.FC = () => {
                 }}
               />
 
-              {/* 3. Analytics & Tools Two Column Section (7 cols / 5 cols) */}
+              {/* 3. Analytics & Live Holdings Section (8 cols / 4 cols) */}
               <div className="grid grid-cols-12 gap-8 items-start">
-                {/* Right / Main 7-cols: Wealth Progression Chart & AI Insights */}
-                <div className="col-span-7 space-y-6">
+                {/* Right / Main 8-cols: Wealth Progression Chart & AI Insights & Verification */}
+                <div className="col-span-8 space-y-6">
                   <WealthChart records={records} />
+
+                  <TrustVerificationBanner />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <CashflowDonutCard currentRecord={currentRecord} />
+                    <LiquidityRunwayCard currentRecord={currentRecord} />
+                  </div>
 
                   <WealthInsightsCarousel
                     records={records}
@@ -521,20 +535,22 @@ export const App: React.FC = () => {
                   />
                 </div>
 
-                {/* Left 5-cols: Month Selector + Cashflow & Runway + Monthly Form */}
-                <div className="col-span-5 space-y-6">
+                {/* Left 4-cols: Top Live Holdings + Month Selector + Form */}
+                <div className="col-span-4 space-y-6">
+                  <TopHoldingsCard
+                    holdings={holdings}
+                    onViewAllStocks={() => {
+                      setActiveTab('stocks');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  />
+
                   {/* Month Carousel Selector */}
                   <MonthSelector
                     records={records}
                     selectedPeriod={selectedPeriod}
                     onSelectPeriod={p => setSelectedPeriod(p)}
                   />
-
-                  {/* Cashflow & Liquidity Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <CashflowDonutCard currentRecord={currentRecord} />
-                    <LiquidityRunwayCard currentRecord={currentRecord} />
-                  </div>
 
                   <FireMilestoneCard
                     currentRecord={currentRecord}
@@ -568,7 +584,7 @@ export const App: React.FC = () => {
         <div className="md:hidden space-y-5">
           {activeTab === 'overview' && (
             <>
-              {/* Apple Card Hero */}
+              {/* 1. Apple Card Hero */}
               <AppleCardHero
                 currentRecord={currentRecord}
                 previousRecord={previousRecord}
@@ -585,7 +601,7 @@ export const App: React.FC = () => {
                 }}
               />
 
-              {/* 5 Wealth Pillars with Live SVG Sparklines & Carousel */}
+              {/* 2. 5 Wealth Pillars with Live SVG Sparklines & Carousel */}
               <AssetSparklinesCard
                 records={records}
                 currentRecord={currentRecord}
@@ -594,30 +610,42 @@ export const App: React.FC = () => {
                 onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
               />
 
-              {/* Month Selector Carousel */}
+              {/* 3. Wealth Growth Curve */}
+              <WealthChart records={records} />
+
+              {/* 4. Top Live Holdings Card (AAPL, NVDA, AMZN, TA125, VTV) */}
+              <TopHoldingsCard
+                holdings={holdings}
+                onViewAllStocks={() => {
+                  setActiveTab('stocks');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+
+              {/* 5. Trust & Security Seal */}
+              <TrustVerificationBanner />
+
+              {/* 6. Month Selector Carousel */}
               <MonthSelector
                 records={records}
                 selectedPeriod={selectedPeriod}
                 onSelectPeriod={p => setSelectedPeriod(p)}
               />
 
-              {/* Wealth Growth Curve */}
-              <WealthChart records={records} />
-
-              {/* Cashflow Donut Ring & Liquidity Runway */}
+              {/* 7. Cashflow Donut Ring & Liquidity Runway */}
               <div className="grid grid-cols-1 gap-4">
                 <CashflowDonutCard currentRecord={currentRecord} />
                 <LiquidityRunwayCard currentRecord={currentRecord} />
               </div>
 
-              {/* AI Wealth Insights */}
+              {/* 8. AI Wealth Insights */}
               <WealthInsightsCarousel
                 records={records}
                 currentRecord={currentRecord}
                 onOpenFire={() => setIsFireModalOpen(true)}
               />
 
-              {/* FIRE Milestone Progress */}
+              {/* 9. FIRE Milestone Progress */}
               <div id="mobile-fire-milestone">
                 <FireMilestoneCard
                   currentRecord={currentRecord}

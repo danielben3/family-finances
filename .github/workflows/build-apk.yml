@@ -66,13 +66,14 @@ jobs:
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0-apk
-          name: "ניהול פיננסי משפחתי - גרסת אנדרואיד (APK)"
+          tag_name: v2.0-apk
+          name: "ניהול פיננסי משפחתי 2.0 - עיצוב Quiet Wealth RTL (APK)"
           body: |
-            ## הורדת אפליקציית אנדרואיד (APK) 📱
-            - קובץ APK עצמאי להתקנה ישירה ללא PWA
-            - כולל את אייקון המיניון החדש עם שק הזהב
-            - סנכרון ענן מלא וחיבור לנתוני תיק ההשקעות (כולל תיק One Zero)
+            ## הורדת אפליקציית אנדרואיד 2.0 (APK) 📱
+            - עיצוב חדש ויוקרתי: Quiet Wealth RTL (Apple Glass & Private Banking)
+            - 5 עמודי התווך של ההון, סרגל אחזקות מובילות בזמן אמת (AAPL, NVDA, AMZN וכו')
+            - אייקון מיניון בנקאי עם שק מטבעות זהב
+            - גרסה 2.0 נקייה ללא שמירת מטמון ישנה
             
             **איך מתקינים?**
             1. לחץ על `family-finances.apk` להורדה
