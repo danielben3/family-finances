@@ -1,4 +1,4 @@
-export type AssetType = 'stock' | 'etf' | 'mutual_fund' | 'bond' | 'other';
+export type AssetType = 'stock' | 'etf' | 'mutual_fund' | 'money_market' | 'bond' | 'other';
 export type Currency = 'ILS' | 'USD' | 'EUR';
 
 export interface Holding {

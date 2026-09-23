@@ -231,13 +231,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 15,
     "avg_buy_price": 123.41,
-    "current_price": 336.13,
+    "current_price": 339.75,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 2.97,
-    "week_change_pct": 2.64,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "מניית אפל - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:58.539Z"
+    "updated_at": "2026-09-23T13:27:42.115Z"
   },
   {
     "id": "h-2-amzn",
@@ -247,13 +246,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 20,
     "avg_buy_price": 172.36,
-    "current_price": 253.71,
+    "current_price": 254.98,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 2.88,
-    "week_change_pct": 3.91,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "מניית אמזון - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:58.620Z"
+    "updated_at": "2026-09-23T13:27:42.257Z"
   },
   {
     "id": "h-3-qcom",
@@ -263,13 +261,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 8,
     "avg_buy_price": 145.38,
-    "current_price": 177.72,
+    "current_price": 198.27,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 1.45,
-    "week_change_pct": 2.1,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "מניית קוואלקום - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:58.767Z"
+    "updated_at": "2026-09-23T13:27:42.408Z"
   },
   {
     "id": "h-4-nvda",
@@ -279,13 +276,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 6,
     "avg_buy_price": 132.13,
-    "current_price": 222.27,
+    "current_price": 228.87,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 8.12,
-    "week_change_pct": 7.25,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "מניית אנבידיה - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:58.883Z"
+    "updated_at": "2026-09-23T13:27:42.558Z"
   },
   {
     "id": "h-5-shop",
@@ -295,13 +291,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 65,
     "avg_buy_price": 70.08,
-    "current_price": 128.5,
+    "current_price": 147.74,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 3.2,
-    "week_change_pct": 4.5,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "מניית שופיפיי - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:59.000Z"
+    "updated_at": "2026-09-23T13:27:42.736Z"
   },
   {
     "id": "h-6-sedg",
@@ -311,13 +306,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 100,
     "avg_buy_price": 60.66,
-    "current_price": 34.68,
+    "current_price": 36.08,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": -1.8,
-    "week_change_pct": -3.2,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "סולאראדג טכנולוגיות - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:59.112Z"
+    "updated_at": "2026-09-23T13:27:42.850Z"
   },
   {
     "id": "h-7-spg",
@@ -327,13 +321,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 10,
     "avg_buy_price": 95.06,
-    "current_price": 205.32,
+    "current_price": 205.95,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 0.65,
-    "week_change_pct": 1.15,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "סיימון פרופרטי גרופ - ריט ארה\"ב",
-    "updated_at": "2026-09-20T12:17:59.258Z"
+    "updated_at": "2026-09-23T13:27:43.011Z"
   },
   {
     "id": "h-8-crm",
@@ -343,13 +336,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 5,
     "avg_buy_price": 227.74,
-    "current_price": 237.92,
+    "current_price": 233.28,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 1.1,
-    "week_change_pct": 1.8,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "סיילספורס - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:59.390Z"
+    "updated_at": "2026-09-23T13:27:43.141Z"
   },
   {
     "id": "h-9-drs",
@@ -359,13 +351,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 103,
     "avg_buy_price": 23.03,
-    "current_price": 37.19,
+    "current_price": 37.15,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 0.46,
-    "week_change_pct": 1.2,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "לאונרדו די.אר.אס - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:59.515Z"
+    "updated_at": "2026-09-23T13:27:43.262Z"
   },
   {
     "id": "h-10-vti",
@@ -375,13 +366,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "etf",
     "shares": 4,
     "avg_buy_price": 250.5,
-    "current_price": 375.43,
+    "current_price": 381.27,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 1.25,
-    "week_change_pct": 1.95,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "קרן סל ואנגארד כלל שוק ארה\"ב",
-    "updated_at": "2026-09-20T12:17:59.624Z"
+    "updated_at": "2026-09-23T13:27:43.397Z"
   },
   {
     "id": "h-11-vug",
@@ -391,13 +381,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "etf",
     "shares": 48,
     "avg_buy_price": 48.4,
-    "current_price": 88.75,
+    "current_price": 91.12,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": 1.85,
-    "week_change_pct": 2.6,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "קרן סל ואנגארד צמיחה - ארה\"ב",
-    "updated_at": "2026-09-20T12:17:59.751Z"
+    "updated_at": "2026-09-23T13:27:43.578Z"
   },
   {
     "id": "h-12-qltu-ta",
@@ -407,13 +396,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 200,
     "avg_buy_price": 71.62,
-    "current_price": 350,
+    "current_price": 347.7,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 8.28,
-    "week_change_pct": 9.4,
+    "day_change_pct": 0.0,
     "notes": "מספר נייר 1083955 - בורסת ת\"א",
-    "updated_at": "2026-09-20T12:17:59.890Z"
+    "updated_at": "2026-09-23T13:27:43.810Z"
   },
   {
     "id": "h-13-ibi-ta",
@@ -423,12 +411,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 37,
     "avg_buy_price": 54.74,
-    "current_price": 457.5,
+    "current_price": 458.8,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0,
+    "day_change_pct": 0.0,
     "notes": "מספר נייר 175018 - בורסת ת\"א",
-    "updated_at": "2026-09-20T12:18:00.038Z"
+    "updated_at": "2026-09-23T13:27:44.010Z"
   },
   {
     "id": "h-14-bkry-ta",
@@ -438,12 +426,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 2687,
     "avg_buy_price": 2.95,
-    "current_price": 4.12,
+    "current_price": 4.03,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0,
+    "day_change_pct": 0.0,
     "notes": "מספר נייר 1172618 - בורסת ת\"א",
-    "updated_at": "2026-09-20T12:18:00.153Z"
+    "updated_at": "2026-09-23T13:27:44.135Z"
   },
   {
     "id": "h-15-hipr-ta",
@@ -453,12 +441,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 287,
     "avg_buy_price": 24.02,
-    "current_price": 31.12,
+    "current_price": 31.02,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0,
+    "day_change_pct": 0.0,
     "notes": "מספר נייר 1184985 - בורסת ת\"א",
-    "updated_at": "2026-09-20T12:18:00.281Z"
+    "updated_at": "2026-09-23T13:27:44.256Z"
   },
   {
     "id": "h-16-ntml-ta",
@@ -468,12 +456,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 32,
     "avg_buy_price": 172.15,
-    "current_price": 121.1,
+    "current_price": 118.1,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0,
+    "day_change_pct": 0.0,
     "notes": "מספר נייר 1105097 - בורסת ת\"א",
-    "updated_at": "2026-09-20T12:18:00.408Z"
+    "updated_at": "2026-09-23T13:27:44.453Z"
   },
   {
     "id": "h-17-dimri-ta",
@@ -483,12 +471,12 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "stock",
     "shares": 10,
     "avg_buy_price": 313.6,
-    "current_price": 370.9,
+    "current_price": 388,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0,
+    "day_change_pct": 0.0,
     "notes": "מספר נייר 1090315 - בורסת ת\"א",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-18-5113345",
@@ -501,10 +489,9 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 4.1286,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0.85,
-    "week_change_pct": 1.45,
+    "day_change_pct": 0.0,
     "notes": "קרן מחקה מדד ת\"א 125",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-19-1186063",
@@ -517,10 +504,9 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 277.6,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 1.9,
-    "week_change_pct": 2.4,
+    "day_change_pct": 0.0,
     "notes": "קרן חוץ נסחרת על מדד נאסד\"ק 100 בשקלים",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-20-1159250",
@@ -533,10 +519,9 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 2491.6,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 1.2,
-    "week_change_pct": 1.85,
+    "day_change_pct": 0.0,
     "notes": "קרן חוץ נסחרת על מדד S&P 500 בשקלים",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-21-5124490",
@@ -549,10 +534,9 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 2.9964,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0.65,
-    "week_change_pct": 1.15,
+    "day_change_pct": 0.0,
     "notes": "קרן מחקה מדד ת\"א 35",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-22-1146331",
@@ -565,10 +549,9 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 334,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 1.1,
-    "week_change_pct": 1.9,
+    "day_change_pct": 0.0,
     "notes": "קרן סל על מדד ת\"א 90",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-23-5131966",
@@ -581,26 +564,24 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 4.7662,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 1.3,
-    "week_change_pct": 2.05,
+    "day_change_pct": 0.0,
     "notes": "קרן מחקה מדד בנקים משקל שווה",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-26-5136694",
     "portfolio_name": "וואן זירו (ONE ZERO)",
     "symbol": "5136694",
     "name": "י.ל. כספית כשרה (ילין לפידות)",
-    "asset_type": "mutual_fund",
+    "asset_type": "money_market",
     "shares": 183881,
     "avg_buy_price": 1.0227,
     "current_price": 1.0321,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
     "day_change_pct": 0.0,
-    "week_change_pct": 0.92,
     "notes": "קרן כספית שקלית מניבה ריבית",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-27-5135688",
@@ -613,10 +594,9 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "current_price": 4.2375,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0.95,
-    "week_change_pct": 1.05,
+    "day_change_pct": 0.0,
     "notes": "קרן מחקה מדד ת\"א 125",
-    "updated_at": "2026-09-20T12:18:00.598Z"
+    "updated_at": "2026-09-23T13:27:44.619Z"
   },
   {
     "id": "h-28-vtv",
@@ -626,27 +606,25 @@ export const INITIAL_HOLDINGS_SEED: Holding[] = [
     "asset_type": "etf",
     "shares": 12,
     "avg_buy_price": 222.64,
-    "current_price": 221.25,
+    "current_price": 221.66,
     "currency": "USD",
-    "exchange_rate_to_ils": 3.028,
-    "day_change_pct": -0.24,
-    "week_change_pct": -0.62,
+    "exchange_rate_to_ils": 3.017,
+    "day_change_pct": 0.0,
     "notes": "קרן סל ערך אמריקאית",
-    "updated_at": "2026-09-20T12:18:00.732Z"
+    "updated_at": "2026-09-23T13:27:44.753Z"
   },
   {
     "id": "h-29-5139258",
     "portfolio_name": "בנק אוצר החייל",
     "symbol": "5139258",
     "name": "ילין לפידות (00) כספית ניהול נזילות",
-    "asset_type": "mutual_fund",
+    "asset_type": "money_market",
     "shares": 29747,
     "avg_buy_price": 1.0777,
     "current_price": 1.0777,
     "currency": "ILS",
     "exchange_rate_to_ils": 1,
-    "day_change_pct": 0.02,
-    "week_change_pct": 0.1,
+    "day_change_pct": 0.0,
     "notes": "קרן כספית שקלית נזילה באוצר החייל (מספר נייר 5139258)",
     "updated_at": "2026-09-20T16:00:52.000Z"
   }

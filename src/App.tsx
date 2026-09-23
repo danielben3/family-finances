@@ -35,7 +35,7 @@ import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [records, setRecords] = useState<FinancialRecord[]>(INITIAL_EXCEL_SEED);
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('2026-07');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('2026-09');
   const [activeTab, setActiveTab] = useState<NavTab>('overview');
   const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);

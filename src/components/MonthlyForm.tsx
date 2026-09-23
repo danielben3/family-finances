@@ -14,26 +14,23 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   isSaving,
 }) => {
   const getInitSalaryDan = (r: FinancialRecord) => {
-    if (r.salary_daniel !== undefined && r.salary_daniel !== null) return String(r.salary_daniel);
-    if (r.period === '2026-09') return '16260';
+    if (r.salary_daniel !== undefined && r.salary_daniel !== null && r.salary_daniel > 0) return String(r.salary_daniel);
     return '';
   };
   const getInitNonWorkDan = (r: FinancialRecord) => {
-    if (r.non_work_daniel !== undefined && r.non_work_daniel !== null) return String(r.non_work_daniel);
+    if (r.non_work_daniel !== undefined && r.non_work_daniel !== null && r.non_work_daniel > 0) return String(r.non_work_daniel);
     return '';
   };
   const getInitSalaryShov = (r: FinancialRecord) => {
-    if (r.salary_shoval !== undefined && r.salary_shoval !== null) return String(r.salary_shoval);
-    if (r.period === '2026-09') return '7800';
+    if (r.salary_shoval !== undefined && r.salary_shoval !== null && r.salary_shoval > 0) return String(r.salary_shoval);
     return '';
   };
   const getInitNonWorkShov = (r: FinancialRecord) => {
-    if (r.non_work_shoval !== undefined && r.non_work_shoval !== null) return String(r.non_work_shoval);
+    if (r.non_work_shoval !== undefined && r.non_work_shoval !== null && r.non_work_shoval > 0) return String(r.non_work_shoval);
     return '';
   };
   const getInitOtherInc = (r: FinancialRecord) => {
-    if (r.other_income !== undefined && r.other_income !== null) return String(r.other_income);
-    if (r.period === '2026-09') return '1310';
+    if (r.other_income !== undefined && r.other_income !== null && r.other_income > 0) return String(r.other_income);
     return '';
   };
 
