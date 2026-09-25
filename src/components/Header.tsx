@@ -55,6 +55,9 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Refresh / Clear cache button */}
             <button
               onClick={async () => {
+                try {
+                  localStorage.removeItem('family_finance_records');
+                } catch (e) {}
                 if ('caches' in window) {
                   try {
                     const names = await caches.keys();
