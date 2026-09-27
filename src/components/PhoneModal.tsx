@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Smartphone, X, Copy, Check, QrCode, Sparkles } from 'lucide-react';
+import { Smartphone, X, Copy, Check, QrCode } from 'lucide-react';
 
 interface PhoneModalProps {
   isOpen: boolean;
@@ -71,22 +71,6 @@ export const PhoneModal: React.FC<PhoneModalProps> = ({ isOpen, onClose }) => {
             {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? 'הועתק!' : 'העתק קישור'}</span>
           </button>
-        </div>
-
-        {/* Instructions */}
-        <div className="space-y-2 text-xs text-slate-700 bg-blue-50/50 p-3.5 rounded-2xl border border-blue-100">
-          <div className="font-semibold text-blue-800 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span>התקנה כאפליקציה עצמאית במסך הבית:</span>
-          </div>
-          <div className="space-y-1 text-[11px] text-slate-600 pr-2">
-            <div>
-              <strong className="text-slate-800">באייפון (Safari):</strong> כפתור שיתוף בתחתית ⬅️ "הוסף למסך הבית".
-            </div>
-            <div>
-              <strong className="text-slate-800">באנדרואיד (Chrome/Brave):</strong> 3 נקודות למעלה ⬅️ "התקן אפליקציה".
-            </div>
-          </div>
         </div>
 
         <button

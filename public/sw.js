@@ -1,4 +1,4 @@
-const CACHE_NAME = 'family-finances-v8';
+const CACHE_NAME = 'family-finances-v9';
 const PRECACHE_URLS = [
   '/family-finances/',
   '/family-finances/index.html',

@@ -11,7 +11,6 @@ import { HistoryTable } from './components/HistoryTable';
 import { IncomeGrantsView } from './components/IncomeGrantsView';
 import { MobileNav, NavTab } from './components/MobileNav';
 import { PhoneModal } from './components/PhoneModal';
-import { InstallBanner } from './components/InstallBanner';
 import { AppleCardHero } from './components/AppleCardHero';
 import { WealthInsightsCarousel } from './components/WealthInsightsCarousel';
 import { AssetSparklinesCard } from './components/AssetSparklinesCard';
