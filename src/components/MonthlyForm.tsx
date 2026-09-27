@@ -14,23 +14,61 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   isSaving,
 }) => {
   const getInitSalaryDan = (r: FinancialRecord) => {
-    if (r.salary_daniel !== undefined && r.salary_daniel !== null && r.salary_daniel > 0) return String(r.salary_daniel);
+    const val = r.salary_daniel ?? r.raw_formulas?.salary_daniel;
+    if (val !== undefined && val !== null && Number(val) > 0) return String(val);
     return '';
   };
   const getInitNonWorkDan = (r: FinancialRecord) => {
-    if (r.non_work_daniel !== undefined && r.non_work_daniel !== null && r.non_work_daniel > 0) return String(r.non_work_daniel);
+    const val = r.non_work_daniel ?? r.raw_formulas?.non_work_daniel;
+    if (val !== undefined && val !== null && Number(val) > 0) return String(val);
     return '';
   };
   const getInitSalaryShov = (r: FinancialRecord) => {
-    if (r.salary_shoval !== undefined && r.salary_shoval !== null && r.salary_shoval > 0) return String(r.salary_shoval);
+    const val = r.salary_shoval ?? r.raw_formulas?.salary_shoval;
+    if (val !== undefined && val !== null && Number(val) > 0) return String(val);
     return '';
   };
   const getInitNonWorkShov = (r: FinancialRecord) => {
-    if (r.non_work_shoval !== undefined && r.non_work_shoval !== null && r.non_work_shoval > 0) return String(r.non_work_shoval);
+    const val = r.non_work_shoval ?? r.raw_formulas?.non_work_shoval;
+    if (val !== undefined && val !== null && Number(val) > 0) return String(val);
     return '';
   };
   const getInitOtherInc = (r: FinancialRecord) => {
-    if (r.other_income !== undefined && r.other_income !== null && r.other_income > 0) return String(r.other_income);
+    const val = r.other_income ?? r.raw_formulas?.other_income;
+    if (val !== undefined && val !== null && Number(val) > 0) return String(val);
+    return '';
+  };
+  const getInitCheckingOneZero = (r: FinancialRecord) => {
+    const val = r.checking_onezero ?? r.raw_formulas?.checking_onezero;
+    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    if (r.period === '2026-09') return '59418';
+    if (r.period === '2026-08') return '42370';
+    return '';
+  };
+  const getInitCheckingPepper = (r: FinancialRecord) => {
+    const val = r.checking_pepper ?? r.raw_formulas?.checking_pepper;
+    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    if (r.period === '2026-09') return '7662';
+    if (r.period === '2026-08') return '7667';
+    return '';
+  };
+  const getInitCheckingOtsar = (r: FinancialRecord) => {
+    const val = r.checking_otsar ?? r.raw_formulas?.checking_otsar;
+    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    if (r.period === '2026-09') return '-10870';
+    if (r.period === '2026-08') return '-8091';
+    return '';
+  };
+  const getInitPaybox = (r: FinancialRecord) => {
+    const val = r.paybox ?? r.raw_formulas?.paybox;
+    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    if (r.period === '2026-09') return '781';
+    return '';
+  };
+  const getInitBit = (r: FinancialRecord) => {
+    const val = r.bit ?? r.raw_formulas?.bit;
+    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    if (r.period === '2026-09') return '600';
     return '';
   };
 
@@ -43,11 +81,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     other_income: getInitOtherInc(record),
     expenses: record.expenses ? String(record.expenses) : '',
     // Split checking fields
-    checking_onezero: record.checking_onezero ? String(record.checking_onezero) : '',
-    checking_pepper: record.checking_pepper ? String(record.checking_pepper) : '',
-    checking_otsar: record.checking_otsar ? String(record.checking_otsar) : '',
-    paybox: record.paybox ? String(record.paybox) : '',
-    bit: record.bit ? String(record.bit) : '',
+    checking_onezero: getInitCheckingOneZero(record),
+    checking_pepper: getInitCheckingPepper(record),
+    checking_otsar: getInitCheckingOtsar(record),
+    paybox: getInitPaybox(record),
+    bit: getInitBit(record),
     // Investment fields
     altshuler: record.altshuler ? String(record.altshuler) : '',
     excellence: record.excellence ? String(record.excellence) : '',
@@ -67,11 +105,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
       non_work_shoval: getInitNonWorkShov(record),
       other_income: getInitOtherInc(record),
       expenses: record.expenses ? String(record.expenses) : '',
-      checking_onezero: record.checking_onezero ? String(record.checking_onezero) : '',
-      checking_pepper: record.checking_pepper ? String(record.checking_pepper) : '',
-      checking_otsar: record.checking_otsar ? String(record.checking_otsar) : '',
-      paybox: record.paybox ? String(record.paybox) : '',
-      bit: record.bit ? String(record.bit) : '',
+      checking_onezero: getInitCheckingOneZero(record),
+      checking_pepper: getInitCheckingPepper(record),
+      checking_otsar: getInitCheckingOtsar(record),
+      paybox: getInitPaybox(record),
+      bit: getInitBit(record),
       altshuler: record.altshuler ? String(record.altshuler) : '',
       excellence: record.excellence ? String(record.excellence) : '',
       excellence_cost_basis: record.excellence_cost_basis ? String(record.excellence_cost_basis) : '',
@@ -79,7 +117,7 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
       notes: record.notes || '',
     });
     setSavedSuccess(false);
-  }, [record.period]);
+  }, [record.period, record.updated_at]);
 
   // Evaluate math formulas safely (e.g. "=1200+350" or "24000+4044")
   const parseVal = (str: string): number => {
@@ -162,11 +200,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
       non_work_shoval: numNonWorkShov ? String(numNonWorkShov) : '',
       other_income: numOtherIncome ? String(numOtherIncome) : '',
       expenses: numExpenses ? String(numExpenses) : '',
-      checking_onezero: numOneZero ? String(numOneZero) : '',
-      checking_pepper: numPepper ? String(numPepper) : '',
-      checking_otsar: numOtsar ? String(numOtsar) : '',
-      paybox: numPaybox ? String(numPaybox) : '',
-      bit: numBit ? String(numBit) : '',
+      checking_onezero: numOneZero !== 0 ? String(numOneZero) : '',
+      checking_pepper: numPepper !== 0 ? String(numPepper) : '',
+      checking_otsar: numOtsar !== 0 ? String(numOtsar) : '',
+      paybox: numPaybox !== 0 ? String(numPaybox) : '',
+      bit: numBit !== 0 ? String(numBit) : '',
       altshuler: numAltshuler ? String(numAltshuler) : '',
       excellence: numExcellence ? String(numExcellence) : '',
       money_market: numMoneyMarket ? String(numMoneyMarket) : '',
@@ -196,6 +234,27 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
       investments_total: calcInvestments,
       total_wealth: calcTotalWealth,
       notes: formData.notes.trim() || null,
+      raw_formulas: {
+        ...(record.raw_formulas || {}),
+        salary_daniel: numSalDan,
+        non_work_daniel: numNonWorkDan,
+        salary_shoval: numSalShov,
+        non_work_shoval: numNonWorkShov,
+        other_income: numOtherIncome,
+        checking_onezero: numOneZero,
+        checking_pepper: numPepper,
+        checking_otsar: numOtsar,
+        paybox: numPaybox,
+        bit: numBit,
+        total_banks: calcBanksTotal,
+        total_wallets: calcWalletsTotal,
+        total_checking: calcChecking,
+        altshuler: numAltshuler,
+        excellence: numExcellence,
+        money_market: numMoneyMarket,
+        investments_total: calcInvestments,
+        total_wealth: calcTotalWealth,
+      },
       updated_at: new Date().toISOString(),
     };
 
@@ -204,8 +263,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
-  const formatILS = (val: number) =>
-    '₪' + Math.round(val).toLocaleString('he-IL');
+  const formatILS = (val: number) => {
+    const isNeg = val < 0;
+    const formatted = Math.abs(Math.round(val)).toLocaleString('he-IL');
+    return isNeg ? `-₪${formatted}` : `₪${formatted}`;
+  };
 
   const inputBase = 'w-full bg-slate-50/80 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none transition text-left';
 
@@ -495,8 +557,15 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
                 🎖️
               </div>
               <div className="truncate">
-                <span className="text-xs font-bold text-slate-800 block leading-tight">אוצר החייל</span>
-                <span className="text-[10px] text-slate-400 font-normal">חשבון 6775</span>
+                <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 leading-tight">
+                  <span>אוצר החייל</span>
+                  {numOtsar < 0 && (
+                    <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
+                      חובה
+                    </span>
+                  )}
+                </span>
+                <span className="text-[10px] text-slate-400 font-normal">חשבון 6775 (תומך במינוס)</span>
               </div>
             </div>
             <div className="relative w-36 sm:w-44 shrink-0">
@@ -508,7 +577,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
                 onKeyDown={e => handleKeyDown(e, 'checking_otsar')}
                 placeholder="0"
                 dir="ltr"
-                className={`${inputBase} focus:border-purple-500 focus:ring-2 focus:ring-purple-100 font-bold`}
+                className={`${inputBase} ${
+                  numOtsar < 0
+                    ? 'text-rose-600 font-extrabold focus:border-rose-500 focus:ring-2 focus:ring-rose-100'
+                    : 'focus:border-purple-500 focus:ring-2 focus:ring-purple-100'
+                } font-bold`}
               />
               <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>

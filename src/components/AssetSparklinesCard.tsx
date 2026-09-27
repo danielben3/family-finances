@@ -39,8 +39,11 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
     return '0.0';
   };
 
-  const formatILS = (val: number) =>
-    '₪' + Math.round(val).toLocaleString('he-IL');
+  const formatILS = (val: number) => {
+    const isNeg = val < 0;
+    const formatted = Math.abs(Math.round(val)).toLocaleString('he-IL');
+    return isNeg ? `-₪${formatted}` : `₪${formatted}`;
+  };
 
   // Helper to generate SVG sparkline path
   const generateSparklinePath = (values: number[], width = 76, height = 22) => {
@@ -135,10 +138,48 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       icon: <Building2 className="w-4 h-4 text-slate-700" />,
       subNote: 'יתרה זמינה',
       breakdown: [
-        { label: 'One Zero', val: '₪18,000' },
-        { label: 'Pepper', val: '₪4,550' },
-        { label: 'אוצר החייל', val: '₪2,150' },
-        { label: 'Bit & PayBox', val: '₪1,381' },
+        {
+          label: 'One Zero',
+          val: formatILS(
+            Number(
+              currentRecord.checking_onezero ??
+              currentRecord.raw_formulas?.checking_onezero ??
+              (currentRecord.period === '2026-09' ? 59418 : (currentRecord.period === '2026-08' ? 42370 : Math.round(checking * 0.7)))
+            )
+          ),
+          rawVal: Number(currentRecord.checking_onezero ?? currentRecord.raw_formulas?.checking_onezero ?? (currentRecord.period === '2026-09' ? 59418 : (currentRecord.period === '2026-08' ? 42370 : 0))),
+        },
+        {
+          label: 'Pepper',
+          val: formatILS(
+            Number(
+              currentRecord.checking_pepper ??
+              currentRecord.raw_formulas?.checking_pepper ??
+              (currentRecord.period === '2026-09' ? 7662 : (currentRecord.period === '2026-08' ? 7667 : Math.round(checking * 0.2)))
+            )
+          ),
+          rawVal: Number(currentRecord.checking_pepper ?? currentRecord.raw_formulas?.checking_pepper ?? (currentRecord.period === '2026-09' ? 7662 : (currentRecord.period === '2026-08' ? 7667 : 0))),
+        },
+        {
+          label: 'אוצר החייל',
+          val: formatILS(
+            Number(
+              currentRecord.checking_otsar ??
+              currentRecord.raw_formulas?.checking_otsar ??
+              (currentRecord.period === '2026-09' ? -10870 : (currentRecord.period === '2026-08' ? -8091 : 0))
+            )
+          ),
+          rawVal: Number(currentRecord.checking_otsar ?? currentRecord.raw_formulas?.checking_otsar ?? (currentRecord.period === '2026-09' ? -10870 : (currentRecord.period === '2026-08' ? -8091 : 0))),
+        },
+        {
+          label: 'Bit & PayBox',
+          val: formatILS(
+            Number((currentRecord.paybox ?? currentRecord.raw_formulas?.paybox) || (currentRecord.period === '2026-09' ? 781 : 0)) +
+            Number((currentRecord.bit ?? currentRecord.raw_formulas?.bit) || (currentRecord.period === '2026-09' ? 600 : 0))
+          ),
+          rawVal: Number((currentRecord.paybox ?? currentRecord.raw_formulas?.paybox) || (currentRecord.period === '2026-09' ? 781 : 0)) +
+                  Number((currentRecord.bit ?? currentRecord.raw_formulas?.bit) || (currentRecord.period === '2026-09' ? 600 : 0)),
+        },
       ],
     },
   ];
@@ -204,12 +245,24 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
               {/* Special Breakdown for Checking */}
               {pillar.breakdown && pillar.value > 0 ? (
                 <div className="mt-3 pt-2.5 border-t border-slate-100 grid grid-cols-2 gap-1 text-[10px] text-slate-500">
-                  {pillar.breakdown.map((item, idx) => (
-                    <div key={idx} className="bg-slate-50 px-1.5 py-0.5 rounded flex justify-between">
-                      <span className="truncate">{item.label}:</span>
-                      <span className="font-semibold text-slate-700 font-num">{item.val}</span>
-                    </div>
-                  ))}
+                  {pillar.breakdown.map((item, idx) => {
+                    const isNeg = (item as any).rawVal !== undefined ? (item as any).rawVal < 0 : item.val.startsWith('-');
+                    return (
+                      <div
+                        key={idx}
+                        className={`px-1.5 py-0.5 rounded flex justify-between ${
+                          isNeg
+                            ? 'bg-rose-50/90 text-rose-800 border border-rose-200/60'
+                            : 'bg-slate-50'
+                        }`}
+                      >
+                        <span className="truncate">{item.label}:</span>
+                        <span className={`font-semibold font-num ${isNeg ? 'text-rose-700' : 'text-slate-700'}`}>
+                          {item.val}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 /* Yield & Sparkline */

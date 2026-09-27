@@ -33,8 +33,55 @@ import { TopHoldingsCard } from './components/TopHoldingsCard';
 import { TrustVerificationBanner } from './components/TrustVerificationBanner';
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
+const normalizeRecord = (r: any): FinancialRecord => {
+  const rf = r.raw_formulas || {};
+  return {
+    ...r,
+    salary_daniel: r.salary_daniel ?? rf.salary_daniel,
+    non_work_daniel: r.non_work_daniel ?? rf.non_work_daniel,
+    salary_shoval: r.salary_shoval ?? rf.salary_shoval,
+    non_work_shoval: r.non_work_shoval ?? rf.non_work_shoval,
+    other_income: r.other_income ?? rf.other_income,
+    checking_onezero: r.checking_onezero ?? rf.checking_onezero ?? (r.period === '2026-09' ? 59418 : (r.period === '2026-08' ? 42370 : undefined)),
+    checking_pepper: r.checking_pepper ?? rf.checking_pepper ?? (r.period === '2026-09' ? 7662 : (r.period === '2026-08' ? 7667 : undefined)),
+    checking_otsar: r.checking_otsar ?? rf.checking_otsar ?? (r.period === '2026-09' ? -10870 : (r.period === '2026-08' ? -8091 : undefined)),
+    paybox: r.paybox ?? rf.paybox ?? (r.period === '2026-09' ? 781 : undefined),
+    bit: r.bit ?? rf.bit ?? (r.period === '2026-09' ? 600 : undefined),
+    excellence_cost_basis: r.excellence_cost_basis ?? rf.excellence_cost_basis,
+  };
+};
+
+const sanitizeForSupabase = (rec: FinancialRecord) => {
+  const validCols = [
+    'period', 'year', 'month', 'label', 'income_net', 'expenses', 'savings',
+    'savings_rate', 'checking', 'altshuler', 'excellence', 'money_market',
+    'investments_total', 'total_wealth', 'wealth_change_pct', 'notes', 'raw_formulas', 'updated_at'
+  ];
+  const rawFormulas = { ...(rec.raw_formulas || {}) };
+  if (rec.checking_onezero !== undefined) rawFormulas.checking_onezero = rec.checking_onezero;
+  if (rec.checking_pepper !== undefined) rawFormulas.checking_pepper = rec.checking_pepper;
+  if (rec.checking_otsar !== undefined) rawFormulas.checking_otsar = rec.checking_otsar;
+  if (rec.paybox !== undefined) rawFormulas.paybox = rec.paybox;
+  if (rec.bit !== undefined) rawFormulas.bit = rec.bit;
+  if (rec.salary_daniel !== undefined) rawFormulas.salary_daniel = rec.salary_daniel;
+  if (rec.salary_shoval !== undefined) rawFormulas.salary_shoval = rec.salary_shoval;
+  if (rec.non_work_daniel !== undefined) rawFormulas.non_work_daniel = rec.non_work_daniel;
+  if (rec.non_work_shoval !== undefined) rawFormulas.non_work_shoval = rec.non_work_shoval;
+  if (rec.other_income !== undefined) rawFormulas.other_income = rec.other_income;
+  if (rec.excellence_cost_basis !== undefined) rawFormulas.excellence_cost_basis = rec.excellence_cost_basis;
+
+  const sanitized: any = {};
+  for (const col of validCols) {
+    if ((rec as any)[col] !== undefined) {
+      sanitized[col] = (rec as any)[col];
+    }
+  }
+  sanitized.raw_formulas = rawFormulas;
+  return sanitized;
+};
+
 export const App: React.FC = () => {
-  const [records, setRecords] = useState<FinancialRecord[]>(INITIAL_EXCEL_SEED);
+  const [records, setRecords] = useState<FinancialRecord[]>(() => INITIAL_EXCEL_SEED.map(normalizeRecord));
   const [selectedPeriod, setSelectedPeriod] = useState<string>('2026-09');
   const [activeTab, setActiveTab] = useState<NavTab>('overview');
   const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
@@ -114,13 +161,13 @@ export const App: React.FC = () => {
       localStorage.setItem('family_finance_records', JSON.stringify(updatedList));
 
       if (applyToAll) {
-        const recordsToUpdate = updatedList.filter(r => r.period >= selectedPeriod);
+        const recordsToUpdate = updatedList.filter(r => r.period >= selectedPeriod).map(sanitizeForSupabase);
         const { error } = await supabase.from('financial_records').upsert(recordsToUpdate, { onConflict: 'period' });
         if (error) console.warn('Supabase batch upsert notice:', error.message);
       } else {
         const single = updatedList.find(r => r.period === selectedPeriod);
         if (single) {
-          const { error } = await supabase.from('financial_records').upsert(single, { onConflict: 'period' });
+          const { error } = await supabase.from('financial_records').upsert(sanitizeForSupabase(single), { onConflict: 'period' });
           if (error) console.warn('Supabase single upsert notice:', error.message);
         }
       }
@@ -259,22 +306,23 @@ export const App: React.FC = () => {
           const localSaved = localStorage.getItem('family_finance_records');
           if (localSaved) {
             try {
-              setRecords(JSON.parse(localSaved));
+              setRecords(JSON.parse(localSaved).map(normalizeRecord));
             } catch (e) {
-              setRecords(INITIAL_EXCEL_SEED);
+              setRecords(INITIAL_EXCEL_SEED.map(normalizeRecord));
             }
           }
         } else if (data && data.length > 0) {
-          setRecords(data);
+          const normalized = data.map(normalizeRecord);
+          setRecords(normalized);
           setIsCloudSynced(true);
-          localStorage.setItem('family_finance_records', JSON.stringify(data));
+          localStorage.setItem('family_finance_records', JSON.stringify(normalized));
         } else {
           // Table exists but is empty -> we can auto-seed from INITIAL_EXCEL_SEED!
           console.log('Supabase table is empty, auto-seeding with historical Excel data...');
-          const { error: seedErr } = await supabase.from('financial_records').upsert(INITIAL_EXCEL_SEED);
+          const { error: seedErr } = await supabase.from('financial_records').upsert(INITIAL_EXCEL_SEED.map(sanitizeForSupabase));
           if (!seedErr) {
             setIsCloudSynced(true);
-            setRecords(INITIAL_EXCEL_SEED);
+            setRecords(INITIAL_EXCEL_SEED.map(normalizeRecord));
           }
         }
       } catch (err: any) {
@@ -291,7 +339,7 @@ export const App: React.FC = () => {
             { event: '*', schema: 'public', table: 'financial_records' },
             (payload: any) => {
               if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-                const updated = payload.new as FinancialRecord;
+                const updated = normalizeRecord(payload.new);
                 setRecords(prev => {
                   const exists = prev.some(r => r.period === updated.period);
                   const next = exists
@@ -380,9 +428,10 @@ export const App: React.FC = () => {
       });
 
       // 2. Cloud Supabase upsert
+      const sanitized = sanitizeForSupabase(updatedRecord);
       const { error } = await supabase
         .from('financial_records')
-        .upsert(updatedRecord, { onConflict: 'period' });
+        .upsert(sanitized, { onConflict: 'period' });
 
       if (error) {
         console.warn('Cloud sync error:', error.message);

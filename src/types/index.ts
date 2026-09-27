@@ -27,7 +27,7 @@ export interface FinancialRecord {
   total_wealth: number;       // עו״ש + השקעות
   wealth_change_pct: number;  // שינוי באחוזים מחודש קודם
   notes?: string | null;      // הערות חודשיות
-  raw_formulas?: Record<string, string>;
+  raw_formulas?: Record<string, any>;
   updated_at?: string;
 }
 
