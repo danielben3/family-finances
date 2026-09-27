@@ -495,10 +495,12 @@ export const App: React.FC = () => {
         }}
       />
 
-      {/* Main Container - 100% Mobile Phone Experience */}
-      <main className="max-w-xl mx-auto px-3.5 sm:px-4 py-4 space-y-5">
+      {/* Main Container - Responsive Executive Wealth Dashboard */}
+      <main className={`mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 transition-all ${
+        activeTab === 'form' ? 'max-w-3xl' : 'max-w-7xl'
+      }`}>
         
-        <div className="space-y-5">
+        <div className="space-y-5 sm:space-y-6">
           {activeTab === 'overview' && (
             <>
               {/* 1. Apple Card Hero */}
@@ -519,7 +521,14 @@ export const App: React.FC = () => {
                 }}
               />
 
-              {/* 2. 5 Wealth Pillars with Live SVG Sparklines & Carousel */}
+              {/* 2. Month Selector Carousel - Positioned prominently near the top */}
+              <MonthSelector
+                records={records}
+                selectedPeriod={selectedPeriod}
+                onSelectPeriod={p => setSelectedPeriod(p)}
+              />
+
+              {/* 3. 5 Wealth Pillars with Live SVG Sparklines & 5-Column Responsive Grid */}
               <AssetSparklinesCard
                 records={records}
                 currentRecord={currentRecord}
@@ -529,48 +538,45 @@ export const App: React.FC = () => {
                 onSelectAsset={setQuickAssetModalType}
               />
 
-              {/* 3. Wealth Growth Curve */}
-              <WealthChart records={records} />
+              {/* 4. Core Investment Analytics Grid: Wealth Growth Curve + Live Holdings */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+                <div className="lg:col-span-7">
+                  <WealthChart records={records} />
+                </div>
+                <div className="lg:col-span-5 flex flex-col">
+                  <TopHoldingsCard
+                    holdings={holdings}
+                    onViewAllStocks={() => {
+                      setActiveTab('stocks');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  />
+                </div>
+              </div>
 
-              {/* 4. Top Live Holdings Card (AAPL, NVDA, AMZN, TA125, VTV) */}
-              <TopHoldingsCard
-                holdings={holdings}
-                onViewAllStocks={() => {
-                  setActiveTab('stocks');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              />
-
-              {/* 5. Trust & Security Seal */}
-              <TrustVerificationBanner />
-
-              {/* 6. Month Selector Carousel */}
-              <MonthSelector
-                records={records}
-                selectedPeriod={selectedPeriod}
-                onSelectPeriod={p => setSelectedPeriod(p)}
-              />
-
-              {/* 7. Cashflow Donut Ring & Liquidity Runway */}
-              <div className="grid grid-cols-1 gap-4">
+              {/* 5. Cashflow & Liquidity Balance: Donut Ring + Liquidity Runway Gauge */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                 <CashflowDonutCard currentRecord={currentRecord} />
                 <LiquidityRunwayCard currentRecord={currentRecord} />
               </div>
 
-              {/* 8. AI Wealth Insights */}
-              <WealthInsightsCarousel
-                records={records}
-                currentRecord={currentRecord}
-                onOpenFire={() => setIsFireModalOpen(true)}
-              />
-
-              {/* 9. FIRE Milestone Progress */}
-              <div id="mobile-fire-milestone">
-                <FireMilestoneCard
+              {/* 6. Strategic Growth & Intelligence: FIRE Milestone + Smart Insights */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                <div id="mobile-fire-milestone">
+                  <FireMilestoneCard
+                    currentRecord={currentRecord}
+                    onOpenCalculator={() => setIsFireModalOpen(true)}
+                  />
+                </div>
+                <WealthInsightsCarousel
+                  records={records}
                   currentRecord={currentRecord}
-                  onOpenCalculator={() => setIsFireModalOpen(true)}
+                  onOpenFire={() => setIsFireModalOpen(true)}
                 />
               </div>
+
+              {/* 7. Subtle Trust & Security Seal */}
+              <TrustVerificationBanner />
             </>
           )}
 
