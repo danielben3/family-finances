@@ -297,9 +297,9 @@ export const QuickAssetEditModal: React.FC<QuickAssetEditModalProps> = ({
         </div>
 
         {/* Modal Form Body */}
-        <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
-          
-          {/* TAB 1: CHECKING & WALLETS */}
+        <form onSubmit={handleSave} className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+            {/* TAB 1: CHECKING & WALLETS */}
           {activeTab === 'checking' && (
             <div className="space-y-3.5 animate-fade-in">
               <div className="flex items-center justify-between pb-1">
@@ -684,14 +684,15 @@ export const QuickAssetEditModal: React.FC<QuickAssetEditModalProps> = ({
                 </span>
               </div>
             </div>
+            </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2 pt-1">
+          {/* Sticky Action Footer */}
+          <div className="shrink-0 p-3 sm:p-4 bg-slate-50 border-t border-slate-200/80 flex items-center gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="w-1/3 py-2.5 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs transition"
+              className="w-1/3 py-2.5 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-100 font-bold text-xs transition"
             >
               ביטול
             </button>

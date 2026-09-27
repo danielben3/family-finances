@@ -35,9 +35,17 @@ import { QuickAssetEditModal, AssetEditType } from './components/QuickAssetEditM
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 const normalizeRecord = (r: any): FinancialRecord => {
-  const rf = r.raw_formulas || {};
+  let rf = r.raw_formulas || {};
+  if (typeof rf === 'string') {
+    try {
+      rf = JSON.parse(rf);
+    } catch {
+      rf = {};
+    }
+  }
   return {
     ...r,
+    raw_formulas: rf,
     salary_daniel: r.salary_daniel ?? rf.salary_daniel,
     non_work_daniel: r.non_work_daniel ?? rf.non_work_daniel,
     salary_shoval: r.salary_shoval ?? rf.salary_shoval,

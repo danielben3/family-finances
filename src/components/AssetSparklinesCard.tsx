@@ -139,50 +139,25 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       bgTag: 'bg-slate-100 text-slate-700 border-slate-200/70',
       icon: <Building2 className="w-4 h-4 text-slate-700" />,
       subNote: 'יתרה זמינה',
-      breakdown: [
-        {
-          label: 'One Zero',
-          val: formatILS(
-            Number(
-              currentRecord.checking_onezero ??
-              currentRecord.raw_formulas?.checking_onezero ??
-              (currentRecord.period === '2026-09' ? 59418 : (currentRecord.period === '2026-08' ? 42370 : Math.round(checking * 0.7)))
-            )
-          ),
-          rawVal: Number(currentRecord.checking_onezero ?? currentRecord.raw_formulas?.checking_onezero ?? (currentRecord.period === '2026-09' ? 59418 : (currentRecord.period === '2026-08' ? 42370 : 0))),
-        },
-        {
-          label: 'Pepper',
-          val: formatILS(
-            Number(
-              currentRecord.checking_pepper ??
-              currentRecord.raw_formulas?.checking_pepper ??
-              (currentRecord.period === '2026-09' ? 7662 : (currentRecord.period === '2026-08' ? 7667 : Math.round(checking * 0.2)))
-            )
-          ),
-          rawVal: Number(currentRecord.checking_pepper ?? currentRecord.raw_formulas?.checking_pepper ?? (currentRecord.period === '2026-09' ? 7662 : (currentRecord.period === '2026-08' ? 7667 : 0))),
-        },
-        {
-          label: 'אוצר החייל',
-          val: formatILS(
-            Number(
-              currentRecord.checking_otsar ??
-              currentRecord.raw_formulas?.checking_otsar ??
-              (currentRecord.period === '2026-09' ? -10870 : (currentRecord.period === '2026-08' ? -8091 : 0))
-            )
-          ),
-          rawVal: Number(currentRecord.checking_otsar ?? currentRecord.raw_formulas?.checking_otsar ?? (currentRecord.period === '2026-09' ? -10870 : (currentRecord.period === '2026-08' ? -8091 : 0))),
-        },
-        {
-          label: 'Bit & PayBox',
-          val: formatILS(
-            Number((currentRecord.paybox ?? currentRecord.raw_formulas?.paybox) || (currentRecord.period === '2026-09' ? 781 : 0)) +
-            Number((currentRecord.bit ?? currentRecord.raw_formulas?.bit) || (currentRecord.period === '2026-09' ? 600 : 0))
-          ),
-          rawVal: Number((currentRecord.paybox ?? currentRecord.raw_formulas?.paybox) || (currentRecord.period === '2026-09' ? 781 : 0)) +
-                  Number((currentRecord.bit ?? currentRecord.raw_formulas?.bit) || (currentRecord.period === '2026-09' ? 600 : 0)),
-        },
-      ],
+      breakdown: (() => {
+        const rf = typeof currentRecord.raw_formulas === 'string'
+          ? (() => { try { return JSON.parse(currentRecord.raw_formulas); } catch { return {}; } })()
+          : (currentRecord.raw_formulas || {});
+
+        const valOneZero = Number(currentRecord.checking_onezero ?? rf.checking_onezero ?? (currentRecord.period === '2026-09' ? 59418 : (currentRecord.period === '2026-08' ? 42370 : Math.round(checking * 0.7))));
+        const valPepper = Number(currentRecord.checking_pepper ?? rf.checking_pepper ?? (currentRecord.period === '2026-09' ? 7662 : (currentRecord.period === '2026-08' ? 7667 : Math.round(checking * 0.2))));
+        const valOtsar = Number(currentRecord.checking_otsar ?? rf.checking_otsar ?? (currentRecord.period === '2026-09' ? -10870 : (currentRecord.period === '2026-08' ? -8091 : 0)));
+        const valPaybox = Number(currentRecord.paybox ?? rf.paybox ?? (currentRecord.period === '2026-09' ? 781 : 0));
+        const valBit = Number(currentRecord.bit ?? rf.bit ?? (currentRecord.period === '2026-09' ? 600 : 0));
+        const valWallets = valPaybox + valBit;
+
+        return [
+          { label: 'One Zero', val: formatILS(valOneZero), rawVal: valOneZero },
+          { label: 'Pepper', val: formatILS(valPepper), rawVal: valPepper },
+          { label: 'אוצר החייל', val: formatILS(valOtsar), rawVal: valOtsar },
+          { label: 'Bit & PayBox', val: formatILS(valWallets), rawVal: valWallets },
+        ];
+      })(),
     },
   ];
 

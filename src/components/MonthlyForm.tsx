@@ -39,35 +39,40 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     return '';
   };
   const getInitCheckingOneZero = (r: FinancialRecord) => {
-    const val = r.checking_onezero ?? r.raw_formulas?.checking_onezero;
-    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    const rf = typeof r.raw_formulas === 'string' ? (() => { try { return JSON.parse(r.raw_formulas); } catch { return {}; } })() : (r.raw_formulas || {});
+    const val = r.checking_onezero ?? rf.checking_onezero;
+    if (val !== undefined && val !== null && val !== '') return String(val);
     if (r.period === '2026-09') return '59418';
     if (r.period === '2026-08') return '42370';
     return '';
   };
   const getInitCheckingPepper = (r: FinancialRecord) => {
-    const val = r.checking_pepper ?? r.raw_formulas?.checking_pepper;
-    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    const rf = typeof r.raw_formulas === 'string' ? (() => { try { return JSON.parse(r.raw_formulas); } catch { return {}; } })() : (r.raw_formulas || {});
+    const val = r.checking_pepper ?? rf.checking_pepper;
+    if (val !== undefined && val !== null && val !== '') return String(val);
     if (r.period === '2026-09') return '7662';
     if (r.period === '2026-08') return '7667';
     return '';
   };
   const getInitCheckingOtsar = (r: FinancialRecord) => {
-    const val = r.checking_otsar ?? r.raw_formulas?.checking_otsar;
-    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    const rf = typeof r.raw_formulas === 'string' ? (() => { try { return JSON.parse(r.raw_formulas); } catch { return {}; } })() : (r.raw_formulas || {});
+    const val = r.checking_otsar ?? rf.checking_otsar;
+    if (val !== undefined && val !== null && val !== '') return String(val);
     if (r.period === '2026-09') return '-10870';
     if (r.period === '2026-08') return '-8091';
     return '';
   };
   const getInitPaybox = (r: FinancialRecord) => {
-    const val = r.paybox ?? r.raw_formulas?.paybox;
-    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    const rf = typeof r.raw_formulas === 'string' ? (() => { try { return JSON.parse(r.raw_formulas); } catch { return {}; } })() : (r.raw_formulas || {});
+    const val = r.paybox ?? rf.paybox;
+    if (val !== undefined && val !== null && val !== '') return String(val);
     if (r.period === '2026-09') return '781';
     return '';
   };
   const getInitBit = (r: FinancialRecord) => {
-    const val = r.bit ?? r.raw_formulas?.bit;
-    if (val !== undefined && val !== null && Number(val) !== 0) return String(val);
+    const rf = typeof r.raw_formulas === 'string' ? (() => { try { return JSON.parse(r.raw_formulas); } catch { return {}; } })() : (r.raw_formulas || {});
+    const val = r.bit ?? rf.bit;
+    if (val !== undefined && val !== null && val !== '') return String(val);
     if (r.period === '2026-09') return '600';
     return '';
   };
@@ -200,11 +205,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
       non_work_shoval: numNonWorkShov ? String(numNonWorkShov) : '',
       other_income: numOtherIncome ? String(numOtherIncome) : '',
       expenses: numExpenses ? String(numExpenses) : '',
-      checking_onezero: numOneZero !== 0 ? String(numOneZero) : '',
-      checking_pepper: numPepper !== 0 ? String(numPepper) : '',
-      checking_otsar: numOtsar !== 0 ? String(numOtsar) : '',
-      paybox: numPaybox !== 0 ? String(numPaybox) : '',
-      bit: numBit !== 0 ? String(numBit) : '',
+      checking_onezero: formData.checking_onezero !== '' ? String(numOneZero) : '',
+      checking_pepper: formData.checking_pepper !== '' ? String(numPepper) : '',
+      checking_otsar: formData.checking_otsar !== '' ? String(numOtsar) : '',
+      paybox: formData.paybox !== '' ? String(numPaybox) : '',
+      bit: formData.bit !== '' ? String(numBit) : '',
       altshuler: numAltshuler ? String(numAltshuler) : '',
       excellence: numExcellence ? String(numExcellence) : '',
       money_market: numMoneyMarket ? String(numMoneyMarket) : '',
@@ -285,11 +290,28 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-end gap-2 bg-blue-50/80 sm:bg-transparent px-3 py-1.5 sm:p-0 rounded-xl sm:rounded-none">
-          <span className="text-[11px] text-slate-500 sm:text-slate-400 block">שווי כולל מחושב:</span>
-          <span className="text-base sm:text-lg font-num font-extrabold text-blue-600">
-            {formatILS(calcTotalWealth)}
-          </span>
+        <div className="flex items-center justify-between sm:justify-end gap-2.5 bg-blue-50/80 sm:bg-transparent p-2 sm:p-0 rounded-2xl sm:rounded-none">
+          <div className="text-right sm:text-left">
+            <span className="text-[10px] text-slate-500 sm:text-slate-400 block leading-tight">שווי כולל מחושב:</span>
+            <span className="text-sm sm:text-base font-num font-extrabold text-blue-600 block">
+              {formatILS(calcTotalWealth)}
+            </span>
+          </div>
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/25 active:scale-95 transition disabled:opacity-50"
+            title="שמור שינויים עכשיו"
+          >
+            {isSaving ? (
+              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : savedSuccess ? (
+              <Check className="w-3.5 h-3.5 text-white" />
+            ) : (
+              <Save className="w-3.5 h-3.5" />
+            )}
+            <span>{savedSuccess ? 'נשמר!' : isSaving ? 'שומר...' : 'שמור נתונים'}</span>
+          </button>
         </div>
       </div>
 
