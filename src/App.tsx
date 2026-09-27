@@ -31,6 +31,7 @@ import { SellHoldingModal } from './components/SellHoldingModal';
 import { AddEditHoldingModal } from './components/AddEditHoldingModal';
 import { TopHoldingsCard } from './components/TopHoldingsCard';
 import { TrustVerificationBanner } from './components/TrustVerificationBanner';
+import { QuickAssetEditModal, AssetEditType } from './components/QuickAssetEditModal';
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 const normalizeRecord = (r: any): FinancialRecord => {
@@ -89,6 +90,7 @@ export const App: React.FC = () => {
   const [isPhoneModalOpen, setIsPhoneModalOpen] = useState<boolean>(false);
   const [isFireModalOpen, setIsFireModalOpen] = useState<boolean>(false);
   const [isCostBasisModalOpen, setIsCostBasisModalOpen] = useState<boolean>(false);
+  const [quickAssetModalType, setQuickAssetModalType] = useState<AssetEditType | null>(null);
 
   // Portfolio Holdings & Cash State
   const [holdings, setHoldings] = useState<Holding[]>(() => {
@@ -506,6 +508,7 @@ export const App: React.FC = () => {
                 onQuickLog={() => setActiveTab('form')}
                 onOpenFire={() => setIsFireModalOpen(true)}
                 onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                onEditAsset={setQuickAssetModalType}
                 onScrollToGoals={() => {
                   const el = document.getElementById('mobile-fire-milestone');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -523,6 +526,7 @@ export const App: React.FC = () => {
                 previousRecord={previousRecord}
                 onViewHistory={() => setActiveTab('history')}
                 onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                onSelectAsset={setQuickAssetModalType}
               />
 
               {/* 3. Wealth Growth Curve */}
@@ -695,6 +699,22 @@ export const App: React.FC = () => {
         holdingToEdit={holdingToEdit}
         onSaveHolding={handleSaveHolding}
       />
+
+      {/* Quick Asset / Checking Edit Modal on card touch */}
+      {quickAssetModalType && (
+        <QuickAssetEditModal
+          isOpen={Boolean(quickAssetModalType)}
+          onClose={() => setQuickAssetModalType(null)}
+          initialAssetType={quickAssetModalType}
+          currentRecord={currentRecord}
+          previousRecord={previousRecord}
+          onSaveRecord={handleSaveRecord}
+          onOpenCostBasis={() => {
+            setQuickAssetModalType(null);
+            setIsCostBasisModalOpen(true);
+          }}
+        />
+      )}
 
     </div>
   );

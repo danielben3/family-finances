@@ -1,6 +1,6 @@
 import React from 'react';
 import { FinancialRecord } from '../types';
-import { TrendingUp, ShieldCheck, Globe, Coins, Building2, ChevronLeft, Calculator, Layers, ArrowUpRight } from 'lucide-react';
+import { TrendingUp, ShieldCheck, Globe, Coins, Building2, ChevronLeft, Calculator, Layers, ArrowUpRight, Pencil } from 'lucide-react';
 
 interface AssetSparklinesCardProps {
   records: FinancialRecord[];
@@ -8,6 +8,7 @@ interface AssetSparklinesCardProps {
   previousRecord?: FinancialRecord;
   onViewHistory?: () => void;
   onOpenCostBasis?: () => void;
+  onSelectAsset?: (assetType: 'checking' | 'excellence' | 'onezero' | 'altshuler' | 'moneyMarket') => void;
 }
 
 export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
@@ -16,6 +17,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
   previousRecord,
   onViewHistory,
   onOpenCostBasis,
+  onSelectAsset,
 }) => {
   const total = currentRecord.total_wealth || 1;
 
@@ -218,7 +220,11 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
           return (
             <div
               key={pillar.id}
-              className="snap-start shrink-0 w-[82%] sm:w-auto glass-card glass-card-interactive rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between relative overflow-hidden transition-all duration-200 min-w-[220px] sm:min-w-0"
+              onClick={() => onSelectAsset?.(pillar.id as any)}
+              role="button"
+              tabIndex={0}
+              title={`לחץ להזנה ועריכת שווי ${pillar.name}`}
+              className="snap-start shrink-0 w-[82%] sm:w-auto glass-card glass-card-interactive rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between relative overflow-hidden transition-all duration-200 min-w-[220px] sm:min-w-0 cursor-pointer hover:border-emerald-300 hover:shadow-md active:scale-[0.98] group"
             >
               <div className="space-y-2.5">
                 {/* Sector Tag & Weight % */}
@@ -226,9 +232,15 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
                   <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${pillar.bgTag}`}>
                     {pillar.sector}
                   </span>
-                  <span className="font-bold text-slate-900 tabular-nums text-xs font-num">
-                    {pillar.pct}%
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="opacity-75 group-hover:opacity-100 text-[10px] font-bold text-emerald-800 bg-emerald-50/90 px-1.5 py-0.5 rounded border border-emerald-200/80 transition inline-flex items-center gap-0.5">
+                      <Pencil className="w-2.5 h-2.5 text-emerald-600" />
+                      <span>הזן</span>
+                    </span>
+                    <span className="font-bold text-slate-900 tabular-nums text-xs font-num">
+                      {pillar.pct}%
+                    </span>
+                  </div>
                 </div>
 
                 {/* Name & Big Value */}
@@ -302,7 +314,10 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
                         נטו משוער: {formatILS(excellence - Math.round(Math.max(0, excellence - currentRecord.excellence_cost_basis) * 0.25))}
                       </span>
                       <button
-                        onClick={onOpenCostBasis}
+                        onClick={e => {
+                          e.stopPropagation();
+                          onOpenCostBasis();
+                        }}
                         className="text-[10px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
                       >
                         <Calculator className="w-3 h-3" />
@@ -311,7 +326,10 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={onOpenCostBasis}
+                      onClick={e => {
+                        e.stopPropagation();
+                        onOpenCostBasis();
+                      }}
                       className="w-full text-[10px] text-emerald-800 bg-emerald-50/70 hover:bg-emerald-100/70 px-2 py-1 rounded-lg border border-emerald-200/60 font-medium flex items-center justify-center gap-1 transition"
                     >
                       <Calculator className="w-3 h-3 text-emerald-600" />

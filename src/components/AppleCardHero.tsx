@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FinancialRecord } from '../types';
-import { TrendingUp, TrendingDown, Eye, EyeOff, Plus, Flame, Target, Download, Wifi, ShieldCheck, Sparkles, Calculator } from 'lucide-react';
+import { TrendingUp, TrendingDown, Eye, EyeOff, Plus, Flame, Target, Download, Wifi, ShieldCheck, Sparkles, Calculator, Building2 } from 'lucide-react';
 
 interface AppleCardHeroProps {
   currentRecord: FinancialRecord;
@@ -10,6 +10,7 @@ interface AppleCardHeroProps {
   onScrollToGoals?: () => void;
   onExportExcel?: () => void;
   onOpenCostBasis?: () => void;
+  onEditAsset?: (assetType: 'checking' | 'excellence' | 'onezero' | 'altshuler' | 'moneyMarket') => void;
 }
 
 export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
@@ -20,6 +21,7 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
   onScrollToGoals,
   onExportExcel,
   onOpenCostBasis,
+  onEditAsset,
 }) => {
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [isNetMode, setIsNetMode] = useState<boolean>(false);
@@ -152,8 +154,23 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
 
           {/* Inline Metadata Stats Ledger */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-5 mt-5 border-t border-slate-200/60 text-xs">
-            <div className="p-2.5 rounded-2xl bg-white/70 border border-slate-100 flex flex-col justify-between">
-              <span className="text-slate-400 text-[11px] block">נזילות מיידית (עו״ש + כספית):</span>
+            <div
+              onClick={() => onEditAsset?.('checking')}
+              role={onEditAsset ? 'button' : undefined}
+              tabIndex={onEditAsset ? 0 : undefined}
+              title={onEditAsset ? 'לחץ להזנה ועריכת יתרות עו״ש' : undefined}
+              className={`p-2.5 rounded-2xl bg-white/70 border border-slate-100 flex flex-col justify-between transition ${
+                onEditAsset ? 'hover:bg-white hover:border-emerald-300 cursor-pointer active:scale-98 group' : ''
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 text-[11px] block">נזילות מיידית (עו״ש + כספית):</span>
+                {onEditAsset && (
+                  <span className="text-[10px] text-emerald-700 font-bold opacity-0 group-hover:opacity-100 transition">
+                    ערוך ✏️
+                  </span>
+                )}
+              </div>
               <span className="font-bold text-slate-900 text-sm sm:text-base tabular-nums mt-0.5">
                 {formatILS((currentRecord.checking || 0) + (currentRecord.money_market || 0))}
               </span>
@@ -179,13 +196,24 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
 
       {/* Quick Action Interactive Pills Bar */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+        {/* Quick Checking & Asset Modal Trigger */}
+        {onEditAsset && (
+          <button
+            onClick={() => onEditAsset('checking')}
+            className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/20 active:scale-95 transition"
+          >
+            <Building2 className="w-4 h-4 text-emerald-200" />
+            <span>עדכון עו״ש מהיר</span>
+          </button>
+        )}
+
         {/* Quick Log Form */}
         <button
           onClick={onQuickLog}
-          className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md active:scale-95 transition"
+          className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs active:scale-95 transition"
         >
           <Plus className="w-4 h-4 text-emerald-400" />
-          <span>הזנת נתונים</span>
+          <span>טופס מלא</span>
         </button>
 
         {/* FIRE Calculator */}
