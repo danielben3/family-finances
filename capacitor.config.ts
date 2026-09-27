@@ -5,6 +5,8 @@ const config: CapacitorConfig = {
   appName: 'ניהול פיננסי משפחתי',
   webDir: 'dist',
   server: {
+    url: 'https://danielben3.github.io/family-finances/',
+    cleartext: false,
     androidScheme: 'https'
   }
 };
