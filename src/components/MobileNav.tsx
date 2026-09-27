@@ -1,7 +1,7 @@
 import React from 'react';
-import { Home, Edit3, TrendingUp, Table, Briefcase } from 'lucide-react';
+import { Home, Edit3, TrendingUp, Table, Briefcase, Coins } from 'lucide-react';
 
-export type NavTab = 'overview' | 'stocks' | 'form' | 'analytics' | 'history';
+export type NavTab = 'overview' | 'stocks' | 'income' | 'form' | 'analytics' | 'history';
 
 interface MobileNavProps {
   activeTab: NavTab;
@@ -12,8 +12,9 @@ export const MobileNav: React.FC<MobileNavProps> = ({ activeTab, onChangeTab }) 
   const tabs = [
     { id: 'overview' as NavTab, label: 'מבט-על', icon: Home },
     { id: 'stocks' as NavTab, label: 'תיק מניות', icon: Briefcase },
+    { id: 'income' as NavTab, label: 'הכנסות', icon: Coins },
     { id: 'form' as NavTab, label: 'הזנה', icon: Edit3 },
-    { id: 'analytics' as NavTab, label: 'גרף צמיחה', icon: TrendingUp },
+    { id: 'analytics' as NavTab, label: 'צמיחה', icon: TrendingUp },
     { id: 'history' as NavTab, label: 'טבלה', icon: Table },
   ];
 

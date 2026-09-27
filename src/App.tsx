@@ -8,6 +8,7 @@ import { MonthSelector } from './components/MonthSelector';
 import { MonthlyForm } from './components/MonthlyForm';
 import { WealthChart } from './components/WealthChart';
 import { HistoryTable } from './components/HistoryTable';
+import { IncomeGrantsView } from './components/IncomeGrantsView';
 import { MobileNav, NavTab } from './components/MobileNav';
 import { PhoneModal } from './components/PhoneModal';
 import { InstallBanner } from './components/InstallBanner';
@@ -431,9 +432,6 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* PWA Install Banner for Mobile */}
-      <InstallBanner onInstalled={() => showToast('ההתקנה אושרה! 🚀 האייקון "פיננסים" נוסף למכשיר (בדוק במגירת האפליקציות)', 'success')} />
-
       {/* Top Navigation Bar */}
       <Header
         isCloudSynced={isCloudSynced}
@@ -705,6 +703,18 @@ export const App: React.FC = () => {
               <CashflowDonutCard currentRecord={currentRecord} />
               <WealthChart records={records} />
             </div>
+          )}
+
+          {activeTab === 'income' && (
+            <IncomeGrantsView
+              records={records}
+              selectedPeriod={selectedPeriod}
+              onSelectPeriod={p => {
+                setSelectedPeriod(p);
+                setActiveTab('form');
+              }}
+              onNavigateToForm={() => setActiveTab('form')}
+            />
           )}
 
           {activeTab === 'history' && (

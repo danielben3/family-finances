@@ -48,7 +48,11 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
         'אקסלנס - מניות (₪)': r.excellence,
         'קרן כספית (₪)': r.money_market,
         'סה"כ השקעות (₪)': r.investments_total,
-        'משכורות נטו (₪)': r.income_net,
+        'סה"כ הכנסות (עבודה ומענקים) (₪)': r.income_net || ((r.salary_daniel || 0) + (r.salary_shoval || 0) + (r.non_work_daniel || 0) + (r.non_work_shoval || 0) + (r.other_income || 0)),
+        'הכנסות מעבודה נטו (₪)': ((r.salary_daniel || 0) + (r.salary_shoval || 0)) > 0 ? ((r.salary_daniel || 0) + (r.salary_shoval || 0)) : (((r.non_work_daniel || 0) + (r.non_work_shoval || 0) + (r.other_income || 0)) === 0 ? r.income_net : 0),
+        'מענקים ושלא מעבודה (₪)': (r.non_work_daniel || 0) + (r.non_work_shoval || 0) + (r.other_income || 0),
+        'שכר דניאל (₪)': r.salary_daniel || 0,
+        'שכר שובל (₪)': r.salary_shoval || 0,
         'הוצאות (₪)': r.expenses,
         'חיסכון (₪)': r.savings,
         'אחוז חיסכון (%)': r.savings_rate ? `${r.savings_rate.toFixed(1)}%` : '—',
@@ -60,7 +64,8 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
       const colWidths = [
         { wch: 10 }, { wch: 14 }, { wch: 16 }, { wch: 18 },
         { wch: 16 }, { wch: 22 }, { wch: 20 }, { wch: 15 },
-        { wch: 16 }, { wch: 16 }, { wch: 14 }, { wch: 14 },
+        { wch: 16 }, { wch: 28 }, { wch: 20 }, { wch: 22 },
+        { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
         { wch: 16 }, { wch: 25 },
       ];
       worksheet['!cols'] = colWidths;
@@ -148,7 +153,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
               <th className="py-3 px-3 text-left hidden sm:table-cell">אקסלנס</th>
               <th className="py-3 px-3 text-left hidden md:table-cell">קרן כספית</th>
               <th className="py-3 px-3 text-left">סה"כ השקעות</th>
-              <th className="py-3 px-3 text-left hidden lg:table-cell">הכנסות</th>
+              <th className="py-3 px-3 text-left">הכנסות (עבודה ומענקים)</th>
               <th className="py-3 px-3 text-left hidden lg:table-cell">הוצאות</th>
               <th className="py-3 px-3 text-left hidden md:table-cell">חיסכון</th>
               <th className="py-3 px-3 text-center">פעולה</th>
@@ -216,8 +221,24 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
                     {formatILS(rec.investments_total)}
                   </td>
 
-                  <td className="py-3 px-3 text-left text-emerald-700 hidden lg:table-cell">
-                    {rec.income_net > 0 ? formatILS(rec.income_net) : '—'}
+                  <td className="py-3 px-3 text-left">
+                    {rec.income_net > 0 ? (
+                      <div>
+                        <span className="font-bold text-emerald-700 block">
+                          {formatILS(rec.income_net)}
+                        </span>
+                        {((rec.salary_daniel || 0) + (rec.salary_shoval || 0) > 0 || (rec.non_work_daniel || 0) + (rec.non_work_shoval || 0) + (rec.other_income || 0) > 0) && (
+                          <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5 whitespace-nowrap">
+                            <span className="text-slate-600">עבודה: {formatILS((rec.salary_daniel || 0) + (rec.salary_shoval || 0))}</span>
+                            {((rec.non_work_daniel || 0) + (rec.non_work_shoval || 0) + (rec.other_income || 0)) > 0 && (
+                              <span className="text-amber-700 font-semibold">• מענקים: {formatILS((rec.non_work_daniel || 0) + (rec.non_work_shoval || 0) + (rec.other_income || 0))}</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-slate-400">—</span>
+                    )}
                   </td>
 
                   <td className="py-3 px-3 text-left text-rose-700 hidden lg:table-cell">

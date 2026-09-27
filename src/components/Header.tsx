@@ -114,6 +114,16 @@ export const Header: React.FC<HeaderProps> = ({
                 תיק השקעות ומניות
               </button>
               <button
+                onClick={() => onSelectTab('income')}
+                className={`pb-1 text-sm font-semibold transition border-b-2 ${
+                  activeTab === 'income'
+                    ? 'border-emerald-600 text-emerald-700'
+                    : 'border-transparent text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                הכנסות ומענקים
+              </button>
+              <button
                 onClick={() => onSelectTab('history')}
                 className={`pb-1 text-sm font-semibold transition border-b-2 ${
                   activeTab === 'history'
