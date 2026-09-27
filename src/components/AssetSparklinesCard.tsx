@@ -146,35 +146,38 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
   return (
     <section className="space-y-3">
       {/* Section Header */}
-      <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-600"></div>
-          <h2 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
-            5 עמודי התווך של ההון המשפחתי
+      <div className="flex items-center justify-between px-1 gap-2 flex-wrap">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></div>
+          <h2 className="text-xs sm:text-base font-bold text-slate-900 tracking-tight truncate">
+            5 עמודי התווך של ההון
           </h2>
-          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-            חלוקה מלאה 100%
+          <span className="hidden xs:inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+            100%
           </span>
         </div>
-        {onViewHistory && (
-          <button
-            onClick={onViewHistory}
-            className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-0.5 transition"
-          >
-            <span>טבלה היסטורית</span>
-            <ChevronLeft className="w-3.5 h-3.5" />
-          </button>
-        )}
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[10.5px] text-slate-400 font-medium sm:hidden">גלילה ⬅️</span>
+          {onViewHistory && (
+            <button
+              onClick={onViewHistory}
+              className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-0.5 transition"
+            >
+              <span>טבלה</span>
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Responsive Grid on Desktop / Smooth Carousel on Mobile */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 sm:gap-4 overflow-x-auto no-scrollbar pb-1">
+      {/* Smooth Horizontal Carousel on Mobile / Responsive Grid on Desktop */}
+      <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 overflow-x-auto no-scrollbar pb-1.5 snap-x snap-mandatory">
         {pillars.map(pillar => {
           const isUp = pillar.diff >= 0;
           return (
             <div
               key={pillar.id}
-              className="glass-card glass-card-interactive rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between relative overflow-hidden transition-all duration-200 min-w-[220px] sm:min-w-0"
+              className="snap-start shrink-0 w-[82%] sm:w-auto glass-card glass-card-interactive rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between relative overflow-hidden transition-all duration-200 min-w-[220px] sm:min-w-0"
             >
               <div className="space-y-2.5">
                 {/* Sector Tag & Weight % */}

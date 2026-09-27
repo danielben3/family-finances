@@ -25,7 +25,7 @@ export const LiquidityRunwayCard: React.FC<LiquidityRunwayCardProps> = ({
 
   return (
     <section className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 titanium-edge space-y-4 shadow-xs">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
             מדד נזילות וכרית ביטחון

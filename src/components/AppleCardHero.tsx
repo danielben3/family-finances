@@ -52,46 +52,46 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
   return (
     <section className="space-y-4">
       {/* Quiet Wealth RTL Master Glass Card */}
-      <div className="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden transition-all duration-300">
+      <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 relative overflow-hidden transition-all duration-300">
         {/* Specular Ambient Gradient Orbs */}
         <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-blue-400/10 blur-3xl pointer-events-none" />
 
         <div className="relative z-10">
           {/* Top Row: Header & Privacy / Net Toggle */}
-          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-slate-200/60">
-            <div className="flex items-center gap-2 text-slate-500 text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="font-bold uppercase tracking-wider text-slate-600 text-[11px]">
-                סך שווי הון כולל נטו (NET WORTH)
+          <div className="flex items-center justify-between flex-wrap gap-2.5 pb-3 border-b border-slate-200/60">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-slate-500 text-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+              <span className="font-bold uppercase tracking-wider text-slate-600 text-[10px] sm:text-[11px]">
+                סך שווי הון נטו
               </span>
               <span className="text-slate-300">•</span>
-              <span className="text-slate-400 text-[11px] font-medium">מעודכן ל-{currentRecord.label}</span>
+              <span className="text-slate-400 text-[10.5px] sm:text-[11px] font-medium">{currentRecord.label}</span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {/* Gross / Net Toggle */}
-              <div className="inline-flex rounded-xl bg-slate-100/90 p-0.5 text-[11px] font-bold border border-slate-200/60">
+              <div className="inline-flex rounded-xl bg-slate-100/90 p-0.5 text-[10.5px] sm:text-[11px] font-bold border border-slate-200/60">
                 <button
                   type="button"
                   onClick={() => setIsNetMode(false)}
-                  className={`px-2.5 py-1 rounded-lg transition ${!isNetMode ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg transition ${!isNetMode ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
                 >
                   ברוטו
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsNetMode(true)}
-                  className={`px-2.5 py-1 rounded-lg transition ${isNetMode ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg transition ${isNetMode ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
                 >
-                  נטו לאחר מס
+                  נטו
                 </button>
               </div>
 
               {onOpenCostBasis && (
                 <button
                   onClick={onOpenCostBasis}
-                  className="flex items-center gap-1 text-emerald-800 hover:text-emerald-950 transition text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-xl border border-emerald-300/80 active:scale-95 shadow-xs"
+                  className="flex items-center gap-1 text-emerald-800 hover:text-emerald-950 transition text-[10.5px] sm:text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100/80 px-2 py-1 rounded-xl border border-emerald-300/80 active:scale-95 shadow-xs"
                   title="הגדרת קרן וחישוב נטו"
                 >
                   <Calculator className="w-3.5 h-3.5 text-emerald-600" />
@@ -101,7 +101,7 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
 
               <button
                 onClick={() => setIsPrivate(!isPrivate)}
-                className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition text-[11px] font-semibold bg-white px-2.5 py-1 rounded-xl border border-slate-200/80 active:scale-95 shadow-xs"
+                className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition text-[10.5px] sm:text-[11px] font-semibold bg-white px-2 py-1 rounded-xl border border-slate-200/80 active:scale-95 shadow-xs"
                 title={isPrivate ? 'הצג סכומים' : 'הסתר סכומים (מצב פרטיות)'}
               >
                 {isPrivate ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -111,9 +111,9 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
           </div>
 
           {/* Big Metric Display */}
-          <div className="mt-5 space-y-2">
-            <div className="flex flex-wrap items-baseline gap-3 sm:gap-5">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tabular-nums tracking-tight">
+          <div className="mt-4 sm:mt-5 space-y-2">
+            <div className="flex flex-wrap items-baseline gap-2.5 sm:gap-5">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tabular-nums tracking-tight">
                 {formatILS(displayTotal)}
               </h1>
 

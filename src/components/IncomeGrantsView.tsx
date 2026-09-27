@@ -319,8 +319,102 @@ export const IncomeGrantsView: React.FC<IncomeGrantsViewProps> = ({
           </div>
         </div>
 
-        {/* The Table */}
-        <div className="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+        {/* Mobile Card Feed (sm:hidden) */}
+        <div className="sm:hidden space-y-3">
+          {sorted.map(rec => {
+            const isSelected = rec.period === selectedPeriod;
+            const workInc = getWorkIncome(rec);
+            const grantsInc = getGrantsIncome(rec);
+            const totalInc = rec.income_net || (workInc + grantsInc);
+            const hasDetailedSplit = (rec.salary_daniel || 0) > 0 || (rec.salary_shoval || 0) > 0 || grantsInc > 0;
+            const workPercent = totalInc > 0 ? Math.round((workInc / totalInc) * 100) : 0;
+            const grantsPercent = totalInc > 0 ? 100 - workPercent : 0;
+
+            return (
+              <div
+                key={rec.period}
+                onClick={() => onSelectPeriod(rec.period)}
+                className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                  isSelected
+                    ? 'bg-emerald-50/70 border-emerald-300 ring-2 ring-emerald-500/20 shadow-sm'
+                    : 'bg-slate-50/50 border-slate-200/80 hover:bg-slate-50'
+                }`}
+              >
+                {/* Top Row: Month & Action */}
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200/60">
+                  <div className="flex items-center gap-1.5 font-bold text-slate-900 text-sm">
+                    <Calendar className="w-4 h-4 text-emerald-600" />
+                    <span>{rec.label}</span>
+                    {isSelected && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-emerald-600 text-white">נבחר</span>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectPeriod(rec.period);
+                      onNavigateToForm();
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-emerald-700 text-xs font-bold transition shadow-xs active:scale-95"
+                  >
+                    ערוך
+                  </button>
+                </div>
+
+                {/* Total Income Big Pill */}
+                <div className="pt-2.5 pb-2 flex items-baseline justify-between">
+                  <span className="text-xs text-slate-500 font-medium">סה״כ הכנסות נטו:</span>
+                  <span className="text-xl font-extrabold text-emerald-700 font-num">
+                    {formatILS(totalInc)}
+                  </span>
+                </div>
+
+                {/* Progress bar split */}
+                {totalInc > 0 && (
+                  <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden flex my-1.5">
+                    <div className="h-full bg-blue-500 rounded-r-full" style={{ width: `${workPercent}%` }} />
+                    <div className="h-full bg-amber-500 rounded-l-full" style={{ width: `${grantsPercent}%` }} />
+                  </div>
+                )}
+
+                {/* Breakdown Badges */}
+                <div className="grid grid-cols-2 gap-2 pt-1.5 text-xs font-num">
+                  <div className="bg-blue-50/80 border border-blue-100 rounded-xl p-2">
+                    <span className="text-[10px] text-blue-700 block font-sans font-medium">💼 שכר עבודה</span>
+                    <span className="font-extrabold text-blue-900 text-sm">{formatILS(workInc)}</span>
+                    {(rec.salary_daniel || rec.salary_shoval) && (
+                      <span className="text-[9.5px] text-blue-500 block truncate mt-0.5">
+                        ד: {formatILS(rec.salary_daniel || 0)} | ש: {formatILS(rec.salary_shoval || 0)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="bg-amber-50/80 border border-amber-100 rounded-xl p-2">
+                    <span className="text-[10px] text-amber-700 block font-sans font-medium">🛡️ מענקים וקצבאות</span>
+                    <span className="font-extrabold text-amber-900 text-sm">{formatILS(grantsInc)}</span>
+                    <span className="text-[9.5px] text-amber-600 block truncate mt-0.5">
+                      {rec.other_income ? `קצבה: ${formatILS(rec.other_income)}` : 'מילואים/ביטוח לאומי'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Expenses & Savings Footnote */}
+                {(rec.expenses > 0 || rec.savings > 0) && (
+                  <div className="flex items-center justify-between text-[11px] font-num text-slate-500 pt-2 mt-2 border-t border-slate-200/60">
+                    <span>הוצאות: {formatILS(rec.expenses)}</span>
+                    <span className="text-blue-600 font-bold">
+                      חיסכון: {formatILS(rec.savings)} ({rec.savings_rate.toFixed(0)}%)
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop / Tablet The Table (hidden on mobile) */}
+        <div className="hidden sm:block overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm">
           <table className="w-full text-right text-xs">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-600 font-bold select-none">

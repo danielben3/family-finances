@@ -61,7 +61,7 @@ export const FireMilestoneCard: React.FC<FireMilestoneCardProps> = ({
       </div>
 
       {/* Footer Insight & Button */}
-      <div className="flex items-center justify-between pt-3 border-t border-slate-200/60 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-200/60 text-xs">
         <div className="flex items-center gap-1.5 text-slate-600">
           <Hourglass className="w-4 h-4 text-amber-600" />
           <span>

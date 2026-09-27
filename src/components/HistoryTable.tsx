@@ -140,8 +140,91 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({
         </div>
       </div>
 
-      {/* Table Container */}
-      <div className="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+      {/* Mobile Card Feed (sm:hidden) */}
+      <div className="sm:hidden space-y-3">
+        {sorted.map(rec => {
+          const isSelected = rec.period === selectedPeriod;
+          const hasDiff = rec.wealth_change_pct !== 0 && rec.wealth_change_pct !== undefined;
+          const isPos = (rec.wealth_change_pct || 0) > 0;
+          const totalInc = rec.income_net || ((rec.salary_daniel || 0) + (rec.salary_shoval || 0) + (rec.non_work_daniel || 0) + (rec.non_work_shoval || 0) + (rec.other_income || 0));
+
+          return (
+            <div
+              key={rec.period}
+              onClick={() => onSelectPeriod(rec.period)}
+              className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                isSelected
+                  ? 'bg-blue-50/70 border-blue-300 ring-2 ring-blue-500/20 shadow-sm'
+                  : 'bg-slate-50/50 border-slate-200/80 hover:bg-slate-50'
+              }`}
+            >
+              {/* Card Top: Month & Diff Badge */}
+              <div className="flex items-center justify-between pb-2.5 border-b border-slate-200/60">
+                <div className="flex items-center gap-1.5 font-bold text-slate-900 text-sm">
+                  <Calendar className="w-4 h-4 text-blue-600" />
+                  <span>{rec.label}</span>
+                  {isSelected && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-blue-600 text-white">נבחר</span>
+                  )}
+                </div>
+
+                {hasDiff ? (
+                  <span
+                    className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold font-num ${
+                      isPos
+                        ? 'bg-emerald-100/70 text-emerald-800'
+                        : 'bg-rose-100/70 text-rose-800'
+                    }`}
+                  >
+                    {isPos ? '+' : ''}{rec.wealth_change_pct}%
+                  </span>
+                ) : (
+                  <span className="text-xs text-slate-400 font-num">—</span>
+                )}
+              </div>
+
+              {/* Total Wealth Hero in Card */}
+              <div className="pt-2.5 pb-2">
+                <span className="text-[11px] text-slate-400 font-medium block">סך שווי הון כולל</span>
+                <span className="text-xl font-extrabold text-slate-900 font-num">
+                  {formatILS(rec.total_wealth)}
+                </span>
+              </div>
+
+              {/* 2x2 Financial Pillars Grid */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/60 text-xs font-num">
+                <div className="bg-white p-2 rounded-xl border border-slate-100">
+                  <span className="text-[10px] text-slate-400 block font-sans">עו״ש וארנקים</span>
+                  <span className="font-bold text-slate-800">{formatILS(rec.checking)}</span>
+                </div>
+                <div className="bg-white p-2 rounded-xl border border-slate-100">
+                  <span className="text-[10px] text-slate-400 block font-sans">סה״כ השקעות</span>
+                  <span className="font-bold text-emerald-700">{formatILS(rec.investments_total)}</span>
+                </div>
+                <div className="bg-white p-2 rounded-xl border border-slate-100">
+                  <span className="text-[10px] text-slate-400 block font-sans">הכנסות נטו</span>
+                  <span className="font-bold text-slate-900">{formatILS(totalInc)}</span>
+                </div>
+                <div className="bg-white p-2 rounded-xl border border-slate-100">
+                  <span className="text-[10px] text-slate-400 block font-sans">חיסכון חודשי</span>
+                  <span className="font-bold text-blue-700">
+                    {rec.savings > 0 ? `${formatILS(rec.savings)} (${rec.savings_rate.toFixed(0)}%)` : '—'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action */}
+              <div className="mt-2.5 pt-2 flex items-center justify-end text-[11px] text-blue-600 font-bold">
+                <span>טען לטופס עריכה</span>
+                <ChevronRight className="w-3.5 h-3.5 mr-1 transform rotate-180" />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop / Tablet Table Container (hidden on mobile) */}
+      <div className="hidden sm:block overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm">
         <table className="w-full text-right text-xs">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 font-semibold select-none">

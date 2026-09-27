@@ -207,7 +207,7 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   const formatILS = (val: number) =>
     '₪' + Math.round(val).toLocaleString('he-IL');
 
-  const inputBase = 'w-full bg-slate-50/80 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none transition text-left';
+  const inputBase = 'w-full bg-slate-50/80 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none transition text-left';
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 card-diffused-shadow border border-slate-200/80">

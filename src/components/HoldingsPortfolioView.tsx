@@ -141,11 +141,11 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <button
                 onClick={handleRefreshClick}
                 disabled={isRefreshing}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold transition active:scale-95 text-slate-200"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold transition active:scale-95 text-slate-200"
                 title="רענן שער דולר ומחירים"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -154,7 +154,7 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
 
               <button
                 onClick={onOpenAddHolding}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-extrabold transition shadow-md shadow-emerald-500/30 active:scale-95"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-extrabold transition shadow-md shadow-emerald-500/30 active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>הוסף נייר ערך</span>
@@ -163,10 +163,10 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
           </div>
 
           {/* KPI Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
             
             {/* 1. Total Portfolio ILS */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
+            <div className="col-span-2 sm:col-span-1 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
               <span className="text-xs text-slate-400 font-medium block">
                 סך שווי התיק הכולל (מניות + מזומן)
               </span>
@@ -259,7 +259,7 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
             </div>
 
             {/* 6. Cash in Account */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
+            <div className="col-span-2 sm:col-span-1 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-slate-400 font-medium block">
@@ -364,7 +364,7 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
           </div>
 
           {/* Tab Pills */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl text-xs font-bold">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl text-xs font-bold overflow-x-auto no-scrollbar max-w-full">
             <button
               onClick={() => setBreakdownCategory('asset')}
               className={`px-3 py-1.5 rounded-xl transition ${
@@ -536,24 +536,24 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
                 className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all space-y-3.5"
               >
                 {/* Top Row: Symbol, Name, Portfolio Tag, Actions */}
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center font-bold text-xs font-mono shrink-0">
                       {holding.symbol.slice(0, 4)}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h4 className="text-sm font-black text-slate-900 font-mono tracking-tight" dir="ltr">
                           {holding.symbol}
                         </h4>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/60">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/60 shrink-0">
                           {holding.portfolio_name}
                         </span>
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 shrink-0">
                           {holding.asset_type === 'etf' ? 'קרן סל / מדד' : holding.asset_type === 'stock' ? 'מניה' : 'קרן'}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5 font-medium">
+                      <p className="text-xs text-slate-500 mt-0.5 font-medium truncate">
                         {holding.name}
                       </p>
                       {/* Daily & Weekly Performance Badges */}
@@ -583,7 +583,7 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center gap-1.5 mr-auto">
+                  <div className="flex items-center gap-1.5 justify-end sm:mr-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                     {/* Sell Button */}
                     <button
                       onClick={() => onOpenSellHolding(holding)}
