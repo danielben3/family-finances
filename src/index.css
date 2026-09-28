@@ -5,44 +5,113 @@
 html {
   overflow-x: hidden;
   max-width: 100vw;
+  background-color: #FAF8F5;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #F8FAFC;
-  color: #0F172A;
+  background-color: #FAF8F5;
+  color: #1A1A1A;
   min-height: 100vh;
   overflow-x: hidden;
   max-width: 100vw;
   direction: rtl;
-  font-family: 'Rubik', 'Heebo', sans-serif;
+  font-family: 'Inter', 'Heebo', sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Stitch Light Design System Cards */
+/* Minimalist Luxury Editorial Typography */
+.font-serif-luxury {
+  font-family: 'Playfair Display', 'Frank Ruhl Libre', serif;
+}
+
+/* Tactile Poker-Chip Badges */
+.poker-chip {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  display: inline-block;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.75), 0 1px 3px rgba(0, 0, 0, 0.18);
+  flex-shrink: 0;
+}
+
+.poker-chip-lg {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 2.5px rgba(255, 255, 255, 0.85), 0 2px 6px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+  font-size: 10px;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* Luxury Editorial Soft Cards */
 .card-diffused-shadow {
-  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 6px 16px -4px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 10px 30px -4px rgba(26, 26, 26, 0.05), 0 2px 8px -2px rgba(26, 26, 26, 0.03);
 }
 
 .floating-dock-shadow {
-  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 15px 35px -5px rgba(26, 26, 26, 0.12), 0 4px 12px -2px rgba(26, 26, 26, 0.06);
 }
 
 .light-card {
   background: #FFFFFF;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1px solid #EAE6DF;
   border-radius: 20px;
-  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 6px 16px -4px rgba(15, 23, 42, 0.05);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px -4px rgba(26, 26, 26, 0.05), 0 2px 8px -2px rgba(26, 26, 26, 0.03);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .light-card:hover {
-  border-color: rgba(203, 213, 225, 1);
-  box-shadow: 0 4px 12px 0 rgba(15, 23, 42, 0.06), 0 12px 24px -4px rgba(15, 23, 42, 0.08);
+  border-color: #D6D0C5;
+  box-shadow: 0 14px 36px -4px rgba(26, 26, 26, 0.08), 0 4px 12px -2px rgba(26, 26, 26, 0.04);
 }
 
-/* Hide scrollbar for clean horizontal carousel */
+.glass-card {
+  background: #FFFFFF;
+  border: 1px solid #EAE6DF;
+  box-shadow: 0 10px 30px -4px rgba(26, 26, 26, 0.05), 0 2px 8px -2px rgba(26, 26, 26, 0.03);
+}
+
+.glass-card-interactive {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-interactive:hover {
+  background: #FFFFFF;
+  border-color: #D6D0C5;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px -6px rgba(26, 26, 26, 0.08), 0 4px 12px -2px rgba(26, 26, 26, 0.04);
+}
+
+.emerald-glow-pill {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #EAE6DF;
+  box-shadow: 0 15px 35px -5px rgba(26, 26, 26, 0.12), 0 4px 12px -2px rgba(26, 26, 26, 0.06);
+}
+
+.font-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: 'tnum' on, 'lnum' on;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hide scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -50,61 +119,3 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
-/* Tabular number font */
-.font-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-feature-settings: 'tnum' on, 'lnum' on;
-}
-
-/* Quiet Wealth RTL - Apple Glass & Private Banking CSS */
-.glass-card {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 1px 3px rgba(15, 23, 42, 0.03), 0 10px 25px -5px rgba(15, 23, 42, 0.03);
-}
-
-.glass-card-interactive {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.glass-card-interactive:hover {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(203, 213, 225, 0.9);
-  transform: translateY(-2px);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 1), 0 4px 6px -1px rgba(15, 23, 42, 0.03), 0 20px 30px -8px rgba(15, 23, 42, 0.06);
-}
-
-.emerald-glow-pill {
-  background: rgba(0, 108, 74, 0.06);
-  border: 1px solid rgba(0, 108, 74, 0.22);
-  box-shadow: 0 0 12px -2px rgba(0, 108, 74, 0.15);
-}
-
-.glass-nav {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.03);
-}
-
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Luxury Titanium & Specular Card Effects */
-.titanium-card-bevel {
-  box-shadow: inset 0 1.5px 0.5px rgba(255, 255, 255, 0.95), inset 0 -1.5px 1px rgba(148, 163, 184, 0.35), 0 20px 40px -15px rgba(15, 23, 42, 0.10);
-}
-
-.titanium-edge {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 12px 32px -4px rgba(15, 23, 42, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
-}
-
-.deboss-text {
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-

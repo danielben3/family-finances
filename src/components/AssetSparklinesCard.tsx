@@ -1,6 +1,6 @@
 import React from 'react';
 import { FinancialRecord } from '../types';
-import { TrendingUp, ShieldCheck, Globe, Coins, Building2, ChevronLeft, Calculator, Layers, ArrowUpRight, Pencil } from 'lucide-react';
+import { TrendingUp, Globe, Coins, Building2, ChevronLeft, Calculator, Layers, Pencil } from 'lucide-react';
 
 interface AssetSparklinesCardProps {
   records: FinancialRecord[];
@@ -72,73 +72,73 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
   const pillars = [
     {
       id: 'excellence',
-      name: 'אקסלנס טרייד (מניות)',
-      sector: 'מניות חו״ל וקרנות סל',
+      name: 'אקסלנס (מניות)',
+      sector: 'מניות חו״ל וקרנות',
       value: excellence,
       pct: ((excellence / total) * 100).toFixed(1),
       diff: excellence - prevExcellence,
       diffPct: calcDiffPct(excellence, prevExcellence),
       history: excellenceHistory,
-      color: '#006c4a',
+      color: '#10B981',
+      pokerClass: 'bg-emerald-500',
       bgTag: 'bg-emerald-50 text-emerald-800 border-emerald-200/60',
-      icon: <Globe className="w-4 h-4 text-emerald-700" />,
       subNote: 'חודשי',
     },
     {
       id: 'onezero',
-      name: 'תיק השקעות One Zero',
+      name: 'מסחר One Zero',
       sector: 'מסחר עצמאי',
       value: onezero,
       pct: ((onezero / total) * 100).toFixed(1),
       diff: onezero - prevOneZero,
       diffPct: calcDiffPct(onezero, prevOneZero),
       history: onezeroHistory,
-      color: '#059669',
-      bgTag: 'bg-slate-100 text-slate-700 border-slate-200/70',
-      icon: <Layers className="w-4 h-4 text-slate-700" />,
-      subNote: 'יומי (מסחר פעיל)',
+      color: '#4F46E5',
+      pokerClass: 'bg-indigo-600',
+      bgTag: 'bg-indigo-50 text-indigo-800 border-indigo-200/60',
+      subNote: 'יומי (פעיל)',
     },
     {
       id: 'altshuler',
       name: 'אלטשולר שחם',
-      sector: 'פנסיוני ופטור ממס',
+      sector: 'פנסיוני וגמל',
       value: altshuler,
       pct: ((altshuler / total) * 100).toFixed(1),
       diff: altshuler - prevAltshuler,
       diffPct: calcDiffPct(altshuler, prevAltshuler),
       history: altshulerHistory,
-      color: '#2563EB',
-      bgTag: 'bg-blue-50 text-blue-800 border-blue-200/60',
-      icon: <ShieldCheck className="w-4 h-4 text-blue-700" />,
-      subNote: 'קרן השתלמות',
+      color: '#F59E0B',
+      pokerClass: 'bg-amber-500',
+      bgTag: 'bg-amber-50 text-amber-800 border-amber-200/60',
+      subNote: 'השתלמות',
     },
     {
       id: 'moneyMarket',
-      name: 'קרן כספית שקלית',
-      sector: 'סולידי / מגן אינפלציה',
+      name: 'קרן כספית',
+      sector: 'מגן אינפלציה',
       value: moneyMarket,
       pct: ((moneyMarket / total) * 100).toFixed(1),
       diff: moneyMarket - prevMoneyMarket,
       diffPct: calcDiffPct(moneyMarket, prevMoneyMarket),
       history: moneyMarketHistory,
-      color: '#D97706',
-      bgTag: 'bg-amber-50 text-amber-800 border-amber-200/60',
-      icon: <Coins className="w-4 h-4 text-amber-700" />,
-      subNote: '4.5% שנתי צפוי',
+      color: '#2563EB',
+      pokerClass: 'bg-blue-600',
+      bgTag: 'bg-blue-50 text-blue-800 border-blue-200/60',
+      subNote: 'סולידי',
     },
     {
       id: 'checking',
-      name: 'עו״ש וארנקים נזילים',
-      sector: 'נזילות ועו״ש',
+      name: 'עו״ש וארנקים',
+      sector: 'נזילות מיידית',
       value: checking,
       pct: ((checking / total) * 100).toFixed(1),
       diff: checking - prevChecking,
       diffPct: calcDiffPct(checking, prevChecking),
       history: checkingHistory,
-      color: '#475569',
-      bgTag: 'bg-slate-100 text-slate-700 border-slate-200/70',
-      icon: <Building2 className="w-4 h-4 text-slate-700" />,
-      subNote: 'יתרה זמינה',
+      color: '#1A1A1A',
+      pokerClass: 'bg-[#1A1A1A]',
+      bgTag: 'bg-stone-100 text-stone-800 border-stone-200',
+      subNote: 'זמין',
       breakdown: (() => {
         const rf = typeof currentRecord.raw_formulas === 'string'
           ? (() => { try { return JSON.parse(currentRecord.raw_formulas); } catch { return {}; } })()
@@ -155,7 +155,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
           { label: 'One Zero', val: formatILS(valOneZero), rawVal: valOneZero },
           { label: 'Pepper', val: formatILS(valPepper), rawVal: valPepper },
           { label: 'אוצר החייל', val: formatILS(valOtsar), rawVal: valOtsar },
-          { label: 'Bit & PayBox', val: formatILS(valWallets), rawVal: valWallets },
+          { label: 'Bit / PayBox', val: formatILS(valWallets), rawVal: valWallets },
         ];
       })(),
     },
@@ -166,20 +166,20 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       {/* Section Header */}
       <div className="flex items-center justify-between px-1 gap-2 flex-wrap">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></div>
-          <h2 className="text-xs sm:text-base font-bold text-slate-900 tracking-tight truncate">
-            5 עמודי התווך של ההון
+          <span className="poker-chip bg-emerald-500" />
+          <h2 className="text-xs sm:text-base font-bold text-[#1A1A1A] tracking-tight truncate">
+            עמודי התווך של ההון המשפחתי
           </h2>
-          <span className="hidden xs:inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+          <span className="hidden xs:inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white text-[#737373] border border-[#EAE6DF] shrink-0 font-num">
             100%
           </span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[10.5px] text-slate-400 font-medium sm:hidden">גלילה ⬅️</span>
+          <span className="text-[10.5px] text-[#737373] font-medium sm:hidden">גלילה ⬅️</span>
           {onViewHistory && (
             <button
               onClick={onViewHistory}
-              className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-0.5 transition"
+              className="text-xs font-semibold text-[#737373] hover:text-[#1A1A1A] flex items-center gap-0.5 transition"
             >
               <span>טבלה</span>
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -189,7 +189,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
       </div>
 
       {/* Smooth Horizontal Carousel on Mobile / Responsive Grid on Desktop */}
-      <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4 overflow-x-auto no-scrollbar pb-1.5 snap-x snap-mandatory">
+      <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5 overflow-x-auto no-scrollbar pb-1.5 snap-x snap-mandatory">
         {pillars.map(pillar => {
           const isUp = pillar.diff >= 0;
           return (
@@ -199,20 +199,23 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
               role="button"
               tabIndex={0}
               title={`לחץ להזנה ועריכת שווי ${pillar.name}`}
-              className="snap-start shrink-0 w-[82%] sm:w-auto glass-card glass-card-interactive rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between relative overflow-hidden transition-all duration-200 min-w-[220px] sm:min-w-0 cursor-pointer hover:border-emerald-300 hover:shadow-md active:scale-[0.98] group"
+              className="snap-start shrink-0 w-[82%] sm:w-auto bg-white rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between relative overflow-hidden transition-all duration-200 min-w-[220px] sm:min-w-0 cursor-pointer border border-[#EAE6DF] card-diffused-shadow hover:border-stone-400 active:scale-[0.98] group"
             >
               <div className="space-y-2.5">
                 {/* Sector Tag & Weight % */}
                 <div className="flex items-center justify-between text-xs">
-                  <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${pillar.bgTag}`}>
-                    {pillar.sector}
-                  </span>
                   <div className="flex items-center gap-1.5">
-                    <span className="opacity-75 group-hover:opacity-100 text-[10px] font-bold text-emerald-800 bg-emerald-50/90 px-1.5 py-0.5 rounded border border-emerald-200/80 transition inline-flex items-center gap-0.5">
-                      <Pencil className="w-2.5 h-2.5 text-emerald-600" />
-                      <span>הזן</span>
+                    <span className={`poker-chip ${pillar.pokerClass}`} />
+                    <span className="text-[10px] font-semibold text-[#737373]">
+                      {pillar.sector}
                     </span>
-                    <span className="font-bold text-slate-900 tabular-nums text-xs font-num">
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="opacity-0 group-hover:opacity-100 text-[10px] font-bold text-[#1A1A1A] bg-[#FAF8F5] px-1.5 py-0.5 rounded border border-[#EAE6DF] transition inline-flex items-center gap-0.5">
+                      <Pencil className="w-2.5 h-2.5 text-stone-600" />
+                      <span>ערוך</span>
+                    </span>
+                    <span className="font-bold text-[#1A1A1A] tabular-nums text-xs font-num">
                       {pillar.pct}%
                     </span>
                   </div>
@@ -220,10 +223,10 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
 
                 {/* Name & Big Value */}
                 <div>
-                  <h3 className="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                  <h3 className="text-xs sm:text-sm font-bold text-[#1A1A1A] flex items-center gap-1.5">
                     {pillar.name}
                   </h3>
-                  <p className="text-lg sm:text-xl font-extrabold text-slate-900 tabular-nums mt-0.5 font-num">
+                  <p className="text-lg sm:text-xl font-bold text-[#1A1A1A] tabular-nums mt-0.5 font-num font-serif-luxury">
                     {formatILS(pillar.value)}
                   </p>
                 </div>
@@ -231,7 +234,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
 
               {/* Special Breakdown for Checking */}
               {pillar.breakdown && pillar.value > 0 ? (
-                <div className="mt-3 pt-2.5 border-t border-slate-100 grid grid-cols-2 gap-1 text-[10px] text-slate-500">
+                <div className="mt-3 pt-2.5 border-t border-[#EAE6DF] grid grid-cols-2 gap-1 text-[10px] text-[#737373]">
                   {pillar.breakdown.map((item, idx) => {
                     const isNeg = (item as any).rawVal !== undefined ? (item as any).rawVal < 0 : item.val.startsWith('-');
                     return (
@@ -240,11 +243,11 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
                         className={`px-1.5 py-0.5 rounded flex justify-between ${
                           isNeg
                             ? 'bg-rose-50/90 text-rose-800 border border-rose-200/60'
-                            : 'bg-slate-50'
+                            : 'bg-[#FAF8F5]'
                         }`}
                       >
                         <span className="truncate">{item.label}:</span>
-                        <span className={`font-semibold font-num ${isNeg ? 'text-rose-700' : 'text-slate-700'}`}>
+                        <span className={`font-semibold font-num ${isNeg ? 'text-rose-700' : 'text-[#1A1A1A]'}`}>
                           {item.val}
                         </span>
                       </div>
@@ -253,13 +256,13 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
                 </div>
               ) : (
                 /* Yield & Sparkline */
-                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-3 pt-2.5 border-t border-[#EAE6DF] flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <span className={`text-[11px] font-bold font-num flex items-center gap-0.5 ${isUp ? 'text-emerald-700' : 'text-rose-600'}`}>
                       {isUp ? <TrendingUp className="w-3 h-3 text-emerald-600" /> : null}
                       {isUp ? '+' : ''}{pillar.diffPct}%
                     </span>
-                    <span className="text-[10px] text-slate-400 font-normal">
+                    <span className="text-[10px] text-[#737373] font-normal">
                       {pillar.subNote}
                     </span>
                   </div>
@@ -282,7 +285,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
 
               {/* Excellence Cost Basis Net Drawer */}
               {pillar.id === 'excellence' && onOpenCostBasis && (
-                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                <div className="mt-2.5 pt-2 border-t border-[#EAE6DF] flex items-center justify-between text-[11px]">
                   {currentRecord.excellence_cost_basis && currentRecord.excellence_cost_basis > 0 ? (
                     <div className="w-full flex items-center justify-between">
                       <span className="text-emerald-700 font-semibold text-[10px] font-num">
@@ -293,7 +296,7 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
                           e.stopPropagation();
                           onOpenCostBasis();
                         }}
-                        className="text-[10px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
+                        className="text-[10px] font-bold text-[#1A1A1A] hover:underline flex items-center gap-0.5"
                       >
                         <Calculator className="w-3 h-3" />
                         <span>ערוך קרן</span>
@@ -305,9 +308,9 @@ export const AssetSparklinesCard: React.FC<AssetSparklinesCardProps> = ({
                         e.stopPropagation();
                         onOpenCostBasis();
                       }}
-                      className="w-full text-[10px] text-emerald-800 bg-emerald-50/70 hover:bg-emerald-100/70 px-2 py-1 rounded-lg border border-emerald-200/60 font-medium flex items-center justify-center gap-1 transition"
+                      className="w-full text-[10px] text-[#1A1A1A] bg-[#FAF8F5] hover:bg-stone-100 px-2 py-1 rounded-lg border border-[#EAE6DF] font-medium flex items-center justify-center gap-1 transition"
                     >
-                      <Calculator className="w-3 h-3 text-emerald-600" />
+                      <Calculator className="w-3 h-3 text-stone-600" />
                       <span>הגדר קרן לחישוב נטו</span>
                     </button>
                   )}

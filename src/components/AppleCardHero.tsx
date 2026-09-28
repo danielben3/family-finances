@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FinancialRecord } from '../types';
-import { TrendingUp, TrendingDown, Eye, EyeOff, Plus, Flame, Target, Download, Wifi, ShieldCheck, Sparkles, Calculator, Building2 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Eye, EyeOff, Plus, Flame, Target, Download, Calculator, Building2, RefreshCw } from 'lucide-react';
 
 interface AppleCardHeroProps {
   currentRecord: FinancialRecord;
@@ -53,210 +53,181 @@ export const AppleCardHero: React.FC<AppleCardHeroProps> = ({
 
   return (
     <section className="space-y-4">
-      {/* Quiet Wealth RTL Master Glass Card */}
-      <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 relative overflow-hidden transition-all duration-300">
-        {/* Specular Ambient Gradient Orbs */}
-        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-blue-400/10 blur-3xl pointer-events-none" />
-
-        <div className="relative z-10">
-          {/* Top Row: Header & Privacy / Net Toggle */}
-          <div className="flex items-center justify-between flex-wrap gap-2.5 pb-3 border-b border-slate-200/60">
-            <div className="flex items-center gap-1.5 sm:gap-2 text-slate-500 text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-              <span className="font-bold uppercase tracking-wider text-slate-600 text-[10px] sm:text-[11px]">
-                סך שווי הון נטו
-              </span>
-              <span className="text-slate-300">•</span>
-              <span className="text-slate-400 text-[10.5px] sm:text-[11px] font-medium">{currentRecord.label}</span>
-            </div>
-
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              {/* Gross / Net Toggle */}
-              <div className="inline-flex rounded-xl bg-slate-100/90 p-0.5 text-[10.5px] sm:text-[11px] font-bold border border-slate-200/60">
-                <button
-                  type="button"
-                  onClick={() => setIsNetMode(false)}
-                  className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg transition ${!isNetMode ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
-                >
-                  ברוטו
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsNetMode(true)}
-                  className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg transition ${isNetMode ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
-                >
-                  נטו
-                </button>
-              </div>
-
-              {onOpenCostBasis && (
-                <button
-                  onClick={onOpenCostBasis}
-                  className="flex items-center gap-1 text-emerald-800 hover:text-emerald-950 transition text-[10.5px] sm:text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100/80 px-2 py-1 rounded-xl border border-emerald-300/80 active:scale-95 shadow-xs"
-                  title="הגדרת קרן וחישוב נטו"
-                >
-                  <Calculator className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="hidden sm:inline">{costBasis > 0 ? 'ערוך קרן' : 'הזן קרן'}</span>
-                </button>
-              )}
-
-              <button
-                onClick={() => setIsPrivate(!isPrivate)}
-                className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition text-[10.5px] sm:text-[11px] font-semibold bg-white px-2 py-1 rounded-xl border border-slate-200/80 active:scale-95 shadow-xs"
-                title={isPrivate ? 'הצג סכומים' : 'הסתר סכומים (מצב פרטיות)'}
-              >
-                {isPrivate ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                <span className="hidden sm:inline">{isPrivate ? 'הצג' : 'פרטיות'}</span>
-              </button>
-            </div>
+      {/* Minimalist Luxury Editorial Hero Card */}
+      <div className="bg-white rounded-3xl p-5 sm:p-7 md:p-8 border border-[#EAE6DF] card-diffused-shadow relative overflow-hidden transition-all">
+        
+        {/* Top Eyebrow & Mode Toggles */}
+        <div className="flex items-center justify-between flex-wrap gap-2.5 pb-4 border-b border-[#EAE6DF]">
+          <div className="flex items-center gap-2">
+            <span className="poker-chip bg-emerald-500 animate-pulse" />
+            <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-[#737373]">
+              סך שווי נכסים כולל // NET WORTH
+            </span>
+            <span className="text-stone-300">•</span>
+            <span className="text-[11px] sm:text-xs text-[#737373] font-medium">{currentRecord.label}</span>
           </div>
 
-          {/* Big Metric Display */}
-          <div className="mt-4 sm:mt-5 space-y-2">
-            <div className="flex flex-wrap items-baseline gap-2.5 sm:gap-5">
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tabular-nums tracking-tight">
-                {formatILS(displayTotal)}
-              </h1>
-
-              {/* Emerald Glow Pill */}
-              {previousRecord && (
-                <div
-                  className={`px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-bold tabular-nums shadow-sm transition ${
-                    isPositive
-                      ? 'emerald-glow-pill text-emerald-800 bg-emerald-500/10 border border-emerald-600/25'
-                      : 'bg-rose-50 text-rose-800 border border-rose-200'
-                  }`}
-                >
-                  {isPositive ? (
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4 text-rose-600" />
-                  )}
-                  <span>
-                    {isPositive ? '+' : ''}
-                    {diffPct.toFixed(1)}%
-                  </span>
-                  <span className="text-[11px] font-normal text-slate-600">
-                    ({isPositive ? '+' : ''}{isPrivate ? '••••' : formatILS(diff)} החודש)
-                  </span>
-                </div>
-              )}
+          <div className="flex items-center gap-2">
+            {/* Gross / Net Toggle */}
+            <div className="inline-flex rounded-full bg-[#FAF8F5] p-0.5 text-xs font-medium border border-[#EAE6DF]">
+              <button
+                type="button"
+                onClick={() => setIsNetMode(false)}
+                className={`px-3 py-1 rounded-full transition ${!isNetMode ? 'bg-[#1A1A1A] text-white shadow-xs font-semibold' : 'text-[#737373] hover:text-[#1A1A1A]'}`}
+              >
+                ברוטו
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsNetMode(true)}
+                className={`px-3 py-1 rounded-full transition ${isNetMode ? 'bg-[#1A1A1A] text-white shadow-xs font-semibold' : 'text-[#737373] hover:text-[#1A1A1A]'}`}
+              >
+                נטו
+              </button>
             </div>
 
-            {costBasis > 0 && isNetMode && (
-              <p className="text-[11px] font-medium text-emerald-700 pt-0.5 flex items-center gap-1">
-                <span>הופחת מס רווחי הון 25% מאקסלנס: -{formatILS(estimatedTax)}</span>
-                <span className="text-slate-400 font-normal">(רווח צבור: +{formatILS(capitalGain)})</span>
-              </p>
+            {onOpenCostBasis && (
+              <button
+                onClick={onOpenCostBasis}
+                className="flex items-center gap-1 text-[#737373] hover:text-[#1A1A1A] transition text-xs font-medium bg-[#FAF8F5] px-2.5 py-1 rounded-full border border-[#EAE6DF] active:scale-95"
+                title="הגדרת קרן וחישוב נטו"
+              >
+                <Calculator className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{costBasis > 0 ? 'ערוך קרן' : 'הזן קרן'}</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => setIsPrivate(!isPrivate)}
+              className="flex items-center gap-1 text-[#737373] hover:text-[#1A1A1A] transition text-xs font-medium bg-[#FAF8F5] px-2.5 py-1 rounded-full border border-[#EAE6DF] active:scale-95"
+              title={isPrivate ? 'הצג סכומים' : 'הסתר סכומים (מצב פרטיות)'}
+            >
+              {isPrivate ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              <span className="hidden sm:inline">{isPrivate ? 'הצג' : 'פרטיות'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Grand Bold Net Worth Metric */}
+        <div className="pt-5 sm:pt-6 space-y-3">
+          <div className="flex flex-wrap items-baseline gap-3 sm:gap-5">
+            <h1 className="text-4xl sm:text-6xl font-serif-luxury font-bold text-[#1A1A1A] tracking-tight">
+              {formatILS(displayTotal)}
+            </h1>
+
+            {/* Performance Pill */}
+            {previousRecord && (
+              <div
+                className={`px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-semibold font-num shadow-2xs ${
+                  isPositive
+                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/60'
+                    : 'bg-rose-50 text-rose-800 border border-rose-200/60'
+                }`}
+              >
+                {isPositive ? (
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <TrendingDown className="w-3.5 h-3.5 text-rose-600" />
+                )}
+                <span>
+                  {isPositive ? '+' : ''}
+                  {diffPct.toFixed(1)}%
+                </span>
+                <span className="text-[11px] font-normal text-stone-500">
+                  ({isPositive ? '+' : ''}{isPrivate ? '••••' : formatILS(diff)} בשנה החולפת)
+                </span>
+              </div>
             )}
           </div>
 
-          {/* Inline Metadata Stats Ledger */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-5 mt-5 border-t border-slate-200/60 text-xs">
-            <div
-              onClick={() => onEditAsset?.('checking')}
-              role={onEditAsset ? 'button' : undefined}
-              tabIndex={onEditAsset ? 0 : undefined}
-              title={onEditAsset ? 'לחץ להזנה ועריכת יתרות עו״ש' : undefined}
-              className={`p-2.5 rounded-2xl bg-white/70 border border-slate-100 flex flex-col justify-between transition ${
-                onEditAsset ? 'hover:bg-white hover:border-emerald-300 cursor-pointer active:scale-98 group' : ''
-              }`}
+          {costBasis > 0 && isNetMode && (
+            <p className="text-xs font-medium text-emerald-700 flex items-center gap-1.5 pt-1">
+              <span>הופחת מס רווחי הון 25% מאקסלנס: -{formatILS(estimatedTax)}</span>
+              <span className="text-stone-400 font-normal">(רווח צבור: +{formatILS(capitalGain)})</span>
+            </p>
+          )}
+
+          {/* Large Action Buttons in stark Black vs Outline hierarchy */}
+          <div className="flex flex-wrap items-center gap-2.5 pt-4">
+            <button
+              onClick={onQuickLog}
+              className="flex-1 sm:flex-none px-6 py-3 rounded-full bg-[#1A1A1A] text-white text-xs sm:text-sm font-semibold hover:bg-stone-800 active:scale-95 transition shadow-sm flex items-center justify-center gap-2"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400 text-[11px] block">נזילות מיידית (עו״ש + כספית):</span>
-                {onEditAsset && (
-                  <span className="text-[10px] text-emerald-700 font-bold opacity-0 group-hover:opacity-100 transition">
-                    ערוך ✏️
-                  </span>
-                )}
-              </div>
-              <span className="font-bold text-slate-900 text-sm sm:text-base tabular-nums mt-0.5">
-                {formatILS((currentRecord.checking || 0) + (currentRecord.money_market || 0))}
-              </span>
-            </div>
+              <Plus className="w-4 h-4 text-amber-400" />
+              <span>+ הזנה חודשית</span>
+            </button>
 
-            <div className="p-2.5 rounded-2xl bg-white/70 border border-slate-100 flex flex-col justify-between">
-              <span className="text-slate-400 text-[11px] block">חיסכון חודשי מדווח:</span>
-              <span className="font-bold text-slate-900 text-sm sm:text-base tabular-nums mt-0.5">
-                {formatILS(currentRecord.savings || 0)}
-              </span>
-            </div>
+            {onEditAsset && (
+              <button
+                onClick={() => onEditAsset('checking')}
+                className="flex-1 sm:flex-none px-5 py-3 rounded-full bg-white border border-[#EAE6DF] text-[#1A1A1A] text-xs sm:text-sm font-semibold hover:border-stone-800 active:scale-95 transition shadow-2xs flex items-center justify-center gap-2"
+              >
+                <Building2 className="w-4 h-4 text-stone-600" />
+                <span>סנכרון ועדכון מהיר</span>
+              </button>
+            )}
 
-            <div className="p-2.5 rounded-2xl bg-white/70 border border-slate-100 col-span-2 sm:col-span-1 flex flex-col justify-between">
-              <span className="text-slate-400 text-[11px] block">פרופיל סיכון והרכב:</span>
-              <span className="font-semibold text-emerald-700 text-xs sm:text-sm mt-0.5 flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>צמיחה מאוזנת (6.2/10)</span>
-              </span>
-            </div>
+            {onOpenFire && (
+              <button
+                onClick={onOpenFire}
+                className="px-4 py-3 rounded-full bg-[#FAF8F5] border border-[#EAE6DF] text-stone-700 text-xs sm:text-sm font-medium hover:border-stone-400 active:scale-95 transition flex items-center gap-1.5"
+              >
+                <Flame className="w-4 h-4 text-amber-500" />
+                <span className="hidden xs:inline">מחשבון FIRE</span>
+              </button>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* Quick Action Interactive Pills Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-        {/* Quick Checking & Asset Modal Trigger */}
-        {onEditAsset && (
-          <button
-            onClick={() => onEditAsset('checking')}
-            className="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/20 active:scale-95 transition"
-          >
-            <Building2 className="w-4 h-4 text-emerald-200" />
-            <span>עדכון עו״ש מהיר</span>
-          </button>
-        )}
+        {/* Quick Micro Indicators with Poker-Chip Monograms */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-6 mt-6 border-t border-[#EAE6DF]">
+          
+          {/* פנסיה וגמל */}
+          <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE6DF] flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-xs text-[#737373] font-medium mb-1">
+              <span className="poker-chip bg-amber-500" />
+              <span className="truncate">פנסיה וגמל</span>
+            </div>
+            <span className="text-sm sm:text-base font-bold text-[#1A1A1A] font-num">
+              {formatILS(currentRecord.altshuler || 0)}
+            </span>
+          </div>
 
-        {/* Quick Log Form */}
-        <button
-          onClick={onQuickLog}
-          className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs active:scale-95 transition"
-        >
-          <Plus className="w-4 h-4 text-emerald-400" />
-          <span>טופס מלא</span>
-        </button>
+          {/* תיק השקעות */}
+          <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE6DF] flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-xs text-[#737373] font-medium mb-1">
+              <span className="poker-chip bg-emerald-500" />
+              <span className="truncate">תיק השקעות</span>
+            </div>
+            <span className="text-sm sm:text-base font-bold text-[#1A1A1A] font-num">
+              {formatILS(currentRecord.excellence || 0)}
+            </span>
+          </div>
 
-        {/* FIRE Calculator */}
-        <button
-          onClick={onOpenFire}
-          className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-xs active:scale-95 transition"
-        >
-          <Flame className="w-4 h-4 text-amber-500" />
-          <span>מחשבון יעדים ו-FIRE</span>
-        </button>
+          {/* קרן כספית */}
+          <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE6DF] flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-xs text-[#737373] font-medium mb-1">
+              <span className="poker-chip bg-blue-600" />
+              <span className="truncate">קרן כספית</span>
+            </div>
+            <span className="text-sm sm:text-base font-bold text-[#1A1A1A] font-num">
+              {formatILS(currentRecord.money_market || 0)}
+            </span>
+          </div>
 
-        {/* Cost Basis & Tax Net */}
-        {onOpenCostBasis && (
-          <button
-            onClick={onOpenCostBasis}
-            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 font-semibold text-xs shadow-xs active:scale-95 transition"
-          >
-            <Calculator className="w-4 h-4 text-emerald-600" />
-            <span>הזנת קרן וחישוב נטו</span>
-          </button>
-        )}
+          {/* עו״ש ונזילות */}
+          <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#EAE6DF] flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-xs text-[#737373] font-medium mb-1">
+              <span className="poker-chip bg-stone-900" />
+              <span className="truncate">עו״ש ונזילות</span>
+            </div>
+            <span className="text-sm sm:text-base font-bold text-[#1A1A1A] font-num">
+              {formatILS(currentRecord.checking || 0)}
+            </span>
+          </div>
 
-        {/* Independence Goals */}
-        {onScrollToGoals && (
-          <button
-            onClick={onScrollToGoals}
-            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-xs active:scale-95 transition"
-          >
-            <Target className="w-4 h-4 text-blue-600" />
-            <span>יעד 2M ₪</span>
-          </button>
-        )}
+        </div>
 
-        {/* Export Report */}
-        {onExportExcel && (
-          <button
-            onClick={onExportExcel}
-            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 font-semibold text-xs shadow-xs active:scale-95 transition"
-          >
-            <Download className="w-4 h-4 text-slate-500" />
-            <span>ייצוא לאקסל</span>
-          </button>
-        )}
       </div>
     </section>
   );

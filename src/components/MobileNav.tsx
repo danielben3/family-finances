@@ -19,8 +19,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({ activeTab, onChangeTab }) 
   ];
 
   return (
-    <nav className="fixed bottom-3.5 left-3 right-3 max-w-md mx-auto z-40 glass-nav rounded-2xl md:hidden px-1 py-1 shadow-xl transition-all border border-slate-200/80">
-      <div className="flex items-center justify-between gap-0.5">
+    <nav className="fixed bottom-4 left-3 right-3 max-w-md mx-auto z-40 glass-nav rounded-full md:hidden px-2 py-1.5 floating-dock-shadow transition-all border border-[#EAE6DF]">
+      <div className="flex items-center justify-between gap-1">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -28,20 +28,22 @@ export const MobileNav: React.FC<MobileNavProps> = ({ activeTab, onChangeTab }) 
             <button
               key={tab.id}
               onClick={() => onChangeTab(tab.id)}
-              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1 px-0.5 rounded-xl transition-all active:scale-95 ${
+              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1 rounded-full transition-all active:scale-95 ${
                 isActive
-                  ? 'text-emerald-800 font-extrabold'
-                  : 'text-slate-400 hover:text-slate-700 font-medium'
+                  ? 'text-[#1A1A1A] font-bold'
+                  : 'text-[#737373] hover:text-[#1A1A1A] font-medium'
               }`}
             >
               <div
-                className={`p-1.5 rounded-xl transition-all flex items-center justify-center ${
-                  isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/70 shadow-2xs scale-105' : ''
+                className={`p-1.5 rounded-full transition-all flex items-center justify-center ${
+                  isActive ? 'bg-[#1A1A1A] text-white shadow-xs scale-105' : 'text-[#737373]'
                 }`}
               >
-                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                <Icon className="w-4 h-4" />
               </div>
-              <span className="text-[10px] tracking-tight truncate max-w-full text-center mt-0.5">{tab.label}</span>
+              <span className="text-[9.5px] tracking-tight truncate max-w-full text-center mt-0.5">
+                {tab.label}
+              </span>
             </button>
           );
         })}
