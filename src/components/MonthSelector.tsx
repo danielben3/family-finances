@@ -29,17 +29,25 @@ export const MonthSelector: React.FC<MonthSelectorProps> = ({
   ];
 
   const recordMap = new Map(records.map(r => [r.period, r]));
+  const currentMonthName = months2026.find(m => m.key === selectedPeriod)?.name || '';
 
   return (
-    <div className="bg-white rounded-2xl p-3 sm:p-4 card-diffused-shadow border border-slate-200/80">
-      <div className="flex items-center justify-between mb-2 px-1">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
-          <Calendar className="w-4 h-4 text-blue-600" />
-          <span>בחר חודש לעיון והזנה (שנת 2026):</span>
+    <div className="bg-white rounded-2xl p-3.5 sm:p-4 border border-black/[0.06] shadow-sm">
+      <div className="flex items-center justify-between mb-2.5 px-1">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] uppercase tracking-[0.14em] font-semibold text-stone-400">
+            // MONTHLY LEDGER
+          </span>
+          <span className="text-xs font-semibold text-stone-800">
+            חודש נבחר לעיון:
+          </span>
         </div>
-        <span className="text-xs text-blue-600 font-semibold">
-          {months2026.find(m => m.key === selectedPeriod)?.name || ''} 2026
-        </span>
+        <div className="flex items-center gap-1.5 bg-[#FAF8F5] px-2.5 py-0.5 rounded-full border border-black/[0.05]">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[11px] font-medium text-stone-700 font-serif">
+            {currentMonthName} 2026
+          </span>
+        </div>
       </div>
 
       {/* Horizontal Carousel */}
@@ -53,18 +61,22 @@ export const MonthSelector: React.FC<MonthSelectorProps> = ({
             <button
               key={m.key}
               onClick={() => onSelectPeriod(m.key)}
-              className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex flex-col items-center gap-1 min-w-[76px] ${
+              className={`flex-shrink-0 px-3.5 py-2 rounded-xl text-xs transition-all flex flex-col items-center gap-1 min-w-[76px] btn-press ${
                 isSelected
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 border border-blue-600 transform -translate-y-0.5'
+                  ? 'bg-[#1A1A1A] text-white shadow-sm font-semibold transform -translate-y-0.5'
                   : hasData
-                  ? 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80'
-                  : 'bg-white hover:bg-slate-50 text-slate-400 border border-slate-200/50'
+                  ? 'bg-white hover:bg-[#FAF8F5] text-stone-800 border border-black/10 font-medium'
+                  : 'bg-white/60 hover:bg-white text-stone-400 border border-stone-200/60'
               }`}
             >
               <span>{m.name}</span>
               <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  isSelected ? 'bg-white' : hasData ? 'bg-emerald-500' : 'bg-slate-300'
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                  isSelected
+                    ? 'bg-emerald-400'
+                    : hasData
+                    ? 'bg-emerald-500'
+                    : 'bg-stone-300'
                 }`}
               />
             </button>

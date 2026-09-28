@@ -237,44 +237,44 @@ export const QuickAssetEditModal: React.FC<QuickAssetEditModalProps> = ({
   ];
 
   const inputBase =
-    'w-full bg-slate-50 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none transition text-left font-bold';
+    'w-full bg-[#FAF8F5] border border-black/[0.08] rounded-xl pl-3.5 pr-8 py-2.5 text-stone-900 font-serif text-sm focus:bg-white focus:border-stone-900 focus:outline-none transition text-left font-bold';
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-sm animate-fade-in"
       dir="rtl"
       onClick={e => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden animate-scale-in">
+      <div className="bg-white border border-black/10 rounded-2xl max-w-lg w-full shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden animate-scale-in">
         
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between shrink-0 bg-slate-50/50">
+        <div className="p-4 sm:p-5 border-b border-black/[0.06] flex items-center justify-between shrink-0 bg-[#FAF8F5]">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <h2 className="text-base sm:text-lg font-bold font-serif text-stone-900">
                 עדכון מהיר — נכסים ועו״ש
               </h2>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              חודש <span className="font-bold text-slate-700">{currentRecord.label}</span> • נגיעה לעדכון וסנכרון מיידי
+            <p className="text-xs text-stone-500 mt-0.5 font-sans">
+              חודש <span className="font-bold font-serif text-stone-800">{currentRecord.label}</span> • נגיעה לעדכון וסנכרון מיידי
             </p>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition active:scale-95"
+            className="p-1.5 rounded-xl bg-white hover:bg-stone-100 text-stone-400 hover:text-stone-800 border border-black/[0.06] transition active:scale-95"
             title="סגור"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Quick Asset Switcher Tabs (Scrollable Bar) */}
-        <div className="flex items-center gap-1.5 p-2 bg-slate-100/70 border-b border-slate-200/80 overflow-x-auto no-scrollbar shrink-0">
+        <div className="flex items-center gap-1.5 p-2 bg-[#FAF8F5] border-b border-black/[0.06] overflow-x-auto no-scrollbar shrink-0">
           {tabs.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -283,13 +283,13 @@ export const QuickAssetEditModal: React.FC<QuickAssetEditModalProps> = ({
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition active:scale-95 ${
+                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition active:scale-95 btn-press ${
                   isActive
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200 font-bold ring-2 ring-emerald-500/20'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                    ? 'bg-[#1A1A1A] text-white shadow-2xs'
+                    : 'bg-white text-stone-600 hover:text-stone-900 border border-black/[0.06]'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-stone-400'}`} />
                 <span>{tab.label}</span>
               </button>
             );
@@ -665,21 +665,21 @@ export const QuickAssetEditModal: React.FC<QuickAssetEditModalProps> = ({
           )}
 
           {/* Realtime Impact Summary Ribbon */}
-          <div className="pt-3 border-t border-slate-100">
-            <div className="p-3 rounded-2xl bg-slate-900 text-white flex items-center justify-between shadow-sm">
+          <div className="pt-3 border-t border-black/[0.06]">
+            <div className="p-3 rounded-xl bg-[#1A1A1A] text-white flex items-center justify-between shadow-2xs">
               <div>
-                <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block">
+                <span className="text-[10px] uppercase font-semibold text-stone-400 tracking-wider block">
                   סך שווי הון מעודכן
                 </span>
-                <span className="text-base sm:text-lg font-black font-num">
+                <span className="text-base sm:text-lg font-bold font-serif">
                   {formatILS(calcTotalWealth)}
                 </span>
               </div>
-              <div className="text-left font-num">
-                <span className={`text-xs font-bold flex items-center gap-1 ${diffFromPrev >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <div className="text-left font-serif">
+                <span className={`text-xs font-semibold flex items-center gap-1 ${diffFromPrev >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   {diffFromPrev >= 0 ? '+' : ''}{diffPct}%
                 </span>
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-stone-400 font-sans">
                   {diffFromPrev >= 0 ? '+' : ''}{formatILS(diffFromPrev)}
                 </span>
               </div>
@@ -688,18 +688,18 @@ export const QuickAssetEditModal: React.FC<QuickAssetEditModalProps> = ({
           </div>
 
           {/* Sticky Action Footer */}
-          <div className="shrink-0 p-3 sm:p-4 bg-slate-50 border-t border-slate-200/80 flex items-center gap-2">
+          <div className="shrink-0 p-3 sm:p-4 bg-[#FAF8F5] border-t border-black/[0.06] flex items-center gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="w-1/3 py-2.5 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-100 font-bold text-xs transition"
+              className="w-1/3 py-2.5 rounded-xl border border-[#E5E0D8] bg-white text-stone-700 hover:bg-stone-50 font-medium text-xs transition btn-press shadow-2xs"
             >
               ביטול
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="w-2/3 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 active:scale-98 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-700/20 transition disabled:opacity-60"
+              className="w-2/3 py-2.5 rounded-xl bg-[#1A1A1A] text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-2xs hover:opacity-90 active:scale-95 transition disabled:opacity-60 btn-press"
             >
               {isSaving ? (
                 <>
@@ -708,7 +708,7 @@ export const QuickAssetEditModal: React.FC<QuickAssetEditModalProps> = ({
                 </>
               ) : (
                 <>
-                  <Check className="w-4 h-4 text-emerald-200" />
+                  <Check className="w-4 h-4 text-emerald-400" />
                   <span>שמור וסנכרן עכשיו</span>
                 </>
               )}

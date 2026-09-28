@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FinancialRecord } from '../types';
-import { Save, Sparkles, Check } from 'lucide-react';
+import { Save, Sparkles, Check, Wallet, Landmark, DollarSign, ArrowUpRight, TrendingUp } from 'lucide-react';
 
 interface MonthlyFormProps {
   record: FinancialRecord;
@@ -78,20 +78,17 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   };
 
   const [formData, setFormData] = useState({
-    // Split income fields
     salary_daniel: getInitSalaryDan(record),
     non_work_daniel: getInitNonWorkDan(record),
     salary_shoval: getInitSalaryShov(record),
     non_work_shoval: getInitNonWorkShov(record),
     other_income: getInitOtherInc(record),
     expenses: record.expenses ? String(record.expenses) : '',
-    // Split checking fields
     checking_onezero: getInitCheckingOneZero(record),
     checking_pepper: getInitCheckingPepper(record),
     checking_otsar: getInitCheckingOtsar(record),
     paybox: getInitPaybox(record),
     bit: getInitBit(record),
-    // Investment fields
     altshuler: record.altshuler ? String(record.altshuler) : '',
     excellence: record.excellence ? String(record.excellence) : '',
     excellence_cost_basis: record.excellence_cost_basis ? String(record.excellence_cost_basis) : '',
@@ -101,7 +98,6 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
 
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // Sync form when selected record changes
   useEffect(() => {
     setFormData({
       salary_daniel: getInitSalaryDan(record),
@@ -124,14 +120,11 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     setSavedSuccess(false);
   }, [record.period, record.updated_at]);
 
-  // Evaluate math formulas safely (e.g. "=1200+350" or "24000+4044")
   const parseVal = (str: string): number => {
     if (!str) return 0;
     let clean = String(str).trim();
     if (clean.startsWith('=')) clean = clean.substring(1).trim();
-    // Remove thousands commas (e.g. 18,000 + 500)
     clean = clean.replace(/,/g, '');
-    // Support Hebrew keyboard dashes and Unicode minus (־, –, —, −)
     clean = clean.replace(/[\u2212\u2013\u2014\u05BE]/g, '-');
     if (!clean) return 0;
     if (/^-?\d+(\.\d+)?$/.test(clean)) return parseFloat(clean);
@@ -144,7 +137,6 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     }
   };
 
-  // Excel-like: on blur or Enter, evaluate any formula and replace field text with the result
   const evalField = (field: keyof typeof formData) => {
     const raw = formData[field];
     if (raw && /[+\-*/=־–—−]/.test(raw)) {
@@ -161,7 +153,7 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
     }
   };
 
-  // Live Calculated Values
+  // Live calculations
   const numSalDan = parseVal(formData.salary_daniel);
   const numNonWorkDan = parseVal(formData.non_work_daniel);
   const numSalShov = parseVal(formData.salary_shoval);
@@ -171,8 +163,6 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
 
   const calcTotalDan = numSalDan + numNonWorkDan;
   const calcTotalShov = numSalShov + numNonWorkShov;
-  const calcTotalWorkSalary = numSalDan + numSalShov;
-  const calcTotalNonWork = numNonWorkDan + numNonWorkShov + numOtherIncome;
   const calcTotalIncome = calcTotalDan + calcTotalShov + numOtherIncome;
 
   const numOneZero = parseVal(formData.checking_onezero);
@@ -185,18 +175,17 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
   const numCostBasis = parseVal(formData.excellence_cost_basis);
   const numMoneyMarket = parseVal(formData.money_market);
 
-  const calcBanksTotal = numOneZero + numPepper + numOtsar;
-  const calcWalletsTotal = numPaybox + numBit;
-  const calcChecking = calcBanksTotal + calcWalletsTotal;
+  const calcChecking = numOneZero + numPepper + numOtsar + numPaybox + numBit;
   const calcSavings = calcTotalIncome > 0 || numExpenses > 0 ? calcTotalIncome - numExpenses : 0;
   const calcSavingsRate = calcTotalIncome > 0 ? (calcSavings / calcTotalIncome) * 100 : 0;
   const calcInvestments = numAltshuler + numExcellence + numMoneyMarket;
   const calcTotalWealth = calcChecking + calcInvestments;
 
+  const formatILS = (val: number) => '₪ ' + Math.round(val).toLocaleString('he-IL');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Ensure all input fields reflect their evaluated numeric values
     setFormData(prev => ({
       ...prev,
       salary_daniel: numSalDan ? String(numSalDan) : '',
@@ -251,346 +240,126 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
         checking_otsar: numOtsar,
         paybox: numPaybox,
         bit: numBit,
-        total_banks: calcBanksTotal,
-        total_wallets: calcWalletsTotal,
-        total_checking: calcChecking,
         altshuler: numAltshuler,
         excellence: numExcellence,
+        excellence_cost_basis: numCostBasis,
         money_market: numMoneyMarket,
-        investments_total: calcInvestments,
-        total_wealth: calcTotalWealth,
       },
       updated_at: new Date().toISOString(),
     };
 
     await onSave(updated);
     setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
+    setTimeout(() => setSavedSuccess(false), 2500);
   };
 
-  const formatILS = (val: number) => {
-    const isNeg = val < 0;
-    const formatted = Math.abs(Math.round(val)).toLocaleString('he-IL');
-    return isNeg ? `-₪${formatted}` : `₪${formatted}`;
-  };
-
-  const inputBase = 'w-full bg-slate-50/80 border border-slate-200 rounded-xl pl-3.5 pr-8 py-2.5 text-slate-900 font-num text-sm focus:bg-white focus:outline-none transition text-left';
+  const inputClass =
+    'w-28 sm:w-36 text-left pl-3 pr-7 py-2 text-xs font-semibold text-stone-900 bg-[#FAF8F5] border border-black/[0.08] rounded-xl focus:outline-none focus:border-stone-900 focus:bg-white transition-all font-serif';
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 card-diffused-shadow border border-slate-200/80">
+    <form onSubmit={handleSubmit} className="space-y-5 animate-fade-in" dir="rtl">
       
-      {/* Title & Live Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-slate-100 gap-2.5">
+      {/* 1. Page Title & Action Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
         <div>
-          <h3 className="text-sm sm:text-base font-bold text-slate-900">
-            טופס הזנה ועריכה – {record.label}
-          </h3>
-          <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">
-            ניתן להזין תרגיל (למשל: 16260+1500) – יחושב אוטומטית ביציאה או בלחיצה על Enter.
-          </p>
+          <span className="text-[10px] tracking-[0.16em] uppercase text-stone-400 font-semibold block mb-0.5">
+            MONTHLY DATA LEDGER // ספר נתונים חודשי
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif tracking-tight text-stone-900">
+            הזנה ועדכון חודשי
+          </h1>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-end gap-2.5 bg-blue-50/80 sm:bg-transparent p-2 sm:p-0 rounded-2xl sm:rounded-none">
-          <div className="text-right sm:text-left">
-            <span className="text-[10px] text-slate-500 sm:text-slate-400 block leading-tight">שווי כולל מחושב:</span>
-            <span className="text-sm sm:text-base font-num font-extrabold text-blue-600 block">
-              {formatILS(calcTotalWealth)}
-            </span>
-          </div>
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/25 active:scale-95 transition disabled:opacity-50"
-            title="שמור שינויים עכשיו"
-          >
-            {isSaving ? (
-              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            ) : savedSuccess ? (
-              <Check className="w-3.5 h-3.5 text-white" />
-            ) : (
-              <Save className="w-3.5 h-3.5" />
-            )}
-            <span>{savedSuccess ? 'נשמר!' : isSaving ? 'שומר...' : 'שמור נתונים'}</span>
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#1A1A1A] text-white font-semibold text-xs shadow-2xs hover:opacity-90 active:scale-95 transition disabled:opacity-50 btn-press"
+        >
+          {isSaving ? (
+            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : savedSuccess ? (
+            <Check className="w-3.5 h-3.5 text-emerald-400" />
+          ) : (
+            <Save className="w-3.5 h-3.5" />
+          )}
+          <span>{savedSuccess ? 'נשמר בהצלחה!' : isSaving ? 'שומר...' : 'שמור נתוני חודש'}</span>
+        </button>
       </div>
 
-      {/* ─────────────── Section 1: Income & Cashflow (Split Daniel & Shoval) ─────────────── */}
-      <div className="mb-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-1.5">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-            הכנסות משק הבית — שכר עבודה ושלא מעבודה
-          </p>
-          <div className="self-start sm:self-auto">
-            <span className="text-xs font-num font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-              סה״כ הכנסות נטו: {formatILS(calcTotalIncome)}
-            </span>
-          </div>
+      {/* 2. Calculated Summary Floating Card (Minimalist Luxury) */}
+      <section className="bg-white rounded-2xl p-5 border border-black/[0.06] shadow-sm relative overflow-hidden">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-stone-400">
+            חיסכון נטו מחושב החודש // CALCULATED NET SAVINGS
+          </span>
+          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span>{calcSavingsRate.toFixed(1)}% שיעור חיסכון</span>
+          </span>
         </div>
 
-        {/* Daniel & Shoval Split Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-          
-          {/* Card: Daniel */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-blue-50/60 to-slate-50/90 border border-blue-100 space-y-2.5">
-            <div className="flex items-center justify-between border-b border-blue-100/70 pb-2">
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs">
-                <span className="text-base">👨‍💻</span>
-                <span>דניאל</span>
-                <span className="text-[10px] text-blue-600 font-normal">(אוניברסיטת אריאל)</span>
-              </div>
-              <span className="text-[11px] font-num font-extrabold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-lg">
-                סה״כ: {formatILS(calcTotalDan)}
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                  💼 שכר עבודה נטו
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.salary_daniel}
-                    onChange={e => setFormData({ ...formData, salary_daniel: e.target.value })}
-                    onBlur={() => evalField('salary_daniel')}
-                    onKeyDown={e => handleKeyDown(e, 'salary_daniel')}
-                    placeholder="0"
-                    dir="ltr"
-                    className={`${inputBase} focus:border-blue-500 focus:ring-2 focus:ring-blue-100`}
-                  />
-                  <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                  🛡️ שלא מעבודה (מילואים / ביטוח לאומי)
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.non_work_daniel}
-                    onChange={e => setFormData({ ...formData, non_work_daniel: e.target.value })}
-                    onBlur={() => evalField('non_work_daniel')}
-                    onKeyDown={e => handleKeyDown(e, 'non_work_daniel')}
-                    placeholder="0"
-                    dir="ltr"
-                    className={`${inputBase} focus:border-blue-500 focus:ring-2 focus:ring-blue-100`}
-                  />
-                  <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card: Shoval */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-purple-50/60 to-slate-50/90 border border-purple-100 space-y-2.5">
-            <div className="flex items-center justify-between border-b border-purple-100/70 pb-2">
-              <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs">
-                <span className="text-base">👩‍⚕️</span>
-                <span>שובל</span>
-                <span className="text-[10px] text-purple-600 font-normal">(עזר מציון / עיריית פ״ת)</span>
-              </div>
-              <span className="text-[11px] font-num font-extrabold text-purple-700 bg-purple-100/70 px-2 py-0.5 rounded-lg">
-                סה״כ: {formatILS(calcTotalShov)}
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                  💼 שכר עבודה נטו
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.salary_shoval}
-                    onChange={e => setFormData({ ...formData, salary_shoval: e.target.value })}
-                    onBlur={() => evalField('salary_shoval')}
-                    onKeyDown={e => handleKeyDown(e, 'salary_shoval')}
-                    placeholder="0"
-                    dir="ltr"
-                    className={`${inputBase} focus:border-purple-500 focus:ring-2 focus:ring-purple-100`}
-                  />
-                  <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                  👶 שלא מעבודה (דמי לידה / ביטוח לאומי)
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formData.non_work_shoval}
-                    onChange={e => setFormData({ ...formData, non_work_shoval: e.target.value })}
-                    onBlur={() => evalField('non_work_shoval')}
-                    onKeyDown={e => handleKeyDown(e, 'non_work_shoval')}
-                    placeholder="0"
-                    dir="ltr"
-                    className={`${inputBase} focus:border-purple-500 focus:ring-2 focus:ring-purple-100`}
-                  />
-                  <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Hero Monetary Metric */}
+        <div className="flex items-baseline gap-2 mb-2.5">
+          <span className="text-3xl sm:text-4xl font-bold font-serif tracking-tight text-stone-900">
+            {formatILS(calcSavings)}
+          </span>
+          <span className="text-xs text-stone-500 font-normal">נצבר להון</span>
         </div>
 
-        {/* Other household income & Expenses row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-          <div>
-            <label className="block text-xs font-semibold text-teal-800 mb-1">
-              🏛️ קצבאות ילדים והכנסות נוספות
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.other_income}
-                onChange={e => setFormData({ ...formData, other_income: e.target.value })}
-                onBlur={() => evalField('other_income')}
-                onKeyDown={e => handleKeyDown(e, 'other_income')}
-                placeholder="0"
-                dir="ltr"
-                className={`${inputBase} focus:border-teal-500 focus:ring-2 focus:ring-teal-100`}
-              />
-              <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-rose-700 mb-1">
-              💳 הוצאות שוטפות (אשראי, שכירות, חשבונות)
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.expenses}
-                onChange={e => setFormData({ ...formData, expenses: e.target.value })}
-                onBlur={() => evalField('expenses')}
-                onKeyDown={e => handleKeyDown(e, 'expenses')}
-                placeholder="0"
-                dir="ltr"
-                className={`${inputBase} focus:border-rose-500 focus:ring-2 focus:ring-rose-100`}
-              />
-              <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-            </div>
-          </div>
+        {/* Progress Bar Indicator */}
+        <div className="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden mb-3.5">
+          <div
+            className="bg-[#1A1A1A] h-full rounded-full transition-all duration-500"
+            style={{ width: `${Math.min(100, Math.max(0, calcSavingsRate))}%` }}
+          />
         </div>
 
-        {/* Live Income Subtotal Ribbon: 2x2 grid on mobile, row on desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] font-num font-semibold">
-          <div className="bg-white p-2 rounded-lg border border-slate-100 text-center">
-            <span className="text-slate-400 block text-[10px]">דניאל</span>
-            <span className="text-blue-700 font-bold">{formatILS(calcTotalDan)}</span>
+        {/* Micro-stats Metrics Grid */}
+        <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-black/[0.06]">
+          <div className="bg-[#FAF8F5] p-2.5 rounded-xl border border-black/[0.04]">
+            <span className="text-[10px] text-stone-400 block mb-0.5">סך הכנסות חודשיות</span>
+            <span className="text-xs font-bold font-serif text-stone-900">{formatILS(calcTotalIncome)}</span>
           </div>
-          <div className="bg-white p-2 rounded-lg border border-slate-100 text-center">
-            <span className="text-slate-400 block text-[10px]">שובל</span>
-            <span className="text-purple-700 font-bold">{formatILS(calcTotalShov)}</span>
+          <div className="bg-[#FAF8F5] p-2.5 rounded-xl border border-black/[0.04]">
+            <span className="text-[10px] text-stone-400 block mb-0.5">הוצאות החודש</span>
+            <span className="text-xs font-bold font-serif text-stone-900">{formatILS(numExpenses)}</span>
           </div>
-          <div className="bg-white p-2 rounded-lg border border-slate-100 text-center">
-            <span className="text-slate-400 block text-[10px]">מעבודה</span>
-            <span className="text-slate-800 font-bold">{formatILS(calcTotalWorkSalary)}</span>
-          </div>
-          <div className="bg-white p-2 rounded-lg border border-slate-100 text-center">
-            <span className="text-slate-400 block text-[10px]">שלא מעבודה</span>
-            <span className="text-teal-700 font-bold">{formatILS(calcTotalNonWork)}</span>
+          <div className="bg-[#FAF8F5] p-2.5 rounded-xl border border-black/[0.04]">
+            <span className="text-[10px] text-stone-400 block mb-0.5">סך הון מעודכן</span>
+            <span className="text-xs font-bold font-serif text-stone-900">{formatILS(calcTotalWealth)}</span>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ─────────────── Section 2: Checking Accounts & Wallets ─────────────── */}
-      <div className="mb-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-1.5">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-            עו״ש — חשבונות בנק וארנקים
-          </p>
+      {/* 3. Section: יתרות עו״ש ונזילות (Liquid Cash) with Poker Chips */}
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-num font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
-              בנקים: {formatILS(calcBanksTotal)}
-            </span>
-            <span className="text-xs font-num font-bold text-violet-700 bg-violet-50 px-2.5 py-0.5 rounded-full border border-violet-200">
-              ארנקים: {formatILS(calcWalletsTotal)}
-            </span>
+            <span className="w-2 h-2 rounded-full bg-stone-900" />
+            <h2 className="text-xs font-bold uppercase tracking-[0.1em] text-stone-800 font-serif">
+              1. יתרות עו״ש ונזילות (Liquid Cash)
+            </h2>
           </div>
+          <span className="text-[11px] font-semibold text-stone-900 font-serif">
+            סה״כ: {formatILS(calcChecking)}
+          </span>
         </div>
 
-        {/* Bank Accounts List: Clean Card Rows */}
-        <div className="space-y-2 mb-3">
-          {/* ONE ZERO */}
-          <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-blue-100/70 text-blue-700 flex items-center justify-center text-sm shrink-0">
-                🏦
+        <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm divide-y divide-black/[0.04] overflow-hidden">
+          
+          {/* אוצר החייל */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center shrink-0 border border-stone-800 shadow-2xs font-mono">
+                או
               </div>
-              <div className="truncate">
-                <span className="text-xs font-bold text-slate-800 block leading-tight">ONE ZERO</span>
-                <span className="text-[10px] text-slate-400 font-normal">חשבון ראשי 2150</span>
-              </div>
-            </div>
-            <div className="relative w-36 sm:w-44 shrink-0">
-              <input
-                type="text"
-                value={formData.checking_onezero}
-                onChange={e => setFormData({ ...formData, checking_onezero: e.target.value })}
-                onBlur={() => evalField('checking_onezero')}
-                onKeyDown={e => handleKeyDown(e, 'checking_onezero')}
-                placeholder="0"
-                dir="ltr"
-                className={`${inputBase} focus:border-blue-500 focus:ring-2 focus:ring-blue-100 font-bold`}
-              />
-              <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-            </div>
-          </div>
-
-          {/* Pepper */}
-          <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-red-100/70 text-red-700 flex items-center justify-center text-sm shrink-0">
-                🌶️
-              </div>
-              <div className="truncate">
-                <span className="text-xs font-bold text-slate-800 block leading-tight">Pepper (לאומי)</span>
-                <span className="text-[10px] text-slate-400 font-normal">חשבון 3302</span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">בנק אוצר החייל</p>
+                <p className="text-[10px] text-stone-400 truncate">עו״ש ראשי למשק בית</p>
               </div>
             </div>
-            <div className="relative w-36 sm:w-44 shrink-0">
-              <input
-                type="text"
-                value={formData.checking_pepper}
-                onChange={e => setFormData({ ...formData, checking_pepper: e.target.value })}
-                onBlur={() => evalField('checking_pepper')}
-                onKeyDown={e => handleKeyDown(e, 'checking_pepper')}
-                placeholder="0"
-                dir="ltr"
-                className={`${inputBase} focus:border-red-400 focus:ring-2 focus:ring-red-100 font-bold`}
-              />
-              <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-            </div>
-          </div>
-
-          {/* Otzar HaHayal */}
-          <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-purple-100/70 text-purple-700 flex items-center justify-center text-sm shrink-0">
-                🎖️
-              </div>
-              <div className="truncate">
-                <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 leading-tight">
-                  <span>אוצר החייל</span>
-                  {numOtsar < 0 && (
-                    <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
-                      חובה
-                    </span>
-                  )}
-                </span>
-                <span className="text-[10px] text-slate-400 font-normal">חשבון 6775 (תומך במינוס)</span>
-              </div>
-            </div>
-            <div className="relative w-36 sm:w-44 shrink-0">
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
               <input
                 type="text"
                 value={formData.checking_otsar}
@@ -598,212 +367,441 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
                 onBlur={() => evalField('checking_otsar')}
                 onKeyDown={e => handleKeyDown(e, 'checking_otsar')}
                 placeholder="0"
-                dir="ltr"
-                className={`${inputBase} ${
-                  numOtsar < 0
-                    ? 'text-rose-600 font-extrabold focus:border-rose-500 focus:ring-2 focus:ring-rose-100'
-                    : 'focus:border-purple-500 focus:ring-2 focus:ring-purple-100'
-                } font-bold`}
+                className={inputClass}
               />
-              <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
           </div>
 
-          {/* Digital Wallets: PayBox & Bit Side-by-Side */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-            {/* PayBox */}
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-base">👛</span>
-                <span className="text-xs font-bold text-slate-800">PayBox</span>
+          {/* One Zero */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-100 text-stone-900 font-bold text-[11px] flex items-center justify-center shrink-0 border border-stone-300 shadow-2xs font-mono">
+                OZ
               </div>
-              <div className="relative w-32 sm:w-36 shrink-0">
-                <input
-                  type="text"
-                  value={formData.paybox}
-                  onChange={e => setFormData({ ...formData, paybox: e.target.value })}
-                  onBlur={() => evalField('paybox')}
-                  onKeyDown={e => handleKeyDown(e, 'paybox')}
-                  placeholder="0"
-                  dir="ltr"
-                  className={`${inputBase} focus:border-orange-400 focus:ring-2 focus:ring-orange-100 font-bold`}
-                />
-                <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">וואן זירו One Zero</p>
+                <p className="text-[10px] text-stone-400 truncate">קרן ביטחון ונזילות</p>
               </div>
             </div>
-
-            {/* Bit */}
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/80 border border-slate-200/80 gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-base">💳</span>
-                <span className="text-xs font-bold text-slate-800">Bit</span>
-              </div>
-              <div className="relative w-32 sm:w-36 shrink-0">
-                <input
-                  type="text"
-                  value={formData.bit}
-                  onChange={e => setFormData({ ...formData, bit: e.target.value })}
-                  onBlur={() => evalField('bit')}
-                  onKeyDown={e => handleKeyDown(e, 'bit')}
-                  placeholder="0"
-                  dir="ltr"
-                  className={`${inputBase} focus:border-teal-400 focus:ring-2 focus:ring-teal-100 font-bold`}
-                />
-                <span className="absolute right-2.5 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
-              </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.checking_onezero}
+                onChange={e => setFormData({ ...formData, checking_onezero: e.target.value })}
+                onBlur={() => evalField('checking_onezero')}
+                onKeyDown={e => handleKeyDown(e, 'checking_onezero')}
+                placeholder="0"
+                className={inputClass}
+              />
             </div>
           </div>
+
+          {/* Pepper */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-900 font-bold text-[10px] flex items-center justify-center shrink-0 border border-emerald-500/30 shadow-2xs font-mono">
+                PEP
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">פפר Pepper</p>
+                <p className="text-[10px] text-stone-400 truncate">שוטף וכרטיסים</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.checking_pepper}
+                onChange={e => setFormData({ ...formData, checking_pepper: e.target.value })}
+                onBlur={() => evalField('checking_pepper')}
+                onKeyDown={e => handleKeyDown(e, 'checking_pepper')}
+                placeholder="0"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* PayBox */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-900 font-bold text-xs flex items-center justify-center shrink-0 border border-amber-500/30 shadow-2xs font-mono">
+                PB
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">יתרת PayBox</p>
+                <p className="text-[10px] text-stone-400 truncate">ארנק תשלומים</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.paybox}
+                onChange={e => setFormData({ ...formData, paybox: e.target.value })}
+                onBlur={() => evalField('paybox')}
+                onKeyDown={e => handleKeyDown(e, 'paybox')}
+                placeholder="0"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Bit */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-100 text-stone-800 font-bold text-xs flex items-center justify-center shrink-0 border border-stone-300 shadow-2xs font-mono">
+                BIT
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">יתרת Bit</p>
+                <p className="text-[10px] text-stone-400 truncate">העברות מיידיות</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.bit}
+                onChange={e => setFormData({ ...formData, bit: e.target.value })}
+                onBlur={() => evalField('bit')}
+                onKeyDown={e => handleKeyDown(e, 'bit')}
+                placeholder="0"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 4. Section: הכנסות חודשיות נטו (Income Inflow) */}
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-600" />
+            <h2 className="text-xs font-bold uppercase tracking-[0.1em] text-stone-800 font-serif">
+              2. הכנסות חודשיות נטו (Monthly Net Inflow)
+            </h2>
+          </div>
+          <span className="text-[11px] font-semibold text-emerald-800 font-serif">
+            סה״כ: {formatILS(calcTotalIncome)}
+          </span>
         </div>
 
-        {/* Total Checking Summary Strip */}
-        <div className="flex items-center justify-between bg-sky-50/90 border border-sky-200 rounded-xl px-3.5 py-2">
-          <div className="text-xs text-sky-800 font-semibold flex items-center gap-1.5">
-            <span>💰</span>
-            <span>סה״כ נזילות מיידית:</span>
-          </div>
-          <span className="text-sm font-num font-extrabold text-sky-900">{formatILS(calcChecking)}</span>
-        </div>
-      </div>
-
-      {/* ─────────────── Section 3: Investments ─────────────── */}
-      <div className="mb-5">
-        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">השקעות ותיקים</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-
-          {/* Altshuler Gemel */}
-          <div>
-            <label className="block text-xs font-semibold text-blue-700 mb-1">
-              אלטשולר שחם (גמל)
-            </label>
-            <div className="relative">
-              <input type="text" value={formData.altshuler}
-                onChange={e => setFormData({ ...formData, altshuler: e.target.value })}
-                onBlur={() => evalField('altshuler')}
-                onKeyDown={e => handleKeyDown(e, 'altshuler')}
-                placeholder="0" dir="ltr"
-                className={`${inputBase} focus:border-blue-500 focus:ring-2 focus:ring-blue-100`}
+        <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm divide-y divide-black/[0.04] overflow-hidden">
+          
+          {/* Daniel Salary */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs font-serif">
+                ד
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">דניאל — שכר עבודה נטו</p>
+                <p className="text-[10px] text-stone-400 truncate">אוניברסיטת אריאל</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.salary_daniel}
+                onChange={e => setFormData({ ...formData, salary_daniel: e.target.value })}
+                onBlur={() => evalField('salary_daniel')}
+                onKeyDown={e => handleKeyDown(e, 'salary_daniel')}
+                placeholder="0"
+                className={inputClass}
               />
-              <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
           </div>
 
-          {/* Excellence Market Value */}
+          {/* Daniel Non-Work */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-100 text-stone-700 font-bold text-xs flex items-center justify-center shrink-0 border border-stone-300 font-serif">
+                ד+
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">דניאל — שלא מעבודה</p>
+                <p className="text-[10px] text-stone-400 truncate">מילואים / תגמולים</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.non_work_daniel}
+                onChange={e => setFormData({ ...formData, non_work_daniel: e.target.value })}
+                onBlur={() => evalField('non_work_daniel')}
+                onKeyDown={e => handleKeyDown(e, 'non_work_daniel')}
+                placeholder="0"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Shoval Salary */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-900 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs font-serif">
+                ש
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">שובל — שכר עבודה נטו</p>
+                <p className="text-[10px] text-stone-400 truncate">עזר מציון / עיריית פ״ת</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.salary_shoval}
+                onChange={e => setFormData({ ...formData, salary_shoval: e.target.value })}
+                onBlur={() => evalField('salary_shoval')}
+                onKeyDown={e => handleKeyDown(e, 'salary_shoval')}
+                placeholder="0"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Shoval Non-Work */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-100 text-stone-700 font-bold text-xs flex items-center justify-center shrink-0 border border-stone-300 font-serif">
+                ש+
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">שובל — שלא מעבודה</p>
+                <p className="text-[10px] text-stone-400 truncate">דמי לידה / ביטוח לאומי</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.non_work_shoval}
+                onChange={e => setFormData({ ...formData, non_work_shoval: e.target.value })}
+                onBlur={() => evalField('non_work_shoval')}
+                onKeyDown={e => handleKeyDown(e, 'non_work_shoval')}
+                placeholder="0"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Other Income / Child allowances */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 border border-emerald-500/20">
+                🏛️
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">קצבאות ילדים והכנסות נוספות</p>
+                <p className="text-[10px] text-stone-400 truncate">ביטוח לאומי / מענקים</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.other_income}
+                onChange={e => setFormData({ ...formData, other_income: e.target.value })}
+                onBlur={() => evalField('other_income')}
+                onKeyDown={e => handleKeyDown(e, 'other_income')}
+                placeholder="0"
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 5. Section: הוצאות החודש (Expenses Outflow) */}
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-stone-400" />
+            <h2 className="text-xs font-bold uppercase tracking-[0.1em] text-stone-800 font-serif">
+              3. הוצאות החודש הכוללות (Monthly Outflow)
+            </h2>
+          </div>
+          <span className="text-[11px] font-semibold text-stone-900 font-serif">
+            {formatILS(numExpenses)}
+          </span>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 flex items-center justify-between gap-3">
           <div>
-            <label className="block text-xs font-semibold text-emerald-700 mb-1">
-              אקסלנס (תיק מניות) – שווי שוק
-            </label>
-            <div className="relative">
-              <input type="text" value={formData.excellence}
+            <p className="text-xs font-semibold text-stone-900">סך הוצאות מחיה, כרטיסי אשראי והתחייבויות</p>
+            <p className="text-[10px] text-stone-400 mt-0.5">ניתן להזין ביטוי חיבור ישיר (למשל: 14200+3100)</p>
+          </div>
+          <div className="relative flex items-center shrink-0">
+            <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+            <input
+              type="text"
+              value={formData.expenses}
+              onChange={e => setFormData({ ...formData, expenses: e.target.value })}
+              onBlur={() => evalField('expenses')}
+              onKeyDown={e => handleKeyDown(e, 'expenses')}
+              placeholder="0"
+              className={inputClass}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Section: אפיקי השקעה והון (Investments & Portfolios) */}
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-600" />
+            <h2 className="text-xs font-bold uppercase tracking-[0.1em] text-stone-800 font-serif">
+              4. אפיקי השקעה והון (Investments Portfolio)
+            </h2>
+          </div>
+          <span className="text-[11px] font-semibold text-emerald-800 font-serif">
+            סה״כ: {formatILS(calcInvestments)}
+          </span>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm divide-y divide-black/[0.04] overflow-hidden">
+          
+          {/* Excellence */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-900 font-bold text-xs flex items-center justify-center shrink-0 border border-emerald-500/30 shadow-2xs font-serif">
+                EX
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">אקסלנס נשואה — מניות</p>
+                <p className="text-[10px] text-stone-400 truncate">תיק מנוהל ומניות עצמאיות</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.excellence}
                 onChange={e => setFormData({ ...formData, excellence: e.target.value })}
                 onBlur={() => evalField('excellence')}
                 onKeyDown={e => handleKeyDown(e, 'excellence')}
-                placeholder="0" dir="ltr"
-                className={`${inputBase} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100`}
+                placeholder="0"
+                className={inputClass}
               />
-              <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
           </div>
 
           {/* Excellence Cost Basis */}
-          <div>
-            <label className="block text-xs font-semibold text-teal-700 mb-1">
-              קרן שהופקדה באקסלנס (בסיס)
-            </label>
-            <div className="relative">
-              <input type="text" value={formData.excellence_cost_basis}
+          <div className="p-3.5 flex items-center justify-between gap-3 bg-[#FAF8F5]/60 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-100 text-stone-700 font-bold text-[11px] flex items-center justify-center shrink-0 border border-stone-300 font-serif">
+                CB
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">עלות בסיס (אקסלנס)</p>
+                <p className="text-[10px] text-stone-400 truncate">לחישוב מס רווח הון נטו</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.excellence_cost_basis}
                 onChange={e => setFormData({ ...formData, excellence_cost_basis: e.target.value })}
                 onBlur={() => evalField('excellence_cost_basis')}
                 onKeyDown={e => handleKeyDown(e, 'excellence_cost_basis')}
-                placeholder="למשל: 400000" dir="ltr"
-                className={`${inputBase} focus:border-teal-500 focus:ring-2 focus:ring-teal-100`}
+                placeholder="0"
+                className={inputClass}
               />
-              <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
-            {numCostBasis > 0 && numExcellence > 0 && (
-              <div className="text-[11px] text-teal-800 bg-teal-50/60 border border-teal-200/60 rounded-lg p-1.5 mt-1.5 font-num flex flex-wrap items-center justify-between gap-1">
-                <span>רווח: +{formatILS(Math.max(0, numExcellence - numCostBasis))}</span>
-                <span>מס 25%: -{formatILS(Math.round(Math.max(0, numExcellence - numCostBasis) * 0.25))}</span>
-                <span className="font-bold text-emerald-800">נטו: {formatILS(numExcellence - Math.round(Math.max(0, numExcellence - numCostBasis) * 0.25))}</span>
+          </div>
+
+          {/* Altshuler */}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-900 font-bold text-xs flex items-center justify-center shrink-0 border border-amber-500/30 shadow-2xs font-serif">
+                AL
               </div>
-            )}
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">אלטשולר שחם — גמל והשתלמות</p>
+                <p className="text-[10px] text-stone-400 truncate">מסלול S&P 500 ומניות</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.altshuler}
+                onChange={e => setFormData({ ...formData, altshuler: e.target.value })}
+                onBlur={() => evalField('altshuler')}
+                onKeyDown={e => handleKeyDown(e, 'altshuler')}
+                placeholder="0"
+                className={inputClass}
+              />
+            </div>
           </div>
 
           {/* Money Market */}
-          <div>
-            <label className="block text-xs font-semibold text-indigo-700 mb-1">
-              קרן כספית שקלית
-            </label>
-            <div className="relative">
-              <input type="text" value={formData.money_market}
+          <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-[#FAF8F5] transition-colors">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-stone-100 text-stone-900 font-bold text-xs flex items-center justify-center shrink-0 border border-stone-300 shadow-2xs font-serif">
+                MM
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-stone-900 truncate">קרן כספית שקלית</p>
+                <p className="text-[10px] text-stone-400 truncate">תשואה צמודת ריבית בנק ישראל</p>
+              </div>
+            </div>
+            <div className="relative flex items-center shrink-0">
+              <span className="absolute right-3 text-xs text-stone-400 font-serif pointer-events-none">₪</span>
+              <input
+                type="text"
+                value={formData.money_market}
                 onChange={e => setFormData({ ...formData, money_market: e.target.value })}
                 onBlur={() => evalField('money_market')}
                 onKeyDown={e => handleKeyDown(e, 'money_market')}
-                placeholder="0" dir="ltr"
-                className={`${inputBase} focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100`}
+                placeholder="0"
+                className={inputClass}
               />
-              <span className="absolute right-3 top-2.5 text-slate-400 text-xs font-semibold pointer-events-none">₪</span>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Live Computed Summary Ribbon */}
-      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 grid grid-cols-3 gap-2 text-center text-xs mb-4">
-        <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-xs">
-          <span className="text-slate-400 text-[10px] block">חיסכון חודשי</span>
-          <span className={`font-num font-extrabold text-xs sm:text-sm ${calcSavings >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-            {formatILS(calcSavings)}
-          </span>
         </div>
-        <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-xs">
-          <span className="text-slate-400 text-[10px] block">אחוז חיסכון</span>
-          <span className="font-num font-extrabold text-xs sm:text-sm text-blue-600">
-            {calcSavingsRate.toFixed(1)}%
-          </span>
-        </div>
-        <div className="bg-white p-2 rounded-xl border border-slate-100 shadow-xs">
-          <span className="text-slate-400 text-[10px] block">סה״כ השקעות</span>
-          <span className="font-num font-extrabold text-xs sm:text-sm text-slate-900">
-            {formatILS(calcInvestments)}
-          </span>
-        </div>
-      </div>
+      </section>
 
-      {/* Notes */}
-      <div>
-        <label className="block text-xs font-semibold text-slate-500 mb-1">הערות חופשיות (אופציונלי)</label>
+      {/* 7. Notes Textarea */}
+      <section className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 space-y-2">
+        <label className="block text-xs font-bold font-serif text-stone-900">
+          הערות ומאורעות חודשיים מיוחדים
+        </label>
         <textarea
+          rows={2}
           value={formData.notes}
           onChange={e => setFormData({ ...formData, notes: e.target.value })}
-          placeholder="הערות לחודש זה..."
-          rows={2}
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-slate-700 text-xs focus:bg-white focus:outline-none focus:border-slate-400 focus:ring-2 focus:ring-slate-100 transition resize-none"
+          placeholder="לדוגמה: בוצע פדיון, קיבלנו מענק לידה, שילמנו ביטוח שנתי..."
+          className="w-full bg-[#FAF8F5] border border-black/[0.08] rounded-xl p-3 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-stone-900 focus:bg-white transition-all resize-none"
         />
-      </div>
+      </section>
 
-      {/* Actions */}
-      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-slate-100 gap-3">
+      {/* 8. Bottom Sticky / Floating Save Button */}
+      <div className="pt-2">
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-md shadow-blue-500/25 active:scale-95 transition disabled:opacity-50"
+          className="w-full py-3.5 px-6 rounded-xl bg-[#1A1A1A] text-white font-semibold text-xs sm:text-sm shadow-sm hover:opacity-95 active:scale-95 transition flex items-center justify-center gap-2 btn-press"
         >
           {isSaving ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : savedSuccess ? (
-            <Check className="w-4 h-4 text-white" />
+            <Check className="w-4 h-4 text-emerald-400" />
           ) : (
             <Save className="w-4 h-4" />
           )}
-          <span>{savedSuccess ? 'נשמר בהצלחה!' : isSaving ? 'שומר...' : 'שמור חודש זה בענן'}</span>
+          <span>{savedSuccess ? 'הנתונים נשמרו בהצלחה!' : isSaving ? 'שומר שינויים בענן...' : 'שמור נתונים חודשיים'}</span>
         </button>
-
-        {savedSuccess && (
-          <span className="text-xs text-emerald-600 font-medium animate-fade-in flex items-center gap-1">
-            <Check className="w-3.5 h-3.5" />
-            <span>מסונכרן ל-Supabase</span>
-          </span>
-        )}
       </div>
 
     </form>

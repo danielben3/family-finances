@@ -72,27 +72,30 @@ export const AddEditHoldingModal: React.FC<AddEditHoldingModalProps> = ({
     }
   };
 
+  const inputClass =
+    'w-full px-3 py-2 rounded-xl bg-[#FAF8F5] border border-black/[0.08] text-stone-900 text-xs font-semibold outline-none focus:bg-white focus:border-stone-900 transition-all font-serif';
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in" dir="rtl">
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" dir="rtl">
+      <div className="bg-white border border-black/10 rounded-2xl p-5 sm:p-6 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
         
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 left-4 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition"
+          className="absolute top-4 left-4 p-1.5 rounded-xl bg-[#FAF8F5] hover:bg-stone-100 text-stone-400 hover:text-stone-800 border border-black/[0.06] transition"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
         {/* Title */}
         <div className="text-center mb-5">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center mx-auto mb-2 shadow-xs">
-            {isEdit ? <Edit2 className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+          <div className="w-10 h-10 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center mx-auto mb-2 shadow-2xs">
+            {isEdit ? <Edit2 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           </div>
-          <h3 className="text-lg font-bold text-slate-900">
+          <h3 className="text-base sm:text-lg font-bold font-serif text-stone-900">
             {isEdit ? 'עריכת נייר ערך' : 'הוספת נייר ערך חדש'}
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-stone-500 mt-0.5 font-sans">
             הזן את נתוני הנייר, כמות המניות ושערי הקנייה והשוק
           </p>
         </div>
@@ -102,23 +105,23 @@ export const AddEditHoldingModal: React.FC<AddEditHoldingModalProps> = ({
           {/* Portfolio & Asset Type */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">שם התיק / ברוקר</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">שם התיק / ברוקר</label>
               <input
                 type="text"
                 value={portfolioName}
                 onChange={(e) => setPortfolioName(e.target.value)}
                 placeholder="למשל: אקסלנס"
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold outline-none focus:bg-white focus:border-blue-500"
+                className={inputClass}
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">סוג נכס</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">סוג נכס</label>
               <select
                 value={assetType}
                 onChange={(e) => setAssetType(e.target.value as AssetType)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold outline-none focus:bg-white focus:border-blue-500"
+                className={inputClass}
               >
-                <option value="etf">קרן סל / מחקת מדד (ETF)</option>
+                <option value="etf">קרן סל / מדד (ETF)</option>
                 <option value="stock">מניה בודדת (Stock)</option>
                 <option value="mutual_fund">קרן נאמנות</option>
                 <option value="bond">אג״ח (Bond)</option>
@@ -130,25 +133,25 @@ export const AddEditHoldingModal: React.FC<AddEditHoldingModalProps> = ({
           {/* Symbol & Name */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">סימול נייר (Ticker / מספר)</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">סימול נייר (Ticker)</label>
               <input
                 type="text"
                 value={symbol}
                 onChange={(e) => setSymbol(e.target.value)}
-                placeholder="CSPX.L / VOO / 1159250"
+                placeholder="VOO / CSPX / AAPL"
                 required
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold font-mono outline-none focus:bg-white focus:border-blue-500"
+                className={`${inputClass} font-mono`}
                 dir="ltr"
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">שם מלא של הנייר</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">שם מלא של הנייר</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="iShares S&P 500"
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold outline-none focus:bg-white focus:border-blue-500"
+                placeholder="Vanguard S&P 500"
+                className={inputClass}
               />
             </div>
           </div>
@@ -156,11 +159,11 @@ export const AddEditHoldingModal: React.FC<AddEditHoldingModalProps> = ({
           {/* Currency & Exchange rate */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">מטבע נקוב</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">מטבע נקוב</label>
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value as Currency)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold outline-none focus:bg-white focus:border-blue-500"
+                className={inputClass}
               >
                 <option value="USD">דולר ($ USD)</option>
                 <option value="ILS">שקל (₪ ILS)</option>
@@ -168,86 +171,88 @@ export const AddEditHoldingModal: React.FC<AddEditHoldingModalProps> = ({
               </select>
             </div>
             <div>
-              <label className="text-xs font-bold text-slate-700 block mb-1">שער המרה לשקל (₪)</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">שער המרה לשקל (₪)</label>
               <input
                 type="number"
                 step="any"
                 value={exchangeRate}
                 disabled={currency === 'ILS'}
                 onChange={(e) => setExchangeRate(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-num font-bold outline-none focus:bg-white focus:border-blue-500 disabled:opacity-60 text-left"
+                className={`${inputClass} disabled:opacity-50 text-left`}
               />
             </div>
           </div>
 
-          {/* Shares, Avg Buy Price, Current Price */}
+          {/* Shares, Avg Buy, Current Price */}
           <div className="grid grid-cols-3 gap-2.5">
             <div>
-              <label className="text-[11px] font-bold text-slate-700 block mb-1">כמות יחידות</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">כמות יחידות</label>
               <input
                 type="number"
                 step="any"
-                min="0.0001"
-                required
                 value={shares}
                 onChange={(e) => setShares(e.target.value)}
-                placeholder="100"
-                className="w-full px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-num font-bold outline-none focus:bg-white focus:border-blue-500 text-left"
+                placeholder="0"
+                required
+                className={`${inputClass} text-left`}
               />
             </div>
             <div>
-              <label className="text-[11px] font-bold text-slate-700 block mb-1">שער קנייה ממוצע</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">שער קנייה</label>
               <input
                 type="number"
                 step="any"
-                min="0.001"
                 value={avgBuyPrice}
                 onChange={(e) => setAvgBuyPrice(e.target.value)}
-                placeholder="500"
-                className="w-full px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-num font-bold outline-none focus:bg-white focus:border-blue-500 text-left"
+                placeholder="0"
+                className={`${inputClass} text-left`}
               />
             </div>
             <div>
-              <label className="text-[11px] font-bold text-emerald-700 block mb-1">מחיר שוק עדכני</label>
+              <label className="text-[11px] font-semibold text-stone-700 block mb-1">מחיר שוק עדכני</label>
               <input
                 type="number"
                 step="any"
-                min="0.001"
-                required
                 value={currentPrice}
                 onChange={(e) => setCurrentPrice(e.target.value)}
-                placeholder="550"
-                className="w-full px-2.5 py-2 rounded-xl bg-emerald-50/70 border border-emerald-300 text-emerald-900 text-xs font-num font-bold outline-none focus:bg-white focus:border-emerald-500 text-left"
+                placeholder="0"
+                required
+                className={`${inputClass} text-left`}
               />
             </div>
           </div>
 
           {/* Notes */}
           <div>
-            <label className="text-xs font-bold text-slate-700 block mb-1">הערות נוספות</label>
+            <label className="text-[11px] font-semibold text-stone-700 block mb-1">הערות / אסטרטגיה</label>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="למשל: נרכש דרך הוראת קבע חודשית"
-              className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-normal outline-none focus:bg-white focus:border-blue-500"
+              placeholder="למשל: נרכש כחלק מחיסכון חודשי..."
+              className={inputClass}
             />
           </div>
 
-          {/* Submit */}
-          <div className="pt-2">
+          {/* Submit & Cancel */}
+          <div className="flex items-center gap-2 pt-3 border-t border-black/[0.06]">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-1/3 py-2.5 rounded-xl border border-[#E5E0D8] bg-white text-stone-700 hover:bg-stone-50 font-medium text-xs transition btn-press shadow-2xs"
+            >
+              ביטול
+            </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-md shadow-blue-600/20 active:scale-95 flex items-center justify-center gap-1.5"
+              className="w-2/3 py-2.5 rounded-xl bg-[#1A1A1A] text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-2xs hover:opacity-90 active:scale-95 transition disabled:opacity-60 btn-press"
             >
-              <Check className="w-4 h-4" />
-              <span>{isSubmitting ? 'שומר נייר...' : isEdit ? 'שמור שינויים' : 'הוסף נייר לתיק'}</span>
+              {isSubmitting ? 'שומר...' : isEdit ? 'שמור שינויים בנייר' : 'הוסף נייר לתיק'}
             </button>
           </div>
 
         </form>
-
       </div>
     </div>
   );

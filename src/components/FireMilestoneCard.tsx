@@ -25,56 +25,55 @@ export const FireMilestoneCard: React.FC<FireMilestoneCardProps> = ({
   const estimatedMonths = monthlySavings > 0 ? Math.ceil(remaining / monthlySavings) : 24;
 
   return (
-    <section className="bg-gradient-to-br from-white via-slate-50 to-blue-50/40 rounded-3xl p-5 sm:p-6 border border-slate-200/80 titanium-edge space-y-4 shadow-xs">
+    <section className="bg-white rounded-2xl p-4 sm:p-5 border border-black/[0.06] shadow-sm space-y-4">
       <div className="flex items-start justify-between">
         <div>
-          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-700">
-            <Flame className="w-4 h-4 text-amber-500" />
-            <span>יעד עצמאות כלכלית (FIRE Milestone)</span>
-          </div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-1">
+          <span className="text-[10px] tracking-[0.14em] font-semibold text-stone-400 uppercase block mb-0.5">
+            // FINANCIAL INDEPENDENCE (FIRE)
+          </span>
+          <h3 className="text-base font-bold font-serif text-stone-900">
             המסע לעבר {formatILS(targetAmount)}
           </h3>
         </div>
 
         <div className="text-left">
-          <span className="text-xl sm:text-2xl font-extrabold text-blue-600 font-num">
+          <span className="text-xl sm:text-2xl font-bold font-serif text-stone-900">
             {progressPct.toFixed(0)}%
           </span>
-          <p className="text-[10px] font-bold text-slate-400">הושלמו</p>
+          <p className="text-[10px] font-medium text-stone-400">הושלמו</p>
         </div>
       </div>
 
-      {/* Progress Bar with Dual Gradient */}
+      {/* Progress Bar */}
       <div className="space-y-1.5">
-        <div className="w-full h-3.5 rounded-full bg-slate-200/80 p-0.5 overflow-hidden shadow-inner">
+        <div className="w-full h-2.5 rounded-full bg-stone-100 p-0.5 overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-l from-emerald-500 to-blue-600 transition-all duration-700 shadow-sm"
+            className="h-full rounded-full bg-emerald-500 transition-all duration-700 shadow-2xs"
             style={{ width: `${progressPct}%` }}
           />
         </div>
 
-        <div className="flex justify-between text-[11px] text-slate-500 font-num">
-          <span>נצבר: {formatILS(total)}</span>
-          <span className="font-semibold text-slate-700">נותר: {formatILS(remaining)}</span>
+        <div className="flex justify-between text-[11px] text-stone-500 font-num">
+          <span>נצבר: <strong className="text-stone-800 font-serif">{formatILS(total)}</strong></span>
+          <span>נותר: <strong className="text-stone-800 font-serif">{formatILS(remaining)}</strong></span>
         </div>
       </div>
 
       {/* Footer Insight & Button */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-200/60 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-600">
-          <Hourglass className="w-4 h-4 text-amber-600" />
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-black/[0.04] text-xs">
+        <div className="flex items-center gap-1.5 text-stone-600">
+          <span className="w-2 h-2 rounded-full bg-amber-500" />
           <span>
-            צפי הגעה: עוד כ-<strong className="text-slate-900 font-bold">{estimatedMonths} חודשים</strong> בקצב הנוכחי
+            צפי הגעה: עוד כ-<strong className="text-stone-900 font-bold">{estimatedMonths} חודשים</strong> בקצב הנוכחי
           </span>
         </div>
 
         <button
           onClick={onOpenCalculator}
-          className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-0.5 transition shrink-0 bg-blue-50/80 px-3 py-1.5 rounded-xl border border-blue-200/60 active:scale-95"
+          className="text-xs font-semibold text-stone-900 hover:bg-[#FAF8F5] flex items-center gap-1 transition shrink-0 bg-white px-3 py-1.5 rounded-xl border border-[#E5E0D8] active:scale-95 btn-press shadow-2xs"
         >
           <span>סימולטור FIRE</span>
-          <ArrowUpRight className="w-3.5 h-3.5" />
+          <ArrowUpRight className="w-3.5 h-3.5 text-stone-500" />
         </button>
       </div>
     </section>

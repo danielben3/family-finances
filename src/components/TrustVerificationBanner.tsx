@@ -3,24 +3,24 @@ import { ShieldCheck } from 'lucide-react';
 
 export const TrustVerificationBanner: React.FC = () => {
   return (
-    <section className="glass-card rounded-2xl p-4 sm:p-5 border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-4 bg-white/70">
+    <section className="bg-gradient-to-r from-[#FAF8F5] via-white to-[#FAF8F5] rounded-2xl p-4 border border-black/[0.06] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center text-emerald-700 shrink-0">
-          <ShieldCheck className="w-5 h-5 text-emerald-700" />
+        <div className="w-8 h-8 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center shrink-0">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
         </div>
         <div>
-          <span className="font-bold text-slate-900 text-xs sm:text-sm block">
-            אימות רשות ניירות ערך וחשבונות נאמנות
+          <span className="font-semibold text-stone-900 text-xs block font-sans">
+            אימות חשבונות ונאמנות פיננסית
           </span>
-          <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-            כל הנתונים מסונכרנים ב-API מאובטח עם בנקי המשמורת בישראל ובארה״ב בסטנדרט הצפנה פיננסי FIPS 140-2.
+          <p className="text-[11px] text-stone-500 mt-0.5 leading-relaxed font-sans">
+            כל הנתונים מסונכרנים ב-API מאובטח ופרטי, מוצפנים בתקן בנקאי ומגובים בענן.
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 shrink-0">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-semibold text-slate-700 border border-slate-200/60">
-          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-[11px] font-semibold text-stone-800 border border-black/[0.06] shadow-2xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           סנכרון מלא פעיל
         </span>
       </div>

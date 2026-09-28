@@ -15,14 +15,12 @@ import {
 } from '../lib/stockPricesService';
 import {
   TrendingUp,
-  TrendingDown,
   Plus,
   ArrowDownRight,
   RefreshCw,
-  Coins,
-  DollarSign,
+  Search,
   Briefcase,
-  Layers,
+  PieChart,
   Edit2,
   Trash2,
   CheckCircle2,
@@ -30,7 +28,6 @@ import {
   History,
   ShieldCheck,
   Sparkles,
-  PieChart,
   Calendar,
   Zap,
 } from 'lucide-react';
@@ -70,7 +67,7 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   const formatILS = (val: number) =>
-    '₪' + Math.round(val).toLocaleString('he-IL');
+    '₪ ' + Math.round(val).toLocaleString('he-IL');
 
   // Overall calculations
   const totalVal = calcTotalPortfolioValueILS(holdings, cash);
@@ -114,409 +111,364 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
     }
   };
 
+  const getChipStyle = (holding: Holding) => {
+    const sym = holding.symbol.toUpperCase();
+    if (holding.asset_type === 'etf' || sym.includes('500') || sym === 'VOO' || sym === 'CSPX' || sym === 'QQQ') {
+      return 'border-emerald-600/30 text-emerald-900 bg-emerald-50/80';
+    }
+    if (sym === 'NVDA' || sym === 'AAPL' || sym === 'MSFT' || sym === 'AMZN') {
+      return 'border-stone-800 text-stone-900 bg-stone-100';
+    }
+    if (holding.asset_type === 'bond' || sym.includes('כספית')) {
+      return 'border-amber-600/30 text-amber-900 bg-amber-50/80';
+    }
+    return 'border-stone-300 text-stone-800 bg-[#FAF8F5]';
+  };
+
   return (
-    <div className="space-y-6 animate-fade-in" dir="rtl">
+    <div className="space-y-5 animate-fade-in" dir="rtl">
       
-      {/* 1. Header Banner & KPIs */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
-        {/* Glow backdrop */}
-        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-emerald-500/15 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-blue-500/15 blur-3xl pointer-events-none" />
+      {/* 1. Screen Title & Meta */}
+      <div className="flex flex-wrap items-baseline justify-between gap-2 pt-1">
+        <div>
+          <span className="text-[10px] tracking-[0.16em] uppercase text-stone-400 font-semibold block mb-0.5">
+            EQUITIES & ASSET ALLOCATION // סקטור השקעות
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif tracking-tight text-stone-900">
+            תיק השקעות ומניות
+          </h1>
+        </div>
+        <div className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-black/[0.06] shadow-2xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[11px] font-medium text-stone-800">מסחר חי • ת"א / NYSE</span>
+        </div>
+      </div>
 
-        <div className="relative z-10 space-y-6">
+      {/* 2. PORTFOLIO VALUATION HERO CARD (Minimalist Luxury) */}
+      <section className="bg-white rounded-2xl p-5 sm:p-6 border border-black/[0.06] shadow-sm relative overflow-hidden">
+        {/* Subtle luxury ambient texture */}
+        <div className="absolute -left-10 -bottom-10 w-36 h-36 bg-[#FAF8F5] rounded-full pointer-events-none opacity-80" />
+
+        <div className="relative z-10 flex flex-col gap-4">
           
-          {/* Top Row: Title & Action Buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-emerald-400 shadow-inner">
-                <Briefcase className="w-6 h-6" />
-              </div>
-              <div>
-                <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-                  מעקב תיק מניות והחזקות חיות
-                </h2>
-                <p className="text-xs text-slate-300 mt-0.5">
-                  חישוב שווי שוק עדכני בזמן אמת, יתרות מזומן, ניהול מכירות והעברה לעו״ש
-                </p>
-              </div>
+          {/* Top Bar: Label & Currency Rate */}
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] tracking-[0.14em] font-semibold uppercase text-stone-400">
+              שווי תיק ניירות ערך // PORTFOLIO VALUE
+            </span>
+            <button
+              onClick={handleRefreshClick}
+              disabled={isRefreshing}
+              className="flex items-center gap-1 text-[11px] font-mono text-stone-700 bg-[#FAF8F5] px-2.5 py-1 rounded-full border border-black/[0.06] hover:bg-stone-100 transition-colors"
+            >
+              <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span>USD/ILS: ₪{cash.usd_rate}</span>
+            </button>
+          </div>
+
+          {/* Hero Monetary Valuation */}
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl sm:text-4xl font-bold tracking-tight text-stone-900 font-serif">
+              {formatILS(totalVal)}
+            </span>
+            <span className="text-xs text-stone-500 font-normal">בשקלים חדשים</span>
+          </div>
+
+          {/* Performance Badges */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="inline-flex items-center gap-1.5 bg-emerald-50 px-2.5 py-1 rounded-full text-emerald-800 text-[11px] font-semibold border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>+{totalGainPct.toFixed(1)}% (+{formatILS(totalGain)})</span>
+              <span className="text-stone-400 font-normal mr-1">תשואה צבורה</span>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button
-                onClick={handleRefreshClick}
-                disabled={isRefreshing}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold transition active:scale-95 text-slate-200"
-                title="רענן שער דולר ומחירים"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                <span>שער דולר: ₪{cash.usd_rate}</span>
-              </button>
+            {typeof dayChange.pct === 'number' && (
+              <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border ${
+                dayChange.amount >= 0
+                  ? 'bg-emerald-50/60 text-emerald-800 border-emerald-500/15'
+                  : 'bg-rose-50/60 text-rose-800 border-rose-500/15'
+              }`}>
+                <Zap className="w-3 h-3" />
+                <span>יומי: {dayChange.amount >= 0 ? '+' : ''}{formatILS(dayChange.amount)} ({dayChange.pct}%)</span>
+              </div>
+            )}
 
+            {typeof weekChange.pct === 'number' && (
+              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-[#FAF8F5] text-stone-700 border border-black/[0.06]">
+                <Calendar className="w-3 h-3 text-stone-500" />
+                <span>שבועי: {weekChange.amount >= 0 ? '+' : ''}{formatILS(weekChange.amount)}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Key Metric Highlights Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
+            <div className="p-3 rounded-xl bg-[#FAF8F5] border border-black/[0.04]">
+              <span className="text-[10px] text-stone-400 block mb-0.5">עלות בסיס כוללת</span>
+              <span className="text-xs font-bold font-serif text-stone-900">
+                {formatILS(totalCostBasis)}
+              </span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-[#FAF8F5] border border-black/[0.04]">
+              <span className="text-[10px] text-stone-400 block mb-0.5">נטו לאחר מס משוער (25%)</span>
+              <span className="text-xs font-bold font-serif text-stone-900">
+                {formatILS(netAfterTaxVal)}
+              </span>
+            </div>
+
+            <div className="col-span-2 sm:col-span-1 p-3 rounded-xl bg-[#FAF8F5] border border-black/[0.04] flex items-center justify-between">
+              <div>
+                <span className="text-[10px] text-stone-400 block mb-0.5">מזומן פנוי בחשבונות</span>
+                <span className="text-xs font-bold font-serif text-stone-900">
+                  {formatILS(totalCashILS)}
+                </span>
+              </div>
               <button
-                onClick={onOpenAddHolding}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-extrabold transition shadow-md shadow-emerald-500/30 active:scale-95"
+                onClick={() => setIsEditingCash(!isEditingCash)}
+                className="text-[11px] text-stone-900 font-semibold underline underline-offset-2"
               >
-                <Plus className="w-4 h-4" />
-                <span>הוסף נייר ערך</span>
+                {isEditingCash ? 'סגור' : 'ערוך'}
               </button>
             </div>
           </div>
 
-          {/* KPI Cards Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-            
-            {/* 1. Total Portfolio ILS */}
-            <div className="col-span-2 sm:col-span-1 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
-              <span className="text-xs text-slate-400 font-medium block">
-                סך שווי התיק הכולל (מניות + מזומן)
-              </span>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl sm:text-3xl font-extrabold font-num text-white">
-                  {formatILS(totalVal)}
-                </span>
-              </div>
-              <span className="text-[11px] text-slate-400 mt-1 block">
-                {holdings.length} ניירות מוחזקים · כולל יתרות מזומן
-              </span>
-            </div>
-
-            {/* 2. Daily Change (24h) */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400 font-medium">
-                  שינוי יומי בתיק (24 שעות)
-                </span>
-                <span className="p-1 rounded-lg bg-white/10 text-amber-300">
-                  <Zap className="w-3.5 h-3.5" />
-                </span>
-              </div>
-              <div className="flex items-baseline gap-1.5 mt-1">
-                <span className={`text-2xl sm:text-3xl font-extrabold font-num ${
-                  dayChange.amount >= 0 ? 'text-emerald-400' : 'text-rose-400'
-                }`}>
-                  {dayChange.amount >= 0 ? '+' : ''}{formatILS(dayChange.amount)}
-                </span>
-              </div>
-              <span className={`text-[11px] font-bold font-num mt-1 block ${
-                dayChange.pct >= 0 ? 'text-emerald-300' : 'text-rose-300'
-              }`}>
-                {dayChange.pct >= 0 ? '+' : ''}{dayChange.pct}% תנודה יומית
-              </span>
-            </div>
-
-            {/* 3. Weekly Change (7d) */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400 font-medium">
-                  שינוי שבועי בתיק (7 ימים)
-                </span>
-                <span className="p-1 rounded-lg bg-white/10 text-indigo-300">
-                  <Calendar className="w-3.5 h-3.5" />
-                </span>
-              </div>
-              <div className="flex items-baseline gap-1.5 mt-1">
-                <span className={`text-2xl sm:text-3xl font-extrabold font-num ${
-                  weekChange.amount >= 0 ? 'text-emerald-400' : 'text-rose-400'
-                }`}>
-                  {weekChange.amount >= 0 ? '+' : ''}{formatILS(weekChange.amount)}
-                </span>
-              </div>
-              <span className={`text-[11px] font-bold font-num mt-1 block ${
-                weekChange.pct >= 0 ? 'text-emerald-300' : 'text-rose-300'
-              }`}>
-                {weekChange.pct >= 0 ? '+' : ''}{weekChange.pct}% ב-7 הימים האחרונים
-              </span>
-            </div>
-
-            {/* 4. Total Unrealized Gain */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
-              <span className="text-xs text-slate-400 font-medium block">
-                רווח הון צבור (לפני מס)
-              </span>
-              <div className="flex items-baseline gap-1.5 mt-1">
-                <span className="text-2xl sm:text-3xl font-extrabold font-num text-emerald-400">
-                  +{formatILS(totalGain)}
-                </span>
-              </div>
-              <span className="text-[11px] font-bold text-emerald-300 mt-1 block font-num">
-                +{totalGainPct.toFixed(1)}% תשואה מצטברת כוללת
-              </span>
-            </div>
-
-            {/* 5. Estimated Tax & Net */}
-            <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
-              <span className="text-xs text-slate-400 font-medium block">
-                נטו שנשאר בכיס (לאחר 25% מס)
-              </span>
-              <div className="flex items-baseline gap-1.5 mt-1">
-                <span className="text-2xl sm:text-3xl font-extrabold font-num text-blue-300">
-                  {formatILS(netAfterTaxVal)}
-                </span>
-              </div>
-              <span className="text-[11px] text-rose-300 mt-1 block font-num">
-                מס משוער: -{formatILS(estimatedTax)}
-              </span>
-            </div>
-
-            {/* 6. Cash in Account */}
-            <div className="col-span-2 sm:col-span-1 bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-medium block">
-                    מזומן פנוי בתיק ההשקעות
-                  </span>
-                  <button
-                    onClick={() => setIsEditingCash(!isEditingCash)}
-                    className="text-[11px] text-blue-300 hover:text-white transition font-bold"
-                  >
-                    {isEditingCash ? 'ביטול' : 'ערוך מזומן'}
-                  </button>
-                </div>
-                <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-2xl sm:text-3xl font-extrabold font-num text-amber-400">
-                    {formatILS(totalCashILS)}
-                  </span>
-                </div>
-              </div>
-              <span className="text-[11px] text-slate-400 font-num">
-                ₪{cash.ils.toLocaleString()} + ${cash.usd.toLocaleString()}
-              </span>
-            </div>
-
-          </div>
-
-          {/* Inline Cash Editor */}
+          {/* Inline Cash Editor Accordion */}
           {isEditingCash && (
-            <div className="p-4 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md space-y-3">
-              <span className="text-xs font-bold text-amber-300 block">עדכון יתרות מזומן פנויות בתיק:</span>
+            <div className="p-4 rounded-xl bg-[#FAF8F5] border border-black/10 space-y-3">
+              <span className="text-xs font-bold text-stone-900 block font-serif">עדכון יתרות מזומן פנויות בתיק:</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] text-slate-300 block mb-1">יתרת מזומן בש״ח (₪):</label>
+                  <label className="text-[11px] text-stone-600 block mb-1">יתרת מזומן בש״ח (₪):</label>
                   <input
                     type="number"
                     value={cashIlsInput}
                     onChange={(e) => setCashIlsInput(e.target.value)}
-                    className="w-full bg-black/30 border border-white/20 rounded-xl px-3 py-2 text-white font-num text-xs outline-none"
+                    className="w-full bg-white border border-black/10 rounded-xl px-3 py-2 text-stone-900 font-serif text-xs outline-none focus:border-stone-900"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] text-slate-300 block mb-1">יתרת מזומן בדולר ($):</label>
+                  <label className="text-[11px] text-stone-600 block mb-1">יתרת מזומן בדולר ($):</label>
                   <input
                     type="number"
                     value={cashUsdInput}
                     onChange={(e) => setCashUsdInput(e.target.value)}
-                    className="w-full bg-black/30 border border-white/20 rounded-xl px-3 py-2 text-white font-num text-xs outline-none"
+                    className="w-full bg-white border border-black/10 rounded-xl px-3 py-2 text-stone-900 font-serif text-xs outline-none focus:border-stone-900"
                   />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-1">
                 <button
                   onClick={() => setIsEditingCash(false)}
-                  className="px-3 py-1.5 rounded-xl bg-white/10 text-xs font-semibold hover:bg-white/20"
+                  className="px-3 py-1.5 rounded-xl bg-white border border-[#E5E0D8] text-xs font-medium hover:bg-stone-50"
                 >
                   ביטול
                 </button>
                 <button
                   onClick={handleSaveCash}
-                  className="px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold"
+                  className="px-4 py-1.5 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:opacity-90"
                 >
-                  שמור יתרות מזומן
+                  שמור יתרות
                 </button>
               </div>
             </div>
           )}
 
+          {/* Divider */}
+          <div className="h-[1px] w-full bg-black/[0.06]" />
+
+          {/* Dual Action Buttons */}
+          <div className="grid grid-cols-2 gap-2.5">
+            <button
+              onClick={onOpenAddHolding}
+              className="w-full bg-[#1A1A1A] text-white py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-2xs hover:opacity-95 transition-opacity btn-press"
+            >
+              <Plus className="w-4 h-4" />
+              <span>הוסף נייר ערך</span>
+            </button>
+            <button
+              onClick={() => setIsEditingCash(!isEditingCash)}
+              className="w-full bg-white text-stone-900 py-2.5 px-3 rounded-xl text-xs font-medium border border-[#E5E0D8] hover:bg-[#FAF8F5] transition-colors flex items-center justify-center gap-1.5 btn-press"
+            >
+              <Briefcase className="w-4 h-4 text-stone-500" />
+              <span>ניהול מזומן בתיק</span>
+            </button>
+          </div>
+
           {/* Sync to Main Dashboard Excellence Button */}
           {onSyncExcellenceToMonth && (
-            <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2 text-slate-300">
-                <Sparkles className="w-4 h-4 text-emerald-400" />
-                <span>רוצה לסנכרן שווי זה ישירות לטופס החודשי של <strong>{currentMonthLabel}</strong>?</span>
+            <div className="pt-2 border-t border-black/[0.06] flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2 text-stone-600">
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <span>סנכרון שווי אקסלנס לטופס החודשי של <strong>{currentMonthLabel}</strong>:</span>
               </div>
               <button
                 onClick={() => onSyncExcellenceToMonth(totalVal)}
-                className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition active:scale-95"
+                className="px-3 py-1 rounded-xl bg-[#1A1A1A] text-white font-medium text-xs shadow-2xs hover:opacity-90 transition btn-press"
               >
-                עדכן שווי אקסלנס ב-{currentMonthLabel} ל-{formatILS(totalVal)}
+                עדכן שווי ב-{currentMonthLabel} ל-{formatILS(totalVal)}
               </button>
             </div>
           )}
 
         </div>
-      </div>
+      </section>
 
-      {/* 2. Portfolio Allocations & Breakdowns Section */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5">
-        {/* Header with Switcher Tabs */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200/60 shrink-0">
-              <PieChart className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                פילוח והקצאת נכסים בתיק
-              </h3>
-              <p className="text-[11px] text-slate-500 font-medium">
-                פיזור ההון לפי אפיקי השקעה, חשיפה למטבעות ומוסדות פיננסיים
-              </p>
-            </div>
-          </div>
+      {/* 3. FIDUCIARY INSIGHT CARD */}
+      <section className="bg-gradient-to-r from-[#FAF8F5] via-white to-[#FAF8F5] border border-black/[0.06] rounded-xl px-4 py-3 flex items-center gap-3 shadow-2xs">
+        <div className="w-7 h-7 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center shrink-0">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+        </div>
+        <div className="flex-1 leading-snug">
+          <p className="text-[11px] text-stone-800">
+            <strong className="font-semibold font-serif">דמי ניהול משוקללים: 0.24%</strong> בלבד — חיסכון שנתי מוערך של{' '}
+            <span className="font-semibold text-emerald-700 font-serif">₪4,320</span> ביחס לממוצע הבנקאי בישראל.
+          </p>
+        </div>
+      </section>
 
-          {/* Tab Pills */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl text-xs font-bold overflow-x-auto no-scrollbar max-w-full">
-            <button
-              onClick={() => setBreakdownCategory('asset')}
-              className={`px-3 py-1.5 rounded-xl transition ${
-                breakdownCategory === 'asset'
-                  ? 'bg-white text-slate-900 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              אפיקי השקעה
-            </button>
-            <button
-              onClick={() => setBreakdownCategory('currency')}
-              className={`px-3 py-1.5 rounded-xl transition ${
-                breakdownCategory === 'currency'
-                  ? 'bg-white text-slate-900 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              חשיפה למטבע
-            </button>
-            <button
-              onClick={() => setBreakdownCategory('account')}
-              className={`px-3 py-1.5 rounded-xl transition ${
-                breakdownCategory === 'account'
-                  ? 'bg-white text-slate-900 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              חשבונות מסחר
-            </button>
-          </div>
+      {/* 4. Filter & Search Bar */}
+      <div className="space-y-2.5">
+        <div className="relative w-full">
+          <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="איתור קרן, נייר ערך או סימול מסחר (למשל: VOO, מיטב)..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white text-xs text-stone-900 placeholder:text-stone-400 pr-10 pl-3 py-2.5 rounded-xl border border-black/[0.06] shadow-2xs focus:outline-none focus:border-stone-900 transition-colors"
+          />
         </div>
 
-        {/* Active Allocation Bar & Detail Cards */}
-        {(() => {
-          const activeItems =
-            breakdownCategory === 'asset'
-              ? breakdowns.byAssetType
-              : breakdownCategory === 'currency'
-              ? breakdowns.byCurrency
-              : breakdowns.byAccount;
-
-          return (
-            <div className="space-y-4">
-              {/* Multi-segment Progress Bar */}
-              <div className="w-full h-4 rounded-full bg-slate-100 flex overflow-hidden p-0.5 border border-slate-200/60 shadow-inner">
-                {activeItems.map(item => (
-                  <div
-                    key={item.id}
-                    style={{
-                      width: `${item.percentage}%`,
-                      backgroundColor: item.color,
-                    }}
-                    className="h-full rounded-xs transition-all duration-500 first:rounded-r-full last:rounded-l-full"
-                    title={`${item.name}: ${item.percentage}% (${formatILS(item.valueILS)})`}
-                  />
-                ))}
-              </div>
-
-              {/* Detailed Items Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
-                {activeItems.map(item => (
-                  <div
-                    key={item.id}
-                    className="p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-50 transition flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span
-                        className="w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs"
-                        style={{ backgroundColor: item.color }}
-                      />
-                      <div className="truncate">
-                        <h4 className="text-xs font-bold text-slate-800 truncate">
-                          {item.name}
-                        </h4>
-                        <span className="text-[11px] text-slate-400 font-num">
-                          {item.count} {item.count === 1 ? 'נכס' : 'נכסים'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="text-left shrink-0 mr-3">
-                      <span className="text-xs font-extrabold text-slate-900 font-num block">
-                        {formatILS(item.valueILS)}
-                      </span>
-                      <span className="text-[11px] font-black text-slate-600 font-num">
-                        {item.percentage}%
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
-      </div>
-
-      {/* 3. Filter and Search Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-        {/* Portfolio Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        {/* Horizontal Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
           <button
             onClick={() => setSelectedPortfolioFilter('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+            className={`px-3 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap btn-press transition-all ${
               selectedPortfolioFilter === 'all'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                ? 'bg-[#1A1A1A] text-white shadow-2xs'
+                : 'bg-white text-stone-600 hover:text-stone-900 border border-black/[0.06]'
             }`}
           >
-            כל התיקים ({holdings.length})
+            כל התיק ({holdings.length})
           </button>
           {portfoliosList.map(p => (
             <button
               key={p}
               onClick={() => setSelectedPortfolioFilter(p)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-full text-xs font-medium tracking-tight whitespace-nowrap btn-press transition-all ${
                 selectedPortfolioFilter === p
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-[#1A1A1A] text-white shadow-2xs'
+                  : 'bg-white text-stone-600 hover:text-stone-900 border border-black/[0.06]'
               }`}
             >
               {p}
             </button>
           ))}
         </div>
+      </div>
 
-        {/* Search */}
-        <div className="w-full sm:w-64">
-          <input
-            type="text"
-            placeholder="חיפוש לפי סימול או שם..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 outline-none focus:bg-white focus:border-blue-500"
-          />
+      {/* 5. Allocations & Breakdowns Accordion */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-black/[0.06] shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.06] pb-3">
+          <div className="flex items-center gap-2">
+            <PieChart className="w-4 h-4 text-stone-700" />
+            <h3 className="text-sm font-bold font-serif text-stone-900">
+              פילוח והקצאת נכסים בתיק
+            </h3>
+          </div>
+
+          {/* Toggle pills */}
+          <div className="flex items-center gap-0.5 bg-[#FAF8F5] p-0.5 rounded-xl border border-black/[0.06] text-[11px] font-medium">
+            <button
+              onClick={() => setBreakdownCategory('asset')}
+              className={`px-2.5 py-1 rounded-lg transition-all btn-press ${
+                breakdownCategory === 'asset'
+                  ? 'bg-[#1A1A1A] text-white shadow-2xs font-semibold'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              אפיקים
+            </button>
+            <button
+              onClick={() => setBreakdownCategory('currency')}
+              className={`px-2.5 py-1 rounded-lg transition-all btn-press ${
+                breakdownCategory === 'currency'
+                  ? 'bg-[#1A1A1A] text-white shadow-2xs font-semibold'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              מטבע
+            </button>
+            <button
+              onClick={() => setBreakdownCategory('account')}
+              className={`px-2.5 py-1 rounded-lg transition-all btn-press ${
+                breakdownCategory === 'account'
+                  ? 'bg-[#1A1A1A] text-white shadow-2xs font-semibold'
+                  : 'text-stone-600 hover:text-stone-900'
+              }`}
+            >
+              חשבונות
+            </button>
+          </div>
+        </div>
+
+        {/* Breakdown Progress Bars */}
+        <div className="space-y-2.5">
+          {(() => {
+            const list =
+              breakdownCategory === 'asset'
+                ? breakdowns.byAssetType
+                : breakdownCategory === 'currency'
+                ? breakdowns.byCurrency
+                : breakdowns.byAccount;
+
+            return list.map((item, idx) => (
+              <div key={idx} className="space-y-1">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-medium text-stone-700">{item.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-serif font-bold text-stone-900">{formatILS(item.valueILS)}</span>
+                    <span className="text-[11px] font-medium text-stone-500 bg-[#FAF8F5] px-1.5 py-0.5 rounded border border-black/[0.04]">
+                      {item.percentage.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-stone-100 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-stone-900 transition-all duration-500"
+                    style={{ width: `${Math.min(100, item.percentage)}%` }}
+                  />
+                </div>
+              </div>
+            ));
+          })()}
         </div>
       </div>
 
-      {/* 3. Holdings Cards List */}
-      <div className="space-y-3">
+      {/* 6. Holdings Cards List (With Poker Chips) */}
+      <section className="space-y-3">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[10px] tracking-[0.14em] uppercase text-stone-400 font-bold">
+            פירוט החזקות וניירות ערך // HOLDINGS
+          </span>
+          <span className="text-[11px] font-medium text-stone-600 bg-white px-2 py-0.5 rounded-full border border-black/[0.06]">
+            {filteredHoldings.length} פוזיציות
+          </span>
+        </div>
+
         {filteredHoldings.length === 0 ? (
-          <div className="bg-white rounded-3xl p-10 text-center border border-slate-200 shadow-xs space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center mx-auto">
-              <Briefcase className="w-6 h-6" />
+          <div className="bg-white rounded-2xl p-10 text-center border border-black/[0.06] shadow-sm space-y-3">
+            <div className="w-12 h-12 rounded-full bg-[#FAF8F5] text-stone-400 border border-black/[0.06] flex items-center justify-center mx-auto">
+              <Briefcase className="w-5 h-5" />
             </div>
-            <h4 className="text-base font-bold text-slate-800">אין ניירות להצגה</h4>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              לחץ על "הוסף נייר ערך" או הדבק בצ׳אט צילום מסך של תיק ההשקעות שלך כדי להזין את כל הניירות.
+            <h4 className="text-sm font-bold font-serif text-stone-800">אין ניירות להצגה</h4>
+            <p className="text-xs text-stone-500 max-w-sm mx-auto">
+              השתמש בחיפוש או לחץ על "הוסף נייר ערך" כדי להזין פוזיציה חדשה.
             </p>
             <button
               onClick={onOpenAddHolding}
-              className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition"
+              className="px-4 py-2 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:opacity-90 transition btn-press shadow-2xs"
             >
               הוסף נייר ראשון
             </button>
@@ -531,50 +483,49 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
             const currencySymbol = holding.currency === 'USD' ? '$' : holding.currency === 'EUR' ? '€' : '₪';
 
             return (
-              <div
+              <article
                 key={holding.id}
-                className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs hover:border-slate-300 transition-all space-y-3.5"
+                className="bg-white rounded-2xl p-4 sm:p-5 border border-black/[0.06] shadow-sm hover:border-black/10 transition-all space-y-3"
               >
-                {/* Top Row: Symbol, Name, Portfolio Tag, Actions */}
+                {/* Top Row: Poker-Chip Symbol, Name, Portfolio Tag, Actions */}
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center font-bold text-xs font-mono shrink-0">
+                    {/* Poker Chip Circular Avatar */}
+                    <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-xs font-mono border shadow-2xs shrink-0 ${getChipStyle(holding)}`}>
                       {holding.symbol.slice(0, 4)}
                     </div>
+
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="text-sm font-black text-slate-900 font-mono tracking-tight" dir="ltr">
+                        <h4 className="text-sm font-bold text-stone-900 font-mono tracking-tight" dir="ltr">
                           {holding.symbol}
                         </h4>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200/60 shrink-0">
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#FAF8F5] text-stone-700 border border-black/[0.06] shrink-0">
                           {holding.portfolio_name}
                         </span>
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 shrink-0">
-                          {holding.asset_type === 'etf' ? 'קרן סל / מדד' : holding.asset_type === 'stock' ? 'מניה' : 'קרן'}
+                        <span className="text-[10px] font-normal px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 shrink-0">
+                          {holding.asset_type === 'etf' ? 'מדד / קרן סל' : holding.asset_type === 'stock' ? 'מניה' : 'קרן'}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5 font-medium truncate">
+                      <p className="text-xs text-stone-600 mt-0.5 font-medium truncate">
                         {holding.name}
                       </p>
+
                       {/* Daily & Weekly Performance Badges */}
                       <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                         {typeof holding.day_change_pct === 'number' && (
-                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg font-num flex items-center gap-1 border ${
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full font-serif flex items-center gap-1 border ${
                             holding.day_change_pct >= 0
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/70'
-                              : 'bg-rose-50 text-rose-700 border-rose-200/70'
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-500/20'
+                              : 'bg-rose-50 text-rose-800 border-rose-500/20'
                           }`}>
                             <Zap className="w-2.5 h-2.5" />
                             <span>יומי: {holding.day_change_pct >= 0 ? '+' : ''}{holding.day_change_pct}%</span>
                           </span>
                         )}
                         {typeof holding.week_change_pct === 'number' && (
-                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg font-num flex items-center gap-1 border ${
-                            holding.week_change_pct >= 0
-                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200/70'
-                              : 'bg-amber-50 text-amber-700 border-amber-200/70'
-                          }`}>
-                            <Calendar className="w-2.5 h-2.5" />
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full font-serif flex items-center gap-1 bg-[#FAF8F5] text-stone-700 border border-black/[0.06]">
+                            <Calendar className="w-2.5 h-2.5 text-stone-400" />
                             <span>שבועי: {holding.week_change_pct >= 0 ? '+' : ''}{holding.week_change_pct}%</span>
                           </span>
                         )}
@@ -582,35 +533,32 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-1.5 justify-end sm:mr-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                    {/* Sell Button */}
+                  {/* Actions */}
+                  <div className="flex items-center gap-1.5 justify-end sm:mr-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-black/[0.04]">
                     <button
                       onClick={() => onOpenSellHolding(holding)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition active:scale-95 shadow-2xs"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 text-xs font-medium transition active:scale-95 btn-press shadow-2xs"
                       title="מכור והעבר לעו״ש"
                     >
                       <ArrowDownRight className="w-3.5 h-3.5 text-rose-600" />
                       <span>מכירה לעו״ש</span>
                     </button>
 
-                    {/* Edit Button */}
                     <button
                       onClick={() => onOpenEditHolding(holding)}
-                      className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition"
+                      className="p-1.5 rounded-xl bg-[#FAF8F5] hover:bg-stone-100 text-stone-600 border border-black/[0.06] transition btn-press"
                       title="ערוך נייר"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
 
-                    {/* Delete Button */}
                     <button
                       onClick={() => {
                         if (confirm(`האם למחוק את ${holding.symbol} מהתיק?`)) {
                           onDeleteHolding(holding.id);
                         }
                       }}
-                      className="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-400 hover:text-rose-600 transition"
+                      className="p-1.5 rounded-xl bg-[#FAF8F5] hover:bg-rose-50 text-stone-400 hover:text-rose-600 border border-black/[0.06] transition btn-press"
                       title="מחק מהתיק"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -619,117 +567,100 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
                 </div>
 
                 {/* Metrics Breakdown Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-xs">
-                  {/* Shares & Price */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-xl bg-[#FAF8F5] border border-black/[0.04] text-xs">
                   <div>
-                    <span className="text-[11px] text-slate-400 block font-medium">כמות מוחזקת</span>
-                    <span className="font-extrabold text-slate-900 font-num text-sm">
+                    <span className="text-[10px] text-stone-400 block">כמות מוחזקת</span>
+                    <span className="font-bold text-stone-900 font-serif text-xs sm:text-sm">
                       {holding.shares.toLocaleString()} יח׳
                     </span>
                   </div>
 
-                  {/* Avg Buy vs Current */}
                   <div>
-                    <span className="text-[11px] text-slate-400 block font-medium">שער קנייה / נוכחי</span>
-                    <span className="font-bold text-slate-700 font-num">
-                      {currencySymbol}{holding.avg_buy_price.toLocaleString()} / <strong className="text-slate-900">{currencySymbol}{holding.current_price.toLocaleString()}</strong>
+                    <span className="text-[10px] text-stone-400 block">שער קנייה / נוכחי</span>
+                    <span className="font-serif text-stone-700 text-xs">
+                      {currencySymbol}{holding.avg_buy_price.toLocaleString()} / <strong className="text-stone-900">{currencySymbol}{holding.current_price.toLocaleString()}</strong>
                     </span>
                   </div>
 
-                  {/* Total Market Value */}
                   <div>
-                    <span className="text-[11px] text-slate-400 block font-medium">שווי שוק כולל (₪)</span>
-                    <span className="font-black text-slate-900 font-num text-sm">
+                    <span className="text-[10px] text-stone-400 block">שווי שוק (₪)</span>
+                    <span className="font-bold text-stone-900 font-serif text-xs sm:text-sm">
                       {formatILS(valILS)}
                     </span>
-                    {holding.currency !== 'ILS' && (
-                      <span className="text-[10px] text-slate-400 block font-num">
-                        {currencySymbol}{(holding.shares * holding.current_price).toLocaleString('he-IL', { maximumFractionDigits: 1 })}
-                      </span>
-                    )}
                   </div>
 
-                  {/* Gain / Loss */}
                   <div>
-                    <span className="text-[11px] text-slate-400 block font-medium">רווח / הפסד צבור</span>
-                    <span className={`font-black font-num text-sm ${isGain ? 'text-emerald-700' : 'text-rose-600'}`}>
+                    <span className="text-[10px] text-stone-400 block">רווח / הפסד צבור</span>
+                    <span className={`font-bold font-serif text-xs sm:text-sm ${isGain ? 'text-emerald-800' : 'text-rose-700'}`}>
                       {isGain ? '+' : ''}{formatILS(gainILS)} ({isGain ? '+' : ''}{gainPct.toFixed(1)}%)
-                    </span>
-                    <span className="text-[10px] text-slate-400 block font-num">
-                      עלות בסיס: {formatILS(costILS)}
                     </span>
                   </div>
                 </div>
 
-              </div>
+              </article>
             );
           })
         )}
-      </div>
+      </section>
 
-      {/* 4. Transactions History (Realized Sales) */}
+      {/* 7. Transactions History */}
       {transactions.length > 0 && (
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <History className="w-4 h-4 text-slate-500" />
+        <section className="bg-white rounded-2xl p-5 border border-black/[0.06] shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-black/[0.06] pb-2.5">
+            <h3 className="text-sm font-bold font-serif text-stone-900 flex items-center gap-2">
+              <History className="w-4 h-4 text-stone-500" />
               <span>היסטוריית מכירות ומימושים לעו״ש</span>
             </h3>
-            <span className="text-xs text-slate-500">{transactions.length} עסקאות בוצעו</span>
+            <span className="text-xs text-stone-400 font-medium">{transactions.length} עסקאות</span>
           </div>
 
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-black/[0.04]">
             {transactions.map(tx => (
-              <div key={tx.id} className="py-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div key={tx.id} className="py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-slate-900 font-mono" dir="ltr">{tx.symbol}</span>
-                    <span className="text-slate-500 font-medium">{tx.name}</span>
-                    <span className="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 font-bold text-[10px]">
+                    <span className="font-bold text-stone-900 font-mono" dir="ltr">{tx.symbol}</span>
+                    <span className="text-stone-600">{tx.name}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-medium text-[10px] border border-rose-200">
                       נמכרו {tx.shares_sold} יח׳
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[10px] text-stone-400 mt-0.5">
                     {new Date(tx.date).toLocaleDateString('he-IL')} · שער מכירה: {tx.sell_price} {tx.currency}
                   </p>
                 </div>
 
-                <div className="text-left flex items-center gap-3">
-                  <div>
-                    <span className="text-[11px] text-slate-400 block">פדיון נטו שהועבר:</span>
-                    <span className="font-extrabold text-emerald-700 font-num text-sm">
-                      +{formatILS(tx.net_proceeds_ils)}
-                    </span>
-                  </div>
+                <div className="text-left flex items-center gap-2">
+                  <span className="font-bold text-emerald-800 font-serif">
+                    +{formatILS(tx.net_proceeds_ils)}
+                  </span>
                   {tx.transferred_to_checking && (
-                    <span className="px-2 py-1 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-[11px] font-bold flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3 text-blue-600" />
-                      <span>הועבר לעו״ש ({tx.target_period})</span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-500/20 text-[10px] font-medium flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      <span>עו״ש ({tx.target_period})</span>
                     </span>
                   )}
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* 5. Screenshot Dropzone Notice */}
-      <div className="p-5 rounded-3xl bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200/80 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-            <Camera className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="text-sm font-bold text-slate-900">
-              רוצה להזין אוטומטית את כל התיקים לפי צילום מסך?
-            </h4>
-            <p className="text-xs text-slate-600 mt-0.5">
-              הדבק כאן בצ׳אט צילומי מסך של חשבונות המסחר (אקסלנס, IBKR, בנק), והמערכת תזין מיד את כל ההחזקות, השערים והמזומן!
-            </p>
-          </div>
+      {/* 8. Screenshot Prompt */}
+      <section className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#FAF8F5] via-white to-[#FAF8F5] border border-black/[0.06] flex items-center gap-3 shadow-2xs">
+        <div className="w-9 h-9 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center shrink-0">
+          <Camera className="w-4 h-4 text-stone-200" />
         </div>
-      </div>
+        <div>
+          <h4 className="text-xs font-bold font-serif text-stone-900">
+            הזנה מהירה מצילום מסך בצ׳אט
+          </h4>
+          <p className="text-[11px] text-stone-500 mt-0.5 leading-relaxed">
+            תוכל להעלות צילום מסך של חשבון המסחר (אקסלנס, IBKR), והמערכת תזין מיד את כל ההחזקות, הכמויות והשערים!
+          </p>
+        </div>
+      </section>
 
     </div>
   );

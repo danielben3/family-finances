@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calculator, ShieldCheck, Check, Info, TrendingUp, Sparkles } from 'lucide-react';
+import { X, Calculator, Check } from 'lucide-react';
 import { calculatePortfolioNet } from '../lib/taxCalculations';
 
 interface CostBasisModalProps {
@@ -33,7 +33,7 @@ export const CostBasisModal: React.FC<CostBasisModalProps> = ({
   const result = calculatePortfolioNet(marketValue, numBasis, 0.25);
 
   const formatILS = (val: number) =>
-    '₪' + Math.round(val).toLocaleString('he-IL');
+    '₪ ' + Math.round(val).toLocaleString('he-IL');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,26 +47,26 @@ export const CostBasisModal: React.FC<CostBasisModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in" dir="rtl">
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-md w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" dir="rtl">
+      <div className="bg-white border border-black/10 rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 left-4 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition"
+          className="absolute top-4 left-4 p-1.5 rounded-xl bg-[#FAF8F5] hover:bg-stone-100 text-stone-400 hover:text-stone-800 border border-black/[0.06] transition"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
         {/* Title */}
         <div className="text-center mb-5">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto mb-2 shadow-xs">
-            <Calculator className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center mx-auto mb-2 shadow-2xs">
+            <Calculator className="w-4 h-4 text-stone-200" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">
+          <h3 className="text-base sm:text-lg font-bold font-serif text-stone-900">
             הזנת קרן וחישוב נטו (תיק אקסלנס)
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-stone-500 mt-0.5 font-sans">
             הזן את סך ההפקדות שהפקדת, והמערכת תחשב את הרווח והנטו לאחר מס
           </p>
         </div>
@@ -74,23 +74,23 @@ export const CostBasisModal: React.FC<CostBasisModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           
           {/* Current Market Value */}
-          <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-[#FAF8F5] border border-black/[0.04]">
             <div>
-              <span className="text-[11px] text-slate-400 block font-medium">שווי שוק נוכחי ({monthLabel})</span>
-              <span className="text-base font-extrabold text-slate-900 font-num">
+              <span className="text-[10px] text-stone-400 block font-medium">שווי שוק נוכחי ({monthLabel})</span>
+              <span className="text-base font-bold font-serif text-stone-900">
                 {formatILS(marketValue)}
               </span>
             </div>
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white text-stone-800 border border-black/[0.06]">
               ברוטו
             </span>
           </div>
 
           {/* Cost Basis Input */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-stone-700 flex items-center justify-between">
               <span>סך הקרן שהופקדה (עלות בסיס):</span>
-              <span className="text-[11px] text-slate-400 font-normal">בשקלים ₪</span>
+              <span className="text-[10px] text-stone-400">בשקלים ₪</span>
             </label>
             <div className="relative">
               <input
@@ -98,35 +98,35 @@ export const CostBasisModal: React.FC<CostBasisModalProps> = ({
                 placeholder="למשל: 400000"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
-                className="w-full text-left pl-3 pr-9 py-3 rounded-2xl bg-slate-50 border border-slate-300 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-slate-900 font-num font-bold text-base outline-none transition"
+                className="w-full text-left pl-3 pr-8 py-2.5 rounded-xl bg-[#FAF8F5] border border-black/[0.08] focus:bg-white focus:border-stone-900 text-stone-900 font-serif font-bold text-sm outline-none transition"
               />
-              <span className="absolute right-3.5 top-3.5 text-slate-400 font-bold text-sm">₪</span>
+              <span className="absolute right-3 top-2.5 text-stone-400 font-serif text-sm">₪</span>
             </div>
           </div>
 
           {/* Live Calculation Card */}
           {numBasis > 0 && (
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-50/70 via-white to-blue-50/50 border border-emerald-200/80 space-y-2.5">
+            <div className="p-3.5 rounded-xl bg-[#FAF8F5] border border-black/[0.06] space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-600 font-medium">רווח הון צבור (לפני מס):</span>
-                <span className="font-extrabold text-emerald-700 font-num">
+                <span className="text-stone-600 font-sans">רווח הון צבור (לפני מס):</span>
+                <span className="font-bold text-emerald-800 font-serif">
                   +{formatILS(result.unrealizedGain)} (+{result.gainPct.toFixed(1)}%)
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-600 font-medium">מס רווחי הון משוער (25%):</span>
-                <span className="font-bold text-rose-600 font-num">
+                <span className="text-stone-600 font-sans">מס רווחי הון משוער (25%):</span>
+                <span className="font-bold text-rose-700 font-serif">
                   -{formatILS(result.estimatedTax)}
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-emerald-200/80 flex items-center justify-between">
+              <div className="pt-2 border-t border-black/[0.06] flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold text-slate-900 block">שווי נטו שנשאר ביד:</span>
-                  <span className="text-[10px] text-slate-500">קרן + רווח לאחר מס</span>
+                  <span className="text-xs font-bold text-stone-900 block font-serif">שווי נטו שנשאר ביד:</span>
+                  <span className="text-[10px] text-stone-400 font-sans">קרן + רווח לאחר מס</span>
                 </div>
-                <span className="text-lg font-black text-emerald-700 font-num">
+                <span className="text-lg font-bold text-emerald-800 font-serif">
                   {formatILS(result.netValue)}
                 </span>
               </div>
@@ -134,12 +134,12 @@ export const CostBasisModal: React.FC<CostBasisModalProps> = ({
           )}
 
           {/* Apply to future months checkbox */}
-          <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer pt-1">
+          <label className="flex items-center gap-2 text-xs text-stone-600 cursor-pointer pt-1">
             <input
               type="checkbox"
               checked={applyToAll}
               onChange={(e) => setApplyToAll(e.target.checked)}
-              className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+              className="w-4 h-4 rounded text-stone-900 focus:ring-stone-900 accent-stone-900"
             />
             <span>החל קרן זו גם על כל החודשים הבאים (שמירה אוטומטית)</span>
           </label>
@@ -149,7 +149,7 @@ export const CostBasisModal: React.FC<CostBasisModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-md shadow-emerald-600/20 active:scale-95 flex items-center justify-center gap-1.5"
+              className="w-full py-3 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-1.5 btn-press shadow-2xs"
             >
               <Check className="w-4 h-4" />
               <span>{isSubmitting ? 'שומר ומחשב...' : 'שמור קרן וחשב נטו'}</span>

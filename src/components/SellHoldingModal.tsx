@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Holding, PortfolioTransaction } from '../types/portfolio';
-import { X, ArrowDownRight, DollarSign, ShieldCheck, Check, AlertCircle } from 'lucide-react';
+import { X, ArrowDownRight, Check } from 'lucide-react';
 
 interface SellHoldingModalProps {
   isOpen: boolean;
@@ -41,7 +41,7 @@ export const SellHoldingModal: React.FC<SellHoldingModalProps> = ({
   const netProceedsILS = Math.round(grossILS - taxDeductedILS);
 
   const formatILS = (val: number) =>
-    '₪' + Math.round(val).toLocaleString('he-IL');
+    '₪ ' + Math.round(val).toLocaleString('he-IL');
 
   const handleQuickShares = (pct: number) => {
     const qty = Math.round((holding.shares * pct) * 1000) / 1000;
@@ -62,7 +62,7 @@ export const SellHoldingModal: React.FC<SellHoldingModalProps> = ({
               shares: remainingShares,
               updated_at: new Date().toISOString(),
             }
-          : null; // Entire holding sold
+          : null;
 
       const transaction: PortfolioTransaction = {
         id: `tx-${Date.now()}`,
@@ -89,27 +89,30 @@ export const SellHoldingModal: React.FC<SellHoldingModalProps> = ({
     }
   };
 
+  const inputClass =
+    'w-full text-left px-3 py-2.5 rounded-xl bg-[#FAF8F5] border border-black/[0.08] focus:bg-white focus:border-stone-900 text-stone-900 font-serif font-bold text-sm outline-none transition';
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in" dir="rtl">
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in" dir="rtl">
+      <div className="bg-white border border-black/10 rounded-2xl p-5 sm:p-6 max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 left-4 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition"
+          className="absolute top-4 left-4 p-1.5 rounded-xl bg-[#FAF8F5] hover:bg-stone-100 text-stone-400 hover:text-stone-800 border border-black/[0.06] transition"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
         {/* Header */}
         <div className="text-center mb-5">
-          <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto mb-2 shadow-xs">
-            <ArrowDownRight className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center mx-auto mb-2 shadow-2xs">
+            <ArrowDownRight className="w-4 h-4 text-rose-400" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">
+          <h3 className="text-base sm:text-lg font-bold font-serif text-stone-900">
             מכירת נייר ערך ומימוש לתיק
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-stone-500 mt-0.5 font-sans">
             {holding.name} ({holding.symbol}) · תיק {holding.portfolio_name}
           </p>
         </div>
@@ -117,16 +120,16 @@ export const SellHoldingModal: React.FC<SellHoldingModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           
           {/* Holding Balance Summary */}
-          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs">
+          <div className="p-3.5 rounded-xl bg-[#FAF8F5] border border-black/[0.04] flex items-center justify-between text-xs">
             <div>
-              <span className="text-slate-400 block text-[11px]">כמות קיימת בתיק</span>
-              <span className="font-extrabold text-slate-800 font-num text-sm">
-                {holding.shares} יחידות
+              <span className="text-stone-400 block text-[10px]">כמות קיימת בתיק</span>
+              <span className="font-bold text-stone-900 font-serif text-sm">
+                {holding.shares.toLocaleString()} יחידות
               </span>
             </div>
             <div className="text-left">
-              <span className="text-slate-400 block text-[11px]">שער קנייה ממוצע</span>
-              <span className="font-bold text-slate-700 font-num">
+              <span className="text-stone-400 block text-[10px]">שער קנייה ממוצע</span>
+              <span className="font-serif text-stone-700">
                 {currencySymbol}{holding.avg_buy_price.toLocaleString()}
               </span>
             </div>
@@ -135,29 +138,28 @@ export const SellHoldingModal: React.FC<SellHoldingModalProps> = ({
           {/* Shares to sell input */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-700">
+              <label className="text-xs font-semibold text-stone-700">
                 כמות יחידות למכירה:
               </label>
-              {/* Quick % buttons */}
               <div className="flex gap-1 text-[11px]">
                 <button
                   type="button"
                   onClick={() => handleQuickShares(0.25)}
-                  className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold"
+                  className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] hover:bg-stone-100 text-stone-700 border border-black/[0.06] font-medium"
                 >
                   25%
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickShares(0.5)}
-                  className="px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold"
+                  className="px-2.5 py-0.5 rounded-lg bg-[#FAF8F5] hover:bg-stone-100 text-stone-700 border border-black/[0.06] font-medium"
                 >
                   50%
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickShares(1)}
-                  className="px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold"
+                  className="px-2.5 py-0.5 rounded-lg bg-[#1A1A1A] text-white font-medium"
                 >
                   הכל (100%)
                 </button>
@@ -171,15 +173,15 @@ export const SellHoldingModal: React.FC<SellHoldingModalProps> = ({
               min="0.001"
               value={sharesToSell}
               onChange={(e) => setSharesToSell(parseFloat(e.target.value) || 0)}
-              className="w-full text-left px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 focus:bg-white focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-slate-900 font-num font-bold text-sm outline-none transition"
+              className={inputClass}
             />
           </div>
 
           {/* Sell Price input */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-stone-700 flex items-center justify-between">
               <span>שער מכירה ליחידה ({holding.currency}):</span>
-              <span className="text-[11px] text-slate-400 font-normal">מחיר שוק עדכני</span>
+              <span className="text-[10px] text-stone-400">מחיר שוק</span>
             </label>
             <div className="relative">
               <input
@@ -188,72 +190,72 @@ export const SellHoldingModal: React.FC<SellHoldingModalProps> = ({
                 min="0.01"
                 value={sellPrice}
                 onChange={(e) => setSellPrice(parseFloat(e.target.value) || 0)}
-                className="w-full text-left pl-3 pr-8 py-2.5 rounded-xl bg-slate-50 border border-slate-300 focus:bg-white focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 text-slate-900 font-num font-bold text-sm outline-none transition"
+                className={`${inputClass} pl-3 pr-8`}
               />
-              <span className="absolute right-3 top-2.5 text-slate-400 font-bold text-sm">
+              <span className="absolute right-3 top-2.5 text-stone-400 font-serif text-sm">
                 {currencySymbol}
               </span>
             </div>
           </div>
 
           {/* Live Calculation Preview */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-rose-50/50 via-white to-amber-50/40 border border-rose-200/80 space-y-2 text-xs">
+          <div className="p-3.5 rounded-xl bg-[#FAF8F5] border border-black/[0.06] space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">פדיון ברוטו:</span>
-              <span className="font-bold text-slate-900 font-num">
+              <span className="text-stone-600 font-sans">פדיון ברוטו:</span>
+              <span className="font-bold text-stone-900 font-serif">
                 {currencySymbol}{grossOriginal.toLocaleString('he-IL', { maximumFractionDigits: 2 })} ({formatILS(grossILS)})
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">רווח הון חייב במס:</span>
-              <span className={`font-bold font-num ${capitalGainILS > 0 ? 'text-emerald-700' : 'text-slate-500'}`}>
+              <span className="text-stone-600 font-sans">רווח הון חייב במס:</span>
+              <span className={`font-bold font-serif ${capitalGainILS > 0 ? 'text-emerald-800' : 'text-stone-500'}`}>
                 {capitalGainILS > 0 ? `+${formatILS(capitalGainILS)}` : 'אין רווח חייב'}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-slate-600">ניכוי מס רווחי הון 25%:</span>
-              <span className="font-bold text-rose-600 font-num">
+              <span className="text-stone-600 font-sans">ניכוי מס רווחי הון 25%:</span>
+              <span className="font-bold text-rose-700 font-serif">
                 -{formatILS(taxDeductedILS)}
               </span>
             </div>
 
-            <div className="pt-2 border-t border-rose-200/80 flex items-center justify-between">
+            <div className="pt-2 border-t border-black/[0.06] flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold text-slate-900 block">סך פדיון נטו שיתקבל:</span>
-                <span className="text-[10px] text-slate-500">תמורת מכירה לאחר ניכוי מס</span>
+                <span className="text-xs font-bold text-stone-900 block font-serif">סך פדיון נטו שיתקבל:</span>
+                <span className="text-[10px] text-stone-400 font-sans">לאחר ניכוי מס</span>
               </div>
-              <span className="text-lg font-black text-emerald-700 font-num">
+              <span className="text-base font-bold text-emerald-800 font-serif">
                 {formatILS(netProceedsILS)}
               </span>
             </div>
           </div>
 
           {/* Transfer to Checking Account Checkbox */}
-          <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/80 space-y-2">
-            <label className="flex items-start gap-2.5 text-xs text-blue-900 cursor-pointer">
+          <div className="p-3.5 rounded-xl bg-white border border-black/[0.06] shadow-2xs space-y-2">
+            <label className="flex items-start gap-2.5 text-xs text-stone-800 cursor-pointer">
               <input
                 type="checkbox"
                 checked={transferToChecking}
                 onChange={(e) => setTransferToChecking(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                className="mt-0.5 w-4 h-4 rounded text-stone-900 focus:ring-stone-900 accent-stone-900"
               />
               <div className="space-y-0.5">
                 <span className="font-bold block">העבר פדיון זה ישירות לחשבון העובר ושב (עו״ש)</span>
-                <span className="text-[11px] text-blue-700 block">
-                  סכום הנטו ({formatILS(netProceedsILS)}) יתווסף אוטומטית ליתרת העו״ש החודשית
+                <span className="text-[11px] text-stone-500 block">
+                  סכום הנטו ({formatILS(netProceedsILS)}) יתווסף אוטומטית לעו״ש בחודש הנבחר
                 </span>
               </div>
             </label>
 
             {transferToChecking && (
-              <div className="pt-2 border-t border-blue-200/60 flex items-center justify-between text-xs">
-                <span className="text-blue-800 font-medium">לאיזה חודש להעביר בעו״ש?</span>
+              <div className="pt-2 border-t border-black/[0.04] flex items-center justify-between text-xs">
+                <span className="text-stone-600">לאיזה חודש להעביר בעו״ש?</span>
                 <select
                   value={targetPeriod}
                   onChange={(e) => setTargetPeriod(e.target.value)}
-                  className="bg-white border border-blue-300 rounded-lg px-2.5 py-1 text-xs font-bold text-blue-900 outline-none"
+                  className="bg-[#FAF8F5] border border-black/[0.08] rounded-lg px-2.5 py-1 text-xs font-semibold text-stone-900 outline-none"
                 >
                   {periods.map(p => (
                     <option key={p.period} value={p.period}>
@@ -270,10 +272,10 @@ export const SellHoldingModal: React.FC<SellHoldingModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting || validShares <= 0}
-              className="w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-md shadow-rose-600/20 active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#1A1A1A] text-white text-xs font-semibold hover:opacity-90 active:scale-95 transition flex items-center justify-center gap-1.5 btn-press shadow-2xs disabled:opacity-50"
             >
               <Check className="w-4 h-4" />
-              <span>{isSubmitting ? 'מבצע מכירה ומעביר כספים...' : `אשר מכירה והעבר ${formatILS(netProceedsILS)}`}</span>
+              <span>{isSubmitting ? 'מבצע מכירה...' : `אשר מכירה והעבר ${formatILS(netProceedsILS)}`}</span>
             </button>
           </div>
 

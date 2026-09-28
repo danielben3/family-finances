@@ -1,6 +1,6 @@
 import React from 'react';
 import { FinancialRecord } from '../types';
-import { ArrowDownLeft, ArrowUpRight, PiggyBank, ReceiptText } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
 interface CashflowDonutCardProps {
   currentRecord: FinancialRecord;
@@ -20,18 +20,18 @@ export const CashflowDonutCard: React.FC<CashflowDonutCardProps> = ({
   const expensesPct = 100 - savingsPct;
 
   return (
-    <section className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 titanium-edge space-y-4 shadow-xs">
+    <section className="bg-white rounded-2xl p-4 sm:p-5 border border-black/[0.06] shadow-sm space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            יעילות תזרים חודשי
+          <span className="text-[10px] tracking-[0.14em] font-semibold text-stone-400 uppercase block mb-0.5">
+            // CASHFLOW EFFICIENCY
           </span>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900">
+          <h3 className="text-base font-bold font-serif text-stone-900">
             תמונת מצב הכנסות מול הוצאות
           </h3>
         </div>
 
-        <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-200">
+        <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-semibold border border-emerald-500/20">
           {savingsPct}% נותבו לחיסכון
         </span>
       </div>
@@ -42,79 +42,74 @@ export const CashflowDonutCard: React.FC<CashflowDonutCardProps> = ({
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
             {/* Background ring */}
             <path
-              className="text-slate-100"
+              className="text-stone-100"
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               fill="none"
               stroke="currentColor"
-              strokeWidth="3.5"
+              strokeWidth="3.2"
             />
             {/* Expenses Stroke */}
             <path
-              className="text-rose-400"
+              className="text-stone-300"
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               fill="none"
               stroke="currentColor"
               strokeDasharray={`${expensesPct}, 100`}
-              strokeWidth="3.5"
+              strokeWidth="3.2"
             />
             {/* Savings Stroke */}
             <path
-              className="text-blue-600"
+              className="text-emerald-500"
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               fill="none"
               stroke="currentColor"
               strokeDasharray={`${savingsPct}, 100`}
               strokeDashoffset={`-${expensesPct}`}
+              strokeWidth="3.2"
               strokeLinecap="round"
-              strokeWidth="4"
             />
           </svg>
 
+          {/* Center text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-base font-extrabold text-slate-900 font-num">
+            <span className="text-xl font-bold font-serif text-stone-900 leading-none">
               {savingsPct}%
             </span>
-            <span className="text-[10px] font-bold text-blue-600">חיסכון</span>
+            <span className="text-[10px] text-stone-500 mt-0.5">חיסכון נטו</span>
           </div>
         </div>
 
-        {/* Breakdown Items List */}
-        <div className="flex-1 w-full space-y-2 text-xs">
-          {/* Inflow */}
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+        {/* Legend stats */}
+        <div className="flex-1 w-full space-y-2">
+          {/* Income */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF8F5] border border-black/[0.04]">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <ArrowDownLeft className="w-3.5 h-3.5" />
-              </div>
-              <span className="font-semibold text-slate-700">סך הכנסות נטו (משכורות)</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-stone-900" />
+              <span className="text-xs text-stone-600 font-medium">הכנסות נטו</span>
             </div>
-            <span className="font-extrabold text-slate-900 font-num text-xs sm:text-sm">
+            <span className="text-xs font-bold font-serif text-stone-900">
               {formatILS(income)}
             </span>
           </div>
 
-          {/* Outflow */}
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+          {/* Expenses */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF8F5] border border-black/[0.04]">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center">
-                <ReceiptText className="w-3.5 h-3.5" />
-              </div>
-              <span className="font-semibold text-slate-700">סך הוצאות שוטפות</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-stone-400" />
+              <span className="text-xs text-stone-600 font-medium">הוצאות החודש</span>
             </div>
-            <span className="font-bold text-slate-700 font-num text-xs sm:text-sm">
+            <span className="text-xs font-bold font-serif text-stone-900">
               {formatILS(expenses)}
             </span>
           </div>
 
-          {/* Invested Net */}
-          <div className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50/70 border border-blue-200/80">
+          {/* Net Savings */}
+          <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-500/15">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center">
-                <PiggyBank className="w-3.5 h-3.5" />
-              </div>
-              <span className="font-bold text-blue-900">סך חיסכון והשקעה חודשי</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <span className="text-xs text-emerald-900 font-medium">חיסכון צבור</span>
             </div>
-            <span className="font-extrabold text-blue-700 font-num text-xs sm:text-sm">
+            <span className="text-xs font-bold font-serif text-emerald-800">
               +{formatILS(savings)}
             </span>
           </div>
