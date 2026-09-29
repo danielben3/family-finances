@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Download, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Calendar, Download, RefreshCw, ChevronDown } from 'lucide-react';
 import { NavTab } from './MobileNav';
 
 interface HeaderProps {
@@ -9,6 +9,7 @@ interface HeaderProps {
   onSelectTab?: (tab: NavTab) => void;
   currentPeriodLabel?: string;
   onExportExcel?: () => void;
+  onOpenMonthPicker?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -16,6 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectTab,
   currentPeriodLabel = 'ספטמבר 2026',
   onExportExcel,
+  onOpenMonthPicker,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#EAE6DF] transition-all pt-[env(safe-area-inset-top,0px)]">
@@ -56,17 +58,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'text-[#737373] hover:text-[#1A1A1A]'
               }`}
             >
-              מניות והשקעות
-            </button>
-            <button
-              onClick={() => onSelectTab('income')}
-              className={`px-4 py-1.5 rounded-full transition-all ${
-                activeTab === 'income'
-                  ? 'bg-[#1A1A1A] text-white shadow-xs font-semibold'
-                  : 'text-[#737373] hover:text-[#1A1A1A]'
-              }`}
-            >
-              הכנסות
+              השקעות
             </button>
             <button
               onClick={() => onSelectTab('form')}
@@ -79,16 +71,6 @@ export const Header: React.FC<HeaderProps> = ({
               הזנה חודשית
             </button>
             <button
-              onClick={() => onSelectTab('analytics')}
-              className={`px-4 py-1.5 rounded-full transition-all ${
-                activeTab === 'analytics'
-                  ? 'bg-[#1A1A1A] text-white shadow-xs font-semibold'
-                  : 'text-[#737373] hover:text-[#1A1A1A]'
-              }`}
-            >
-              צמיחה
-            </button>
-            <button
               onClick={() => onSelectTab('history')}
               className={`px-4 py-1.5 rounded-full transition-all ${
                 activeTab === 'history'
@@ -96,18 +78,23 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'text-[#737373] hover:text-[#1A1A1A]'
               }`}
             >
-              היסטוריה
+              היסטוריה ומעקב
             </button>
           </nav>
         )}
 
         {/* Quick Utilities & Period Capsule */}
         <div className="flex items-center gap-2">
-          {/* Period Badge */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#EAE6DF] text-xs font-medium text-[#1A1A1A] shadow-2xs font-num">
+          {/* Clickable Period Capsule Button */}
+          <button
+            onClick={onOpenMonthPicker}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white hover:bg-stone-50 border border-[#EAE6DF] text-xs font-medium text-[#1A1A1A] shadow-2xs font-num active:scale-95 transition cursor-pointer"
+            title="לחץ להחלפת חודש מהירה"
+          >
             <Calendar className="w-3.5 h-3.5 text-[#737373]" />
             <span>{currentPeriodLabel}</span>
-          </div>
+            <ChevronDown className="w-3 h-3 text-[#737373]" />
+          </button>
 
           {/* Export Excel Button */}
           {onExportExcel && (

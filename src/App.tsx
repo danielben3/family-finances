@@ -32,6 +32,7 @@ import { AddEditHoldingModal } from './components/AddEditHoldingModal';
 import { TopHoldingsCard } from './components/TopHoldingsCard';
 import { TrustVerificationBanner } from './components/TrustVerificationBanner';
 import { QuickAssetEditModal, AssetEditType } from './components/QuickAssetEditModal';
+import { MonthPickerModal } from './components/MonthPickerModal';
 import { Sparkles, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 
 const normalizeRecord = (r: any): FinancialRecord => {
@@ -99,6 +100,9 @@ export const App: React.FC = () => {
   const [isFireModalOpen, setIsFireModalOpen] = useState<boolean>(false);
   const [isCostBasisModalOpen, setIsCostBasisModalOpen] = useState<boolean>(false);
   const [quickAssetModalType, setQuickAssetModalType] = useState<AssetEditType | null>(null);
+  const [isMonthPickerOpen, setIsMonthPickerOpen] = useState<boolean>(false);
+  const [overviewSection, setOverviewSection] = useState<'summary' | 'cashflow' | 'goals' | 'all'>('summary');
+  const [historySection, setHistorySection] = useState<'balance' | 'income'>('balance');
 
   // Portfolio Holdings & Cash State
   const [holdings, setHoldings] = useState<Holding[]>(() => {
@@ -497,6 +501,7 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         onSelectTab={tab => setActiveTab(tab)}
         currentPeriodLabel={currentRecord.label}
+        onOpenMonthPicker={() => setIsMonthPickerOpen(true)}
         onExportExcel={() => {
           exportFinancialRecordsToExcel(records);
           showToast('הקובץ יוצא בהצלחה! 📊', 'success');
@@ -509,23 +514,46 @@ export const App: React.FC = () => {
         <div className="space-y-4">
           {activeTab === 'overview' && (
             <>
-              {/* 1. Apple Card Hero */}
-              <AppleCardHero
-                currentRecord={currentRecord}
-                previousRecord={previousRecord}
-                onQuickLog={() => setActiveTab('form')}
-                onOpenFire={() => setIsFireModalOpen(true)}
-                onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
-                onEditAsset={setQuickAssetModalType}
-                onScrollToGoals={() => {
-                  const el = document.getElementById('mobile-fire-milestone');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                onExportExcel={() => {
-                  exportFinancialRecordsToExcel(records);
-                  showToast('הקובץ יוצא בהצלחה! 📊', 'success');
-                }}
-              />
+              {/* Luxury Segmented View Filter - Eliminates Vertical Scroll Overload */}
+              <div className="sticky top-[49px] z-20 bg-[#FAF8F5]/95 backdrop-blur-md py-1.5 -mx-4 px-4 border-b border-black/[0.04]">
+                <div className="flex items-center gap-1 bg-white p-1 rounded-2xl border border-[#EAE6DF] shadow-2xs text-xs font-serif overflow-x-auto no-scrollbar">
+                  {[
+                    { id: 'summary', label: 'תמצית הון' },
+                    { id: 'cashflow', label: 'תזרים ונזילות' },
+                    { id: 'goals', label: 'יעדים וצמיחה' },
+                    { id: 'all', label: 'הכל' },
+                  ].map(sec => (
+                    <button
+                      key={sec.id}
+                      onClick={() => setOverviewSection(sec.id as any)}
+                      className={`flex-1 py-1.5 px-2.5 rounded-xl transition-all whitespace-nowrap text-center text-xs ${
+                        overviewSection === sec.id
+                          ? 'bg-[#1A1A1A] text-white font-bold shadow-xs'
+                          : 'text-stone-600 hover:text-stone-900 font-medium'
+                      }`}
+                    >
+                      {sec.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 1. Apple Card Hero (always in summary & all) */}
+              {(overviewSection === 'summary' || overviewSection === 'all') && (
+                <AppleCardHero
+                  currentRecord={currentRecord}
+                  previousRecord={previousRecord}
+                  onQuickLog={() => setActiveTab('form')}
+                  onOpenFire={() => setIsFireModalOpen(true)}
+                  onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                  onEditAsset={setQuickAssetModalType}
+                  onScrollToGoals={() => setOverviewSection('goals')}
+                  onExportExcel={() => {
+                    exportFinancialRecordsToExcel(records);
+                    showToast('הקובץ יוצא בהצלחה! 📊', 'success');
+                  }}
+                />
+              )}
 
               {/* 2. Month Selector Carousel */}
               <MonthSelector
@@ -534,51 +562,98 @@ export const App: React.FC = () => {
                 onSelectPeriod={p => setSelectedPeriod(p)}
               />
 
-              {/* 3. 5 Wealth Pillars with Poker Chips */}
-              <AssetSparklinesCard
-                records={records}
-                currentRecord={currentRecord}
-                previousRecord={previousRecord}
-                onViewHistory={() => setActiveTab('history')}
-                onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
-                onSelectAsset={setQuickAssetModalType}
-              />
+              {/* Summary View Cards */}
+              {overviewSection === 'summary' && (
+                <>
+                  <AssetSparklinesCard
+                    records={records}
+                    currentRecord={currentRecord}
+                    previousRecord={previousRecord}
+                    onViewHistory={() => setActiveTab('history')}
+                    onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                    onSelectAsset={setQuickAssetModalType}
+                  />
+                  <WealthChart records={records} />
+                  <TrustVerificationBanner />
+                </>
+              )}
 
-              {/* 4. Core Investment Analytics: Wealth Growth Curve */}
-              <WealthChart records={records} />
+              {/* Cashflow & Liquidity View Cards */}
+              {overviewSection === 'cashflow' && (
+                <>
+                  <CashflowDonutCard currentRecord={currentRecord} />
+                  <LiquidityRunwayCard currentRecord={currentRecord} />
+                  <AssetSparklinesCard
+                    records={records}
+                    currentRecord={currentRecord}
+                    previousRecord={previousRecord}
+                    onViewHistory={() => setActiveTab('history')}
+                    onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                    onSelectAsset={setQuickAssetModalType}
+                  />
+                  <TopHoldingsCard
+                    holdings={holdings}
+                    onViewAllStocks={() => {
+                      setActiveTab('stocks');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  />
+                </>
+              )}
 
-              {/* 5. Top Holdings Real-time List */}
-              <TopHoldingsCard
-                holdings={holdings}
-                onViewAllStocks={() => {
-                  setActiveTab('stocks');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              />
+              {/* Goals & FIRE View Cards */}
+              {overviewSection === 'goals' && (
+                <>
+                  <div id="mobile-fire-milestone">
+                    <FireMilestoneCard
+                      currentRecord={currentRecord}
+                      onOpenCalculator={() => setIsFireModalOpen(true)}
+                    />
+                  </div>
+                  <WealthInsightsCarousel
+                    records={records}
+                    currentRecord={currentRecord}
+                    onOpenFire={() => setIsFireModalOpen(true)}
+                  />
+                  <WealthChart records={records} />
+                </>
+              )}
 
-              {/* 6. Cashflow Donut Ring */}
-              <CashflowDonutCard currentRecord={currentRecord} />
-
-              {/* 7. Liquidity Runway Gauge */}
-              <LiquidityRunwayCard currentRecord={currentRecord} />
-
-              {/* 8. Strategic FIRE Milestone */}
-              <div id="mobile-fire-milestone">
-                <FireMilestoneCard
-                  currentRecord={currentRecord}
-                  onOpenCalculator={() => setIsFireModalOpen(true)}
-                />
-              </div>
-
-              {/* 9. Smart Financial Insights Carousel */}
-              <WealthInsightsCarousel
-                records={records}
-                currentRecord={currentRecord}
-                onOpenFire={() => setIsFireModalOpen(true)}
-              />
-
-              {/* 10. Subtle Fiduciary Seal */}
-              <TrustVerificationBanner />
+              {/* Full Continuous View (All Cards) */}
+              {overviewSection === 'all' && (
+                <>
+                  <AssetSparklinesCard
+                    records={records}
+                    currentRecord={currentRecord}
+                    previousRecord={previousRecord}
+                    onViewHistory={() => setActiveTab('history')}
+                    onOpenCostBasis={() => setIsCostBasisModalOpen(true)}
+                    onSelectAsset={setQuickAssetModalType}
+                  />
+                  <WealthChart records={records} />
+                  <TopHoldingsCard
+                    holdings={holdings}
+                    onViewAllStocks={() => {
+                      setActiveTab('stocks');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  />
+                  <CashflowDonutCard currentRecord={currentRecord} />
+                  <LiquidityRunwayCard currentRecord={currentRecord} />
+                  <div id="mobile-fire-milestone">
+                    <FireMilestoneCard
+                      currentRecord={currentRecord}
+                      onOpenCalculator={() => setIsFireModalOpen(true)}
+                    />
+                  </div>
+                  <WealthInsightsCarousel
+                    records={records}
+                    currentRecord={currentRecord}
+                    onOpenFire={() => setIsFireModalOpen(true)}
+                  />
+                  <TrustVerificationBanner />
+                </>
+              )}
             </>
           )}
 
@@ -622,39 +697,53 @@ export const App: React.FC = () => {
             </>
           )}
 
-          {activeTab === 'analytics' && (
-            <div className="space-y-5">
-              <FireMilestoneCard
-                currentRecord={currentRecord}
-                onOpenCalculator={() => setIsFireModalOpen(true)}
-              />
-              <LiquidityRunwayCard currentRecord={currentRecord} />
-              <CashflowDonutCard currentRecord={currentRecord} />
-              <WealthChart records={records} />
-            </div>
-          )}
-
-          {activeTab === 'income' && (
-            <IncomeGrantsView
-              records={records}
-              selectedPeriod={selectedPeriod}
-              onSelectPeriod={p => {
-                setSelectedPeriod(p);
-                setActiveTab('form');
-              }}
-              onNavigateToForm={() => setActiveTab('form')}
-            />
-          )}
-
           {activeTab === 'history' && (
-            <HistoryTable
-              records={records}
-              selectedPeriod={selectedPeriod}
-              onSelectPeriod={p => {
-                setSelectedPeriod(p);
-                setActiveTab('form');
-              }}
-            />
+            <div className="space-y-4">
+              {/* Segmented Switch: מאזן הון חודשי vs פירוט שכר ומענקים */}
+              <div className="flex items-center gap-1 bg-white p-1 rounded-2xl border border-[#EAE6DF] shadow-2xs text-xs font-serif">
+                <button
+                  onClick={() => setHistorySection('balance')}
+                  className={`flex-1 py-2 px-3 rounded-xl transition-all text-center ${
+                    historySection === 'balance'
+                      ? 'bg-[#1A1A1A] text-white font-bold shadow-xs'
+                      : 'text-stone-600 hover:text-stone-900 font-medium'
+                  }`}
+                >
+                  מאזן חודשי וחיסכון
+                </button>
+                <button
+                  onClick={() => setHistorySection('income')}
+                  className={`flex-1 py-2 px-3 rounded-xl transition-all text-center ${
+                    historySection === 'income'
+                      ? 'bg-[#1A1A1A] text-white font-bold shadow-xs'
+                      : 'text-stone-600 hover:text-stone-900 font-medium'
+                  }`}
+                >
+                  פירוט שכר ומענקים
+                </button>
+              </div>
+
+              {historySection === 'balance' ? (
+                <HistoryTable
+                  records={records}
+                  selectedPeriod={selectedPeriod}
+                  onSelectPeriod={p => {
+                    setSelectedPeriod(p);
+                    setActiveTab('form');
+                  }}
+                />
+              ) : (
+                <IncomeGrantsView
+                  records={records}
+                  selectedPeriod={selectedPeriod}
+                  onSelectPeriod={p => {
+                    setSelectedPeriod(p);
+                    setActiveTab('form');
+                  }}
+                  onNavigateToForm={() => setActiveTab('form')}
+                />
+              )}
+            </div>
           )}
         </div>
 
@@ -723,6 +812,15 @@ export const App: React.FC = () => {
           }}
         />
       )}
+
+      {/* Quick Month Switcher Modal */}
+      <MonthPickerModal
+        isOpen={isMonthPickerOpen}
+        onClose={() => setIsMonthPickerOpen(false)}
+        records={records}
+        selectedPeriod={selectedPeriod}
+        onSelectPeriod={p => setSelectedPeriod(p)}
+      />
 
     </div>
   );

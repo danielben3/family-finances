@@ -327,8 +327,8 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
         </div>
       </section>
 
-      {/* 4. Filter & Search Bar */}
-      <div className="space-y-2.5">
+      {/* 4. Filter & Search Bar (Sticky under header for effortless browsing across 27 assets) */}
+      <div className="sticky top-[49px] z-20 bg-[#FAF8F5]/95 backdrop-blur-md py-2 -mx-4 px-4 border-b border-black/[0.04] space-y-2">
         <div className="relative w-full">
           <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 w-4 h-4" />
           <input
@@ -336,7 +336,7 @@ export const HoldingsPortfolioView: React.FC<HoldingsPortfolioViewProps> = ({
             placeholder="איתור קרן, נייר ערך או סימול מסחר (למשל: VOO, מיטב)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white text-xs text-stone-900 placeholder:text-stone-400 pr-10 pl-3 py-2.5 rounded-xl border border-black/[0.06] shadow-2xs focus:outline-none focus:border-stone-900 transition-colors"
+            className="w-full bg-white text-xs text-stone-900 placeholder:text-stone-400 pr-10 pl-3 py-2 rounded-xl border border-black/[0.06] shadow-2xs focus:outline-none focus:border-stone-900 transition-colors"
           />
         </div>
 

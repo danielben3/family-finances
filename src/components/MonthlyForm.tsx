@@ -804,6 +804,24 @@ export const MonthlyForm: React.FC<MonthlyFormProps> = ({
         </button>
       </div>
 
+      {/* Floating Quick Save Pill (Always in thumb zone, above bottom nav) */}
+      <div className="fixed bottom-20 inset-x-0 z-30 flex justify-center px-4 pointer-events-none animate-fade-in">
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="pointer-events-auto bg-[#1A1A1A] text-white px-6 py-3 rounded-full shadow-xl hover:shadow-2xl active:scale-95 transition-all flex items-center gap-2 border border-white/10 text-xs font-semibold font-serif tracking-wide"
+        >
+          {isSaving ? (
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : savedSuccess ? (
+            <Check className="w-4 h-4 text-emerald-400" />
+          ) : (
+            <Save className="w-4 h-4 text-stone-300" />
+          )}
+          <span>{savedSuccess ? 'נשמר בהצלחה ✓' : isSaving ? 'שומר בענן...' : 'שמור חודש'}</span>
+        </button>
+      </div>
+
     </form>
   );
 };
